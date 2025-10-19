@@ -1,0 +1,500 @@
+// Import Line Awesome icons
+@import 'vendor/line-awesome/line-awesome';
+
+// CSS Variables for dynamic theming
+:root {
+  --color-primary: #6366f1;
+  --color-secondary: #4f46e5;
+  --color-accent: #a78bfa;
+  --color-muted: #94a3b8;
+  --color-dark: #1e293b;
+  --color-light: #e2e8f0;
+}
+
+// Reset & Base
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: "omnes-pro", -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: black;
+  transition: background 0.5s ease;
+  position: relative;
+  overflow: hidden;
+
+  // Blur and fade effect for background image
+  &::before {
+    content: '';
+    position: fixed;
+    top: 0px;
+    left: 0px;
+    right: 0px;
+    bottom: 0px;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    filter: blur(1px);
+    opacity: 0.5;
+    z-index: 0;
+    transition: opacity 0.5s ease;
+    overflow: hidden;
+  }
+}
+
+// Visualizer Canvas (within album art container)
+.visualizer-canvas {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 300px;
+  height: 300px;
+  z-index: 1;
+  opacity: 0;
+  transition: opacity 0.5s ease;
+  pointer-events: none;
+
+  @media (max-width:768px) {
+    width: 200px;
+    height: 200px;
+  }
+}
+
+// Ensure player is above background and visualizer
+.player-container {
+  position: relative;
+  z-index: 1;
+}
+
+// Player Container
+.player-container {
+  max-width: 465px;
+  min-width: 465px;
+  padding: 10px;
+  @media (max-width:768px) {
+    max-width: 300px;
+    min-width: 300px;
+  }
+}
+
+// Header
+.player-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 32px;
+}
+
+.player-title {
+  font-size: 36px;
+  font-weight: bold;
+  color: white;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  i {
+    color: var(--color-accent);
+  }
+}
+
+.player-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.icon-btn {
+  padding: 8px;
+  background: rgba(255, 255, 255, 0.1);
+  border: none;
+  border-radius: 8px;
+  color: white;
+  font-size: 20px;
+  cursor: pointer;
+  transition: background 0.2s ease;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.2);
+  }
+
+  i {
+    display: block;
+  }
+}
+
+// Rotating Record
+.rotate-record {
+  position: absolute;
+  left: 200px;
+  top: 30px;
+  pointer-events: none;
+  z-index: 1;
+
+  @media (max-width:768px) {
+    left: 90px;
+    top: 25px;
+  }
+}
+
+.record-image {
+  width: 400px;
+  height: 400px;
+  display: block;
+
+  @media (max-width:768px) {
+    width: 250px;
+    height: 250px;
+  }
+}
+
+// Rotation animation
+@keyframes rotate-record {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+// Apply rotation when playing
+.rotate-record.playing .record-image {
+  animation: rotate-record 3s linear infinite;
+}
+
+// Album Art
+.album-art-container {
+  margin-bottom: 20px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3);
+  border-radius: 10px;
+  z-index: 1;
+}
+
+.album-art {
+  width: 100%;
+  display: block;
+}
+
+// Track Info Overlay
+.track-info-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 32px;
+  background: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0.6) 0%,
+    rgba(0, 0, 0, 0) 30%,
+    rgba(0, 0, 0, 0) 70%,
+    rgba(0, 0, 0, 0.6) 100%
+  );
+}
+
+.track-title {
+  font-size: 32px;
+  font-weight: 700;
+  color: white;
+  text-align: center;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.8);
+  margin: 0;
+  line-height: 1.2;
+  position: relative;
+  z-index: 2;
+  @media (max-width:768px) {
+    font-size: 22px;
+  }
+}
+
+.track-artist {
+  color: #ffffff;
+  font-size: 18px;
+  text-align: center;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.8);
+  margin: 0;
+  font-weight: 500;
+  position: relative;
+  z-index: 2;
+  @media (max-width:768px) {
+    font-size: 14px;
+  }
+}
+
+// Player Controls
+.player-controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.control-btn {
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &--small {
+    padding: 12px;
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+    font-size: 24px;
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.2);
+    }
+  }
+
+  &--large {
+    padding: 16px;
+    background: var(--color-primary);
+    color: white;
+    font-size: 32px;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
+
+    &:hover {
+      transform: scale(1.05);
+    }
+  }
+
+  i {
+    display: block;
+  }
+}
+
+// Progress Bar
+.progress-container-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  width: 80%;
+  margin: auto;
+  margin-bottom: 20px;
+}
+
+.progress-time {
+  color: var(--color-accent);
+  font-size: 14px;
+  min-width: 30px;
+  text-align: center;
+}
+
+.progress-container {
+  flex: 1;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 9999px;
+  overflow: visible;
+  cursor: pointer;
+  position: relative;
+}
+
+.progress-bar {
+  height: 100%;
+  width: 0;
+  background: linear-gradient(90deg, var(--color-primary), var(--color-accent));
+  border-radius: 9999px;
+  transition: width 0.1s linear;
+  position: relative;
+}
+
+.progress-handle {
+  position: absolute;
+  right: -10px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 20px;
+  height: 20px;
+  background: var(--color-primary);
+  border-radius: 50%;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+  cursor: grab;
+
+  &:active {
+    cursor: grabbing;
+    transform: translateY(-50%) scale(1.2);
+  }
+}
+
+// Feature Grid
+.feature-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.feature-card {
+  background: rgba(255, 255, 255, 0.05);
+  padding: 16px;
+  border-radius: 8px;
+  text-align: center;
+  cursor: pointer;
+  transition: background 0.2s ease;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.1);
+  }
+}
+
+.feature-icon {
+  font-size: 30px;
+  color: var(--color-accent);
+  display: block;
+  margin-bottom: 8px;
+}
+
+.feature-title {
+  color: white;
+  font-size: 14px;
+  margin-bottom: 4px;
+}
+
+.feature-subtitle {
+  color: #d8b4fe;
+  font-size: 12px;
+}
+
+// Info Box
+.info-box {
+  padding: 16px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+}
+
+.info-text {
+  color: #e9d5ff;
+  font-size: 12px;
+  text-align: center;
+
+  i {
+    margin-right: 4px;
+  }
+}
+
+// Loading Overlay
+.loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: black;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  transition: opacity 0.5s ease;
+
+  &.hidden {
+    opacity: 0;
+    pointer-events: none;
+  }
+}
+
+.loading-content {
+  text-align: center;
+  padding: 10px;
+  background: black;
+  backdrop-filter: blur(10px);
+  border-radius: 16px;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+  width: 50%;
+
+  @media (max-width:768px) {
+    width: 90%;
+  }
+}
+
+.loading-icon {
+  font-size: 64px;
+  color: white;
+  display: block;
+  margin: 0 auto 24px;
+  animation: spin 2s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.loading-title {
+  font-size: 25px;
+  color: white;
+  margin-bottom: 24px;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+}
+
+.loading-progress-container {
+  width: 100%;
+  height: 2px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 9999px;
+  overflow: hidden;
+  margin-bottom: 16px;
+}
+
+.loading-progress-bar {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, white, white);
+  border-radius: 9999px;
+  transition: width 0.3s ease;
+}
+
+.loading-status {
+  color: white;
+  font-size: 15px;
+  margin: 0;
+}
+
+// Credit
+.credit {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 14px;
+  margin-top: 40px;
+
+  img {
+    width: 50px;
+    height: auto;
+    display: block;
+  }
+}
+
+// Responsive Design
+@media (max-width: 768px) {
+
+  .player-title {
+    font-size: 28px;
+  }
+
+  .feature-grid {
+    grid-template-columns: 1fr;
+  }
+}
