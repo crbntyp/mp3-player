@@ -2,6 +2,10 @@
 
 A classic MP3 player web application with vinyl record aesthetics and audio visualizer.
 
+### Check it out
+
+[![Instagram Post](https://via.placeholder.com/600x600?text=View+on+Instagram)](https://www.instagram.com/p/DP_AT0-Dyol214AZknSKSb_9EnxukBWTg9_kF80/)
+
 ## Features
 
 - Audio playback with play/pause, next/previous track controls
