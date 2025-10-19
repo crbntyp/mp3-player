@@ -55,7 +55,7 @@ This runs all build tasks in sequence:
 3. Copy HTML files
 4. Copy JavaScript files
 5. Optimize images
-6. Copy music files
+6. Convert music files to Opus format
 7. Copy data files
 8. Copy font files
 
@@ -95,7 +95,7 @@ Optimizes and copies images using Sharp.
 ```bash
 npm run build:music
 ```
-Copies music files from `src/music/` to `dist/music/`.
+Converts MP3 files to Opus format for optimal web delivery. Uses FFmpeg to transcode audio files from `src/music/` to `dist/music/` with high-quality Opus encoding (128kbps), providing better compression and smaller file sizes compared to MP3.
 
 #### Build Data
 ```bash
@@ -117,7 +117,7 @@ Watch individual file types for changes:
 - `npm run watch:html` - Watch and copy HTML files
 - `npm run watch:js` - Watch and copy JavaScript files
 - `npm run watch:img` - Watch and copy images
-- `npm run watch:music` - Watch and copy music files
+- `npm run watch:music` - Watch and convert music files to Opus format
 - `npm run watch:data` - Watch and copy data files
 
 ### Serve
@@ -145,14 +145,17 @@ player/
 ├── src/
 │   ├── data/           # Track metadata (JSON)
 │   ├── img/            # Album artwork and assets
-│   ├── music/          # MP3 files
+│   ├── music/          # MP3 source files
 │   ├── scripts/        # JavaScript files
 │   ├── styles/         # SCSS stylesheets
 │   └── index.html      # Main HTML file
 ├── dist/               # Build output (generated)
+│   └── music/          # Optimized Opus audio files
 ├── scripts/            # Build scripts
 │   ├── generate-palettes.js
-│   └── optimize-images.js
+│   ├── optimize-images.js
+│   ├── optimize-music.js
+│   └── watch-music.js
 └── package.json
 ```
 
@@ -162,6 +165,9 @@ player/
 - **Line Awesome** - Icon library
 - **Sharp** - Image optimization
 - **Node Vibrant** - Color palette extraction
+- **FFmpeg** - Audio transcoding and optimization
+- **Fluent-FFmpeg** - Node.js wrapper for FFmpeg
+- **Chokidar** - File system watcher for development
 - **Live Server** - Development server
 - **Concurrently** - Run multiple npm scripts simultaneously
 
