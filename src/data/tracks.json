@@ -7,7 +7,7 @@
       "album": "Dream Universe",
       "duration": "4:54",
       "image": "img/CM-Dream_Universe_original_mix.jpg",
-      "audio": "music/CM-Dream_Universe_original_mix.mp3",
+      "audio": "music/CM-Dream_Universe_original_mix.opus",
       "colors": {
         "primary": "#62b79f",
         "secondary": "#14646c",
@@ -19,29 +19,12 @@
     },
     {
       "id": 2,
-      "title": "I Need A Miracle",
-      "artist": "Coco Vs Nalin",
-      "album": "Unknown Album",
-      "duration": "7:36",
-      "image": "img/Coco_vs_Nalin___Kane_-_I_Need_a_Beachball_White_Label_Mix.jpg",
-      "audio": "music/Coco vs Nalin _ Kane - I Need a Beachball (White Label Mix).mp3",
-      "colors": {
-        "primary": "#b78e5b",
-        "secondary": "#0c232b",
-        "accent": "#dadc89",
-        "muted": "#679895",
-        "dark": "#324955",
-        "light": "#b3d5b8"
-      }
-    },
-    {
-      "id": 3,
       "title": "Lifesigns",
       "artist": "Rodd-Y-Ler",
       "album": "The Art Work EP",
       "duration": "8:22",
       "image": "img/Rodd-Y-Ler_-_Lifesigns.jpg",
-      "audio": "music/Rodd-Y-Ler - Lifesigns.mp3",
+      "audio": "music/Rodd-Y-Ler - Lifesigns.opus",
       "colors": {
         "primary": "#56afb6",
         "secondary": "#244658",
@@ -52,13 +35,13 @@
       }
     },
     {
-      "id": 4,
+      "id": 3,
       "title": "Take Me",
       "artist": "The Pumpkin",
       "album": "Unknown Album",
       "duration": "7:10",
       "image": "img/The_Pumpkin_-_Take_Me.jpg",
-      "audio": "music/The Pumpkin - Take Me.mp3",
+      "audio": "music/The Pumpkin - Take Me.opus",
       "colors": {
         "primary": "#40abb0",
         "secondary": "#0b4c69",
@@ -69,47 +52,13 @@
       }
     },
     {
-      "id": 5,
-      "title": "Bulgarian",
-      "artist": "Travel",
-      "album": "Unknown Album",
-      "duration": "6:37",
-      "image": "img/Travel_-_Bulgarian_Signum_Remix.jpg",
-      "audio": "music/Travel - Bulgarian (Signum Remix).mp3",
-      "colors": {
-        "primary": "#c98c7b",
-        "secondary": "#5e3226",
-        "accent": "#d5a596",
-        "muted": "#916765",
-        "dark": "#4c444c",
-        "light": "#cdb4ac"
-      }
-    },
-    {
-      "id": 6,
-      "title": "I Need A Miracle",
-      "artist": "White Label - Frogman",
-      "album": "http://beam.to/shadow-zone",
-      "duration": "7:56",
-      "image": "img/White_Label_-_I_Need_A_Miracle_Unknown_Mix.jpg",
-      "audio": "music/White Label - I Need A Miracle (Unknown Mix).mp3",
-      "colors": {
-        "primary": "#3fbf6f",
-        "secondary": "#040c07",
-        "accent": "#9bddb4",
-        "muted": "#7f7f7f",
-        "dark": "#4c4445",
-        "light": "#ccccc4"
-      }
-    },
-    {
-      "id": 7,
+      "id": 4,
       "title": "Forever",
       "artist": "Ron Hagen & Pascal M",
       "album": "Keepin' It Real",
       "duration": "7:33",
       "image": "img/ron_hagen_and_pascal_m-forever.jpg",
-      "audio": "music/ron_hagen_and_pascal_m-forever.mp3",
+      "audio": "music/ron_hagen_and_pascal_m-forever.opus",
       "colors": {
         "primary": "#2b6e7a",
         "secondary": "#23525e",
