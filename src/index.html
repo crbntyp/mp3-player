@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carbontype | Classic MP3 Player | Shout out to Liam Madden</title>
+    <link rel="stylesheet" href="styles/main.css">
+    <link rel="stylesheet" href="https://use.typekit.net/abs2nmm.css">
+</head>
+<body>
+    <!-- Loading Overlay -->
+    <div id="loading-overlay" class="loading-overlay">
+        <div class="loading-content">
+            <i class="las la-compact-disc loading-icon"></i>
+            <h1 class="loading-title">Loading Player</h1>
+            <div class="loading-progress-container">
+                <div id="loading-progress-bar" class="loading-progress-bar"></div>
+            </div>
+            <p id="loading-status" class="loading-status">Loading cover images... 0/7</p>
+        </div>
+    </div>
+
+    <div class="player-container">
+        <div id="rotate-record" class="rotate-record">
+            <img src="img/assets/record.png" alt="Vinyl Record" class="record-image" />
+        </div>
+        <div class="album-art-container">
+            <img id="album-art"
+                 src=""
+                 class="album-art"
+                 alt="Album Art" />
+            <div class="track-info-overlay">
+                <h2 id="track-title" class="track-title">No Tracks Loaded</h2>
+                <!-- Visualizer Canvas (between title and artist) -->
+                <canvas id="visualizer-canvas" class="visualizer-canvas"></canvas>
+                <p id="track-artist" class="track-artist"></p>
+            </div>
+        </div>
+
+        <div class="progress-container-wrapper">
+            <span id="current-time" class="progress-time">0:00</span>
+            <div id="progress-container" class="progress-container">
+                <div id="progress-bar" class="progress-bar">
+                    <div class="progress-handle"></div>
+                </div>
+            </div>
+            <span id="duration" class="progress-time">0:00</span>
+        </div>
+
+        <div class="player-controls">
+            <button id="prev-btn" class="control-btn control-btn--small">
+                <i class="las la-backward"></i>
+            </button>
+            <button id="play-btn" class="control-btn control-btn--large">
+                <i class="las la-play"></i>
+            </button>
+            <button id="next-btn" class="control-btn control-btn--small">
+                <i class="las la-forward"></i>
+            </button>
+        </div>
+
+        <div class="credit">
+            <img src="img/assets/logo.png" />
+            crbtyp
+        </div>
+
+    </div>
+
+    <script src="scripts/visualizer.js"></script>
+    <script src="scripts/main.js"></script>
+</body>
+</html>
