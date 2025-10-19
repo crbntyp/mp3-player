@@ -4,7 +4,7 @@ A classic MP3 player web application with vinyl record aesthetics and audio visu
 
 ### Check it out
 
-[![Instagram Post](https://via.placeholder.com/600x600?text=View+on+Instagram)](https://www.instagram.com/p/DP_AT0-Dyol214AZknSKSb_9EnxukBWTg9_kF80/)
+[![MP3 Player Demo](music-player.png)](https://www.instagram.com/p/DP_AT0-Dyol214AZknSKSb_9EnxukBWTg9_kF80/)
 
 ## Features
 
