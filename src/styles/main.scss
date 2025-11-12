@@ -9,6 +9,17 @@
   --color-muted: #94a3b8;
   --color-dark: #1e293b;
   --color-light: #e2e8f0;
+
+  // Record positioning
+  --record-visible-left: 200px;
+  --record-hidden-left: 32px;
+  --record-top: 30px;
+
+  @media (max-width:768px) {
+    --record-visible-left: 90px;
+    --record-hidden-left: 25px;
+    --record-top: 25px;
+  }
 }
 
 // Reset & Base
@@ -132,15 +143,37 @@ body {
 // Rotating Record
 .rotate-record {
   position: absolute;
-  left: 200px;
-  top: 30px;
+  left: var(--record-hidden-left);
+  top: var(--record-top);
   pointer-events: none;
   z-index: 1;
+  transition: left 0.8s cubic-bezier(0.34, 1.2, 0.64, 1);
+  width: 400px;
+  height: 400px;
 
   @media (max-width:768px) {
-    left: 90px;
-    top: 25px;
+    width: 250px;
+    height: 250px;
   }
+}
+
+// Record states
+.rotate-record.hidden {
+  left: var(--record-hidden-left);
+}
+
+.rotate-record.visible {
+  left: var(--record-visible-left);
+}
+
+// Slide out animation
+.rotate-record.slide-out {
+  animation: slide-out 0.8s cubic-bezier(0.34, 1.2, 0.64, 1) forwards;
+}
+
+// Slide in animation
+.rotate-record.slide-in {
+  animation: slide-in 0.6s cubic-bezier(0.65, 0, 0.35, 1) forwards;
 }
 
 .record-image {
@@ -154,6 +187,99 @@ body {
   }
 }
 
+// Record label (center circle)
+.record-label {
+  position: absolute;
+  top: calc(50% - 60px);
+  left: calc(50% - 40px);
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 30% 30%,
+    var(--color-accent),
+    var(--color-primary) 40%,
+    var(--color-dark) 100%
+  );
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+  transition: background 0.5s ease;
+  z-index: 2;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  @media (max-width:768px) {
+    top: calc(50% - 37.5px);
+    left: calc(50% - 25px);
+    width: 75px;
+    height: 75px;
+  }
+}
+
+.record-label-art {
+  width: 115px;
+  height: 115px;
+  border-radius: 50%;
+  object-fit: cover;
+  display: block;
+  max-width: 100%;
+  max-height: 100%;
+
+  @media (max-width:768px) {
+    width: 62px;
+    height: 62px;
+  }
+}
+
+.record-label-text {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 120px;
+  height: 120px;
+  pointer-events: none;
+  z-index: 3;
+
+  @media (max-width:768px) {
+    width: 75px;
+    height: 75px;
+  }
+}
+
+.record-label-title {
+  fill: white;
+  font-size: 8px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  font-family: "omnes-pro", sans-serif;
+
+  @media (max-width:768px) {
+    font-size: 5px;
+    letter-spacing: 1px;
+  }
+}
+
+.record-label-artist {
+  fill: white;
+  font-size: 8px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-family: "omnes-pro", sans-serif;
+
+  @media (max-width:768px) {
+    font-size: 5px;
+    letter-spacing: 0.5px;
+  }
+}
+
+// Apply rotation to both record image and label when playing
+.rotate-record.playing:not(.slide-in):not(.slide-out) .record-image,
+.rotate-record.playing:not(.slide-in):not(.slide-out) .record-label {
+  animation: rotate-record 3s linear infinite;
+}
+
 // Rotation animation
 @keyframes rotate-record {
   from {
@@ -164,8 +290,28 @@ body {
   }
 }
 
-// Apply rotation when playing
-.rotate-record.playing .record-image {
+// Slide out animation
+@keyframes slide-out {
+  from {
+    left: var(--record-hidden-left);
+  }
+  to {
+    left: var(--record-visible-left);
+  }
+}
+
+// Slide in animation
+@keyframes slide-in {
+  from {
+    left: var(--record-visible-left);
+  }
+  to {
+    left: var(--record-hidden-left);
+  }
+}
+
+// Apply rotation when playing (but not when sliding)
+.rotate-record.playing:not(.slide-in):not(.slide-out) .record-image {
   animation: rotate-record 3s linear infinite;
 }
 

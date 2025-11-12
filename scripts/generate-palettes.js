@@ -111,6 +111,9 @@ async function generatePalettes() {
         : '0:00';
 
       // Create track object
+      // Replace audio file extension with .opus for optimized playback
+      const audioFilename = filename.replace(/\.(mp3|m4a|wav|ogg|flac)$/i, '.opus');
+
       const track = {
         id: i + 1,
         title: common.title || path.parse(filename).name.replace(/[-_]/g, ' '),
@@ -118,7 +121,7 @@ async function generatePalettes() {
         album: common.album || 'Unknown Album',
         duration: duration,
         image: imageFilename ? `img/${imageFilename}` : null,
-        audio: `music/${filename}`,
+        audio: `music/${audioFilename}`,
         colors: colors
       };
 
@@ -130,6 +133,8 @@ async function generatePalettes() {
       console.error(`  ❌ Error processing ${filename}:`, error.message);
 
       // Create a basic track entry even if metadata extraction fails
+      const audioFilename = filename.replace(/\.(mp3|m4a|wav|ogg|flac)$/i, '.opus');
+
       const track = {
         id: i + 1,
         title: path.parse(filename).name.replace(/[-_]/g, ' '),
@@ -137,7 +142,7 @@ async function generatePalettes() {
         album: 'Unknown Album',
         duration: '0:00',
         image: null,
-        audio: `music/${filename}`,
+        audio: `music/${audioFilename}`,
         colors: {
           primary: '#6366f1',
           secondary: '#4f46e5',

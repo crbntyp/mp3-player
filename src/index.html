@@ -22,8 +22,27 @@
     </div>
 
     <div class="player-container">
-        <div id="rotate-record" class="rotate-record">
+        <div id="rotate-record" class="rotate-record hidden">
             <img src="img/assets/record.png" alt="Vinyl Record" class="record-image" />
+            <div class="record-label">
+                <img id="record-label-art" src="" alt="Album Art" class="record-label-art" />
+                <svg class="record-label-text" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                        <path id="circlePathTop" d="M 10, 60 a 50,50 0 0,1 100,0" />
+                        <path id="circlePathBottom" d="M 110, 60 a 50,50 0 0,1 -100,0" />
+                    </defs>
+                    <text class="record-label-title">
+                        <textPath id="record-label-title-path" href="#circlePathTop" startOffset="50%" text-anchor="middle">
+                            Track Title
+                        </textPath>
+                    </text>
+                    <text class="record-label-artist">
+                        <textPath id="record-label-artist-path" href="#circlePathBottom" startOffset="50%" text-anchor="middle">
+                            Artist Name
+                        </textPath>
+                    </text>
+                </svg>
+            </div>
         </div>
         <div class="album-art-container">
             <img id="album-art"

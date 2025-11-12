@@ -8,6 +8,8 @@ class Player {
         this.preloadCache = new Map(); // Cache for preloaded audio elements
         this.imageCache = new Map(); // Cache for preloaded images
         this.visualizer = null; // Audio visualizer instance
+        this.recordVisible = false; // Track if record is visible
+        this.isSliding = false; // Track if record is currently sliding
         this.init();
     }
 
@@ -262,6 +264,18 @@ class Player {
             img.alt = 'Album Art';
         }
 
+        // Update record label art
+        const recordLabelArt = document.getElementById('record-label-art');
+        if (recordLabelArt) {
+            if (this.imageCache.has(imageSrc)) {
+                const cachedImg = this.imageCache.get(imageSrc);
+                recordLabelArt.src = cachedImg.src;
+            } else {
+                recordLabelArt.src = imageUrl;
+            }
+            recordLabelArt.alt = 'Album Art';
+        }
+
         // Set body background to blurred, faded album art
         // Create or update style element for ::before pseudo-element
         let styleEl = document.getElementById('body-bg-style');
@@ -283,6 +297,13 @@ class Player {
 
         if (titleEl) titleEl.textContent = track.title;
         if (artistEl) artistEl.textContent = track.artist;
+
+        // Update record label text
+        const recordLabelTitle = document.getElementById('record-label-title-path');
+        const recordLabelArtist = document.getElementById('record-label-artist-path');
+
+        if (recordLabelTitle) recordLabelTitle.textContent = track.title;
+        if (recordLabelArtist) recordLabelArtist.textContent = track.artist;
     }
 
     updateTheme(colors) {
@@ -318,7 +339,14 @@ class Player {
             this.audio.play();
             this.isPlaying = true;
             this.updatePlayButton();
-            this.updateRecordRotation();
+
+            // Slide record out if not already visible
+            if (!this.recordVisible) {
+                this.slideRecordOut();
+            } else {
+                // If already visible, just start spinning
+                this.updateRecordRotation();
+            }
         }
     }
 
@@ -326,7 +354,11 @@ class Player {
         this.audio.pause();
         this.isPlaying = false;
         this.updatePlayButton();
-        this.updateRecordRotation();
+
+        // Slide record in when pausing
+        if (this.recordVisible) {
+            this.slideRecordIn();
+        }
     }
 
     togglePlayPause() {
@@ -337,14 +369,34 @@ class Player {
         }
     }
 
-    nextTrack() {
+    async nextTrack() {
+        const wasPlaying = this.isPlaying;
         const nextIndex = (this.currentTrackIndex + 1) % this.tracks.length;
-        this.loadTrack(nextIndex, this.isPlaying);
+
+        // If playing, slide in then out for visual effect
+        if (wasPlaying && this.recordVisible) {
+            await this.slideRecordIn();
+            this.loadTrack(nextIndex, wasPlaying);
+            await this.slideRecordOut();
+        } else {
+            // If not playing, just load the track without animation
+            this.loadTrack(nextIndex, wasPlaying);
+        }
     }
 
-    previousTrack() {
+    async previousTrack() {
+        const wasPlaying = this.isPlaying;
         const prevIndex = (this.currentTrackIndex - 1 + this.tracks.length) % this.tracks.length;
-        this.loadTrack(prevIndex, this.isPlaying);
+
+        // If playing, slide in then out for visual effect
+        if (wasPlaying && this.recordVisible) {
+            await this.slideRecordIn();
+            this.loadTrack(prevIndex, wasPlaying);
+            await this.slideRecordOut();
+        } else {
+            // If not playing, just load the track without animation
+            this.loadTrack(prevIndex, wasPlaying);
+        }
     }
 
     seek(percent) {
@@ -389,12 +441,78 @@ class Player {
     updateRecordRotation() {
         const recordEl = document.getElementById('rotate-record');
         if (recordEl) {
-            if (this.isPlaying) {
+            if (this.isPlaying && !this.isSliding) {
                 recordEl.classList.add('playing');
             } else {
                 recordEl.classList.remove('playing');
             }
         }
+    }
+
+    slideRecordOut() {
+        return new Promise((resolve) => {
+            const recordEl = document.getElementById('rotate-record');
+            if (!recordEl) {
+                resolve();
+                return;
+            }
+
+            this.isSliding = true;
+            this.recordVisible = true;
+
+            // Remove any existing animation classes
+            recordEl.classList.remove('slide-in', 'hidden', 'playing');
+
+            // Add slide-out animation
+            recordEl.classList.add('slide-out');
+
+            // Wait for animation to complete
+            const handleAnimationEnd = () => {
+                recordEl.removeEventListener('animationend', handleAnimationEnd);
+                recordEl.classList.remove('slide-out');
+                recordEl.classList.add('visible');
+                this.isSliding = false;
+
+                // Start spinning if playing
+                if (this.isPlaying) {
+                    this.updateRecordRotation();
+                }
+
+                resolve();
+            };
+
+            recordEl.addEventListener('animationend', handleAnimationEnd);
+        });
+    }
+
+    slideRecordIn() {
+        return new Promise((resolve) => {
+            const recordEl = document.getElementById('rotate-record');
+            if (!recordEl) {
+                resolve();
+                return;
+            }
+
+            this.isSliding = true;
+
+            // Stop spinning and remove visible state
+            recordEl.classList.remove('playing', 'visible', 'slide-out');
+
+            // Add slide-in animation
+            recordEl.classList.add('slide-in');
+
+            // Wait for animation to complete
+            const handleAnimationEnd = () => {
+                recordEl.removeEventListener('animationend', handleAnimationEnd);
+                recordEl.classList.remove('slide-in');
+                recordEl.classList.add('hidden');
+                this.recordVisible = false;
+                this.isSliding = false;
+                resolve();
+            };
+
+            recordEl.addEventListener('animationend', handleAnimationEnd);
+        });
     }
 
     formatTime(seconds) {
