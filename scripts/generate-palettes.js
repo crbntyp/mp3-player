@@ -1,5 +1,4 @@
 const { Vibrant } = require('node-vibrant/node');
-const { parseFile } = require('music-metadata');
 const fs = require('fs');
 const path = require('path');
 
@@ -9,6 +8,9 @@ const OUTPUT_FILE = path.join(__dirname, '../src/data/tracks.json');
 
 async function generatePalettes() {
   console.log('🎵 Generating tracks from MP3 metadata and album art...\n');
+
+  // Dynamically import music-metadata (ES module)
+  const { parseFile } = await import('music-metadata');
 
   // Ensure output directory exists
   const dataDir = path.dirname(OUTPUT_FILE);
