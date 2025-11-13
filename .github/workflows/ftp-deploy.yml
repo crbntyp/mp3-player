@@ -25,19 +25,13 @@ jobs:
       - name: Build project
         run: npm run build
 
-      - name: Deploy to FTP
-        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
-        with:
-          server: ${{ secrets.FTP_SERVER }}
-          username: ${{ secrets.FTP_USERNAME }}
-          password: ${{ secrets.FTP_PASSWORD }}
-          port: 21
-          protocol: ftp
-          local-dir: ./dist/
-          server-dir: public_html/carbontype.co/player/
-          dangerous-clean-slate: false
-          exclude: |
-            **/.git*
-            **/.git*/**
-            **/node_modules/**
-            **/.DS_Store
+      - name: Deploy to FTP via lftp
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y lftp
+          lftp -c "
+            set ftp:ssl-allow no;
+            open -u ${{ secrets.FTP_USERNAME }},${{ secrets.FTP_PASSWORD }} ${{ secrets.FTP_SERVER }};
+            mirror --reverse --delete --verbose --exclude .git/ --exclude node_modules/ ./dist/ public_html/carbontype.co/player/;
+            bye
+          "
