@@ -3,7 +3,7 @@ name: Deploy to FTP
 on:
   push:
     branches:
-      - main
+      - master
       - claude/**  # Allow deployment from Claude branches for testing
 
 jobs:

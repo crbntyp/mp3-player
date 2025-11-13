@@ -4,7 +4,7 @@ This repository is configured to automatically deploy to your FTP hosting when y
 
 ## How It Works
 
-When you push to the `main` branch (or any `claude/**` branch), GitHub Actions will:
+When you push to the `master` branch (or any `claude/**` branch), GitHub Actions will:
 1. Build your project (`npm run build`)
 2. Upload the `dist/` folder to your FTP server
 3. Deploy to: `public_html/carbontype.co/player/`
@@ -29,7 +29,7 @@ You need to add these secrets to your GitHub repository:
 
 Once the secrets are added:
 1. Make any change to your code
-2. Commit and push to `main` or your Claude branch
+2. Commit and push to `master` or your Claude branch
 3. Go to **Actions** tab in GitHub to see the deployment progress
 4. Check your site at: `https://carbontype.co/player/`
 
