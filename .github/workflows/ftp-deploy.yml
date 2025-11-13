@@ -29,9 +29,11 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y lftp
-          lftp -c "
-            set ftp:ssl-allow no;
-            open -u ${{ secrets.FTP_USERNAME }},${{ secrets.FTP_PASSWORD }} ${{ secrets.FTP_SERVER }};
-            mirror --reverse --delete --verbose --exclude .git/ --exclude node_modules/ ./dist/ public_html/carbontype.co/player/;
-            bye
-          "
+          cat > ftp-script.txt << 'FTPEOF'
+          set ftp:ssl-allow no
+          open ${{ secrets.FTP_SERVER }}
+          user ${{ secrets.FTP_USERNAME }} ${{ secrets.FTP_PASSWORD }}
+          mirror --reverse --delete --verbose --exclude .git/ --exclude node_modules/ ./dist/ public_html/carbontype.co/player/
+          bye
+          FTPEOF
+          lftp -f ftp-script.txt
