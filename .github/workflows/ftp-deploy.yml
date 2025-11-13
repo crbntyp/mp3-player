@@ -26,14 +26,15 @@ jobs:
         run: npm run build
 
       - name: Deploy to FTP via lftp
+        env:
+          FTP_HOST: ${{ secrets.FTP_SERVER }}
+          FTP_USER: ${{ secrets.FTP_USERNAME }}
+          FTP_PASS: ${{ secrets.FTP_PASSWORD }}
         run: |
           sudo apt-get update
           sudo apt-get install -y lftp
-          cat > ftp-script.txt << 'FTPEOF'
+          lftp -u "${FTP_USER}","${FTP_PASS}" "${FTP_HOST}" <<EOF
           set ftp:ssl-allow no
-          open ${{ secrets.FTP_SERVER }}
-          user ${{ secrets.FTP_USERNAME }} ${{ secrets.FTP_PASSWORD }}
           mirror --reverse --delete --verbose --exclude .git/ --exclude node_modules/ ./dist/ public_html/carbontype.co/player/
           bye
-          FTPEOF
-          lftp -f ftp-script.txt
+          EOF
