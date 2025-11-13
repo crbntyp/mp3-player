@@ -48,6 +48,8 @@ jobs:
           lftp ${FTP_HOST} <<EOF
           set ftp:ssl-allow no
           set ftp:passive-mode on
-          mirror --reverse --delete --verbose --exclude .git/ --exclude node_modules/ ./dist/ public_html/carbontype.co/player/
+          cd public_html/carbontype.co/player
+          lcd ./dist
+          mirror --reverse --delete --verbose --exclude .git/ --exclude node_modules/
           bye
           EOF
