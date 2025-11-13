@@ -33,12 +33,21 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y lftp
+
+          # Create .netrc file for credentials (handles special chars properly)
+          cat > ~/.netrc <<NETRC
+          machine ${FTP_HOST}
+          login ${FTP_USER}
+          password ${FTP_PASS}
+          NETRC
+          chmod 600 ~/.netrc
+
           echo "Attempting FTP connection to: ${FTP_HOST}"
           echo "Username: ${FTP_USER}"
-          lftp -u "${FTP_USER}","${FTP_PASS}" "${FTP_HOST}" <<EOF
+
+          lftp ${FTP_HOST} <<EOF
           set ftp:ssl-allow no
           set ftp:passive-mode on
-          debug 5
           mirror --reverse --delete --verbose --exclude .git/ --exclude node_modules/ ./dist/ public_html/carbontype.co/player/
           bye
           EOF
