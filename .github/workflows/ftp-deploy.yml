@@ -50,6 +50,6 @@ jobs:
           set ftp:passive-mode on
           cd public_html/carbontype.co/player
           lcd ./dist
-          mirror --reverse --delete --verbose --exclude .git/ --exclude node_modules/
+          mirror --reverse --verbose --exclude .git/ --exclude node_modules/
           bye
           EOF
