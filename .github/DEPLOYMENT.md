@@ -21,9 +21,9 @@ You need to add these secrets to your GitHub repository:
 
 | Secret Name | Value |
 |-------------|-------|
-| `FTP_SERVER` | `ftp.carbontype.co` |
-| `FTP_USERNAME` | `carbontype@carbontype.co` |
-| `FTP_PASSWORD` | `Cantona1979!` |
+| `FTP_SERVER` | Your FTP server address |
+| `FTP_USERNAME` | Your FTP username |
+| `FTP_PASSWORD` | Your FTP password |
 
 ## Testing the Deployment
 
@@ -35,7 +35,6 @@ Once the secrets are added:
 
 ## Deployment Details
 
-- **Server**: ftp.carbontype.co
 - **Port**: 21 (standard FTP)
 - **Remote Path**: `public_html/carbontype.co/player/`
 - **Local Source**: `dist/` folder (after build)
