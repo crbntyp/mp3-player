@@ -13,11 +13,61 @@ if (!fs.existsSync(outputDir)) {
 async function optimizeImages() {
     console.log('🖼️  Optimizing images...\n');
 
-    const files = fs.readdirSync(inputDir);
-    const imageFiles = files.filter(file => /\.(png|jpg|jpeg)$/i.test(file));
-
     let totalOriginalSize = 0;
     let totalOptimizedSize = 0;
+
+    // Process assets folder (keep as PNG, no JPEG conversion)
+    const assetsDir = path.join(inputDir, 'assets');
+    const assetsOutputDir = path.join(outputDir, 'assets');
+
+    if (fs.existsSync(assetsDir)) {
+        if (!fs.existsSync(assetsOutputDir)) {
+            fs.mkdirSync(assetsOutputDir, { recursive: true });
+        }
+
+        console.log('📁 Processing assets folder...\n');
+        const assetFiles = fs.readdirSync(assetsDir);
+        const assetImageFiles = assetFiles.filter(file => /\.(png|jpg|jpeg)$/i.test(file));
+
+        for (const file of assetImageFiles) {
+            const inputPath = path.join(assetsDir, file);
+            const outputPath = path.join(assetsOutputDir, file);
+
+            try {
+                const originalStats = fs.statSync(inputPath);
+                totalOriginalSize += originalStats.size;
+
+                // Keep assets as PNG to preserve transparency
+                if (file.toLowerCase().endsWith('.png')) {
+                    await sharp(inputPath)
+                        .png({
+                            compressionLevel: 9,
+                            quality: 90
+                        })
+                        .toFile(outputPath);
+                } else {
+                    // Copy JPEGs as-is
+                    fs.copyFileSync(inputPath, outputPath);
+                }
+
+                const optimizedStats = fs.statSync(outputPath);
+                totalOptimizedSize += optimizedStats.size;
+
+                const originalKB = (originalStats.size / 1024).toFixed(1);
+                const optimizedKB = (optimizedStats.size / 1024).toFixed(1);
+
+                console.log(`✓ assets/${file}`);
+                console.log(`  ${originalKB}KB → ${optimizedKB}KB\n`);
+            } catch (error) {
+                console.error(`✗ Failed to process assets/${file}:`, error.message);
+            }
+        }
+    }
+
+    // Process album art images (root img folder - convert to JPEG)
+    console.log('📁 Processing album art images...\n');
+    const files = fs.readdirSync(inputDir);
+    const imageFiles = files.filter(file => /\.(png|jpg|jpeg)$/i.test(file));
 
     for (const file of imageFiles) {
         const inputPath = path.join(inputDir, file);
