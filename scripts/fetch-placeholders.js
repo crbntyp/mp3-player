@@ -4,10 +4,10 @@ const { Vibrant } = require('node-vibrant/node');
 const path = require('path');
 
 const PEXELS_API_KEY = 'vTST9e7OjHJBkzipEIm5gFCofIiNeQ5XfRlPU8zk4yN7xLt5qRMv25Zu';
-const SEARCH_QUERIES = ['surreal', 'awkward', 'odd', 'weird', 'unreal', 'neon', 'techno'];
+const SEARCH_QUERIES = ['surreal'];
 const TARGET_COUNT = 50;
 
-console.log('🎨 Fetching surreal/weird/neon/techno images from Pexels...\n');
+console.log('🎨 Fetching surreal images from Pexels...\n');
 
 let allPlaceholders = [];
 let currentQueryIndex = 0;
