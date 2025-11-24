@@ -2,7 +2,7 @@ const fs = require('fs');
 const https = require('https');
 
 const PEXELS_API_KEY = 'vTST9e7OjHJBkzipEIm5gFCofIiNeQ5XfRlPU8zk4yN7xLt5qRMv25Zu';
-const SEARCH_QUERIES = ['techno'];
+const SEARCH_QUERIES = ['techno', 'techno music', 'electronic music', 'dj', 'synthesizer'];
 const TARGET_COUNT = 20;
 
 console.log('🎨 Fetching techno placeholder images from Pexels...\n');
@@ -14,7 +14,7 @@ function fetchImages(query, page = 1) {
     return new Promise((resolve, reject) => {
         const options = {
             hostname: 'api.pexels.com',
-            path: `/v1/search?query=${encodeURIComponent(query)}&per_page=80&page=${page}`,
+            path: `/v1/search?query=${encodeURIComponent(query)}&per_page=80&page=${page}&orientation=square`,
             headers: {
                 'Authorization': PEXELS_API_KEY
             }
