@@ -593,14 +593,8 @@ class Player {
     updateWheelPosition() {
         const wheel = document.getElementById('track-wheel');
         if (wheel) {
-            // Calculate center offset: we want the selected item centered in viewport
-            // Viewport center minus half item height, nudged up a bit
-            const viewportCenter = window.innerHeight / 2;
-            const itemCenter = this.itemHeight / 2;
-            const nudgeUp = 140; // Push content up from true center
-            const baseOffset = viewportCenter - itemCenter - nudgeUp;
-
-            wheel.style.transform = `translateY(${baseOffset + this.wheelOffset}px)`;
+            // Apply scroll offset only - CSS handles centering
+            wheel.style.transform = `translateY(${this.wheelOffset}px)`;
             this.updateWheelDepth();
         }
     }
