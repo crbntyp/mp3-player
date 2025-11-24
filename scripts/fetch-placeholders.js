@@ -2,10 +2,10 @@ const fs = require('fs');
 const https = require('https');
 
 const PEXELS_API_KEY = 'vTST9e7OjHJBkzipEIm5gFCofIiNeQ5XfRlPU8zk4yN7xLt5qRMv25Zu';
-const SEARCH_QUERIES = ['cyberpunk', 'neon city', 'futuristic', 'synthwave', 'vaporwave'];
+const SEARCH_QUERIES = ['techno music', 'dj turntable', 'electronic music', 'nightclub lights', 'rave'];
 const TARGET_COUNT = 20;
 
-console.log('🎨 Fetching cyberpunk placeholder images from Pexels...\n');
+console.log('🎨 Fetching techno placeholder images from Pexels...\n');
 
 let allPlaceholders = [];
 let currentQueryIndex = 0;

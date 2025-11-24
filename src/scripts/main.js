@@ -10,7 +10,7 @@ class Player {
         this.visualizer = null; // Audio visualizer instance
         this.recordVisible = false; // Track if record is visible
         this.isSliding = false; // Track if record is currently sliding
-        this.placeholderImages = []; // Cyberpunk placeholder images
+        this.placeholderImages = []; // Techno placeholder images
         this.init();
     }
 
@@ -267,7 +267,7 @@ class Player {
     }
 
     updateAlbumArt(imageSrc) {
-        // Use random cyberpunk placeholder if no image provided
+        // Use random techno placeholder if no image provided
         let imageUrl = imageSrc;
         if (!imageUrl && this.placeholderImages.length > 0) {
             const randomIndex = Math.floor(Math.random() * this.placeholderImages.length);
