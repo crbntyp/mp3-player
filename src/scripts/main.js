@@ -10,7 +10,7 @@ class Player {
         this.visualizer = null; // Audio visualizer instance
         this.recordVisible = false; // Track if record is visible
         this.isSliding = false; // Track if record is currently sliding
-        this.placeholderImages = []; // Neon placeholder images
+        this.placeholderImages = []; // Neon images (used for all tracks)
         this.init();
     }
 
@@ -62,9 +62,9 @@ class Player {
             const response = await fetch('data/placeholders.json');
             const data = await response.json();
             this.placeholderImages = data.images;
-            console.log(`✓ Loaded ${this.placeholderImages.length} placeholder images`);
+            console.log(`✓ Loaded ${this.placeholderImages.length} neon images`);
         } catch (error) {
-            console.error('Error loading placeholders:', error);
+            console.error('Error loading neon images:', error);
             this.placeholderImages = [];
         }
     }
@@ -181,22 +181,23 @@ class Player {
         // Stop current audio
         this.pause();
 
-        // If track has no image, get random placeholder with colors
-        let placeholderColors = null;
-        if (!track.image && this.placeholderImages.length > 0) {
+        // Always use random neon image for all tracks
+        if (this.placeholderImages.length > 0) {
             const randomIndex = Math.floor(Math.random() * this.placeholderImages.length);
             const placeholder = this.placeholderImages[randomIndex];
             this.currentPlaceholder = placeholder; // Store for updateAlbumArt
-            placeholderColors = placeholder.colors;
-        } else {
-            this.currentPlaceholder = null;
-        }
 
-        // Update UI
-        this.updateAlbumArt(track.image);
-        this.updateTrackInfo(track);
-        // Use placeholder colors if no track image, otherwise use track colors
-        this.updateTheme(placeholderColors || track.colors);
+            // Update UI with neon image and its colors
+            this.updateAlbumArt(null); // Pass null to force placeholder usage
+            this.updateTrackInfo(track);
+            this.updateTheme(placeholder.colors);
+        } else {
+            // Fallback to original behavior if placeholders not loaded
+            this.currentPlaceholder = null;
+            this.updateAlbumArt(track.image);
+            this.updateTrackInfo(track);
+            this.updateTheme(track.colors);
+        }
 
         // Set duration from track data (more reliable than audio metadata for opus)
         const durationEl = document.getElementById('duration');
@@ -279,7 +280,7 @@ class Player {
     }
 
     updateAlbumArt(imageSrc) {
-        // Use stored placeholder if no image provided
+        // Always use neon image from currentPlaceholder (set in loadTrack)
         let imageUrl = imageSrc;
         if (!imageUrl && this.currentPlaceholder) {
             imageUrl = this.currentPlaceholder.url;
