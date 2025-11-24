@@ -10,12 +10,14 @@ class Player {
         this.visualizer = null; // Audio visualizer instance
         this.recordVisible = false; // Track if record is visible
         this.isSliding = false; // Track if record is currently sliding
+        this.placeholderImages = []; // Cyberpunk placeholder images
         this.init();
     }
 
     async init() {
         console.log('🎵 Player application initializing...');
         await this.loadTracks();
+        await this.loadPlaceholders();
 
         // Preload all cover images before showing player
         await this.preloadCoverImages();
@@ -52,6 +54,18 @@ class Player {
             console.log(`✓ Loaded ${this.tracks.length} track(s)`);
         } catch (error) {
             console.error('Error loading tracks:', error);
+        }
+    }
+
+    async loadPlaceholders() {
+        try {
+            const response = await fetch('data/placeholders.json');
+            const data = await response.json();
+            this.placeholderImages = data.images;
+            console.log(`✓ Loaded ${this.placeholderImages.length} placeholder images`);
+        } catch (error) {
+            console.error('Error loading placeholders:', error);
+            this.placeholderImages = [];
         }
     }
 
@@ -253,8 +267,12 @@ class Player {
     }
 
     updateAlbumArt(imageSrc) {
-        // Use placeholder if no image provided
-        const imageUrl = imageSrc || 'https://placehold.co/1024x1024/000000/FFF?text=No+Cover+Image';
+        // Use random cyberpunk placeholder if no image provided
+        let imageUrl = imageSrc;
+        if (!imageUrl && this.placeholderImages.length > 0) {
+            const randomIndex = Math.floor(Math.random() * this.placeholderImages.length);
+            imageUrl = this.placeholderImages[randomIndex].url;
+        }
 
         const img = document.getElementById('album-art');
         if (img) {
