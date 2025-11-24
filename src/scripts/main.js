@@ -171,6 +171,12 @@ class Player {
         this.updateTrackInfo(track);
         this.updateTheme(track.colors);
 
+        // Set duration from track data (more reliable than audio metadata for opus)
+        const durationEl = document.getElementById('duration');
+        if (durationEl && track.duration) {
+            durationEl.textContent = track.duration;
+        }
+
         // Load audio if available
         if (track.audio) {
             // Connect visualizer to audio on first track load
