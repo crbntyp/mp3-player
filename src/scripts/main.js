@@ -541,16 +541,256 @@ class Player {
         return 0;
     }
 
-    // Get valid duration - prefer audio.duration if valid, else use track data
+    // Get valid duration - prefer track JSON data (Opus metadata is unreliable)
     getTrackDuration() {
-        if (this.audio.duration && isFinite(this.audio.duration)) {
-            return this.audio.duration;
-        }
         const track = this.tracks[this.currentTrackIndex];
         if (track && track.duration) {
             return this.parseDuration(track.duration);
         }
+        // Fallback to audio.duration only if no track data
+        if (this.audio.duration && isFinite(this.audio.duration)) {
+            return this.audio.duration;
+        }
         return 0;
+    }
+
+    // Track Wheel Methods
+    renderTrackWheel() {
+        const wheel = document.getElementById('track-wheel');
+        if (!wheel || this.wheelRendered) return;
+
+        wheel.innerHTML = '';
+
+        // Match CSS: 140px desktop, 110px mobile
+        this.itemHeight = window.innerWidth <= 768 ? 110 : 140;
+
+        this.tracks.forEach((track, index) => {
+            const item = document.createElement('div');
+            item.className = 'track-wheel-item';
+            item.dataset.index = index;
+
+            item.innerHTML = `
+                <div class="track-wheel-content">
+                    <div class="track-wheel-name">${track.title}</div>
+                    <div class="track-wheel-artist">${track.artist}</div>
+                </div>
+            `;
+
+            item.addEventListener('click', () => {
+                this.selectTrack(index);
+            });
+
+            wheel.appendChild(item);
+        });
+
+        this.wheelRendered = true;
+        this.wheelSelectedIndex = this.currentTrackIndex;
+        this.wheelOffset = -this.currentTrackIndex * this.itemHeight;
+        this.updateWheelPosition();
+        console.log('✓ Track wheel rendered');
+    }
+
+    updateWheelPosition() {
+        const wheel = document.getElementById('track-wheel');
+        if (wheel) {
+            // Calculate center offset: we want the selected item centered in viewport
+            // Viewport center minus half item height, nudged up a bit
+            const viewportCenter = window.innerHeight / 2;
+            const itemCenter = this.itemHeight / 2;
+            const nudgeUp = 140; // Push content up from true center
+            const baseOffset = viewportCenter - itemCenter - nudgeUp;
+
+            wheel.style.transform = `translateY(${baseOffset + this.wheelOffset}px)`;
+            this.updateWheelDepth();
+        }
+    }
+
+    updateWheelDepth() {
+        const items = document.querySelectorAll('.track-wheel-item');
+        const centerIndex = -this.wheelOffset / this.itemHeight; // Current center position as float
+
+        items.forEach((item) => {
+            const idx = parseInt(item.dataset.index);
+            const distanceFromCenter = Math.abs(idx - centerIndex);
+
+            // Only show prev, current, next (within 1.5 of center during scroll)
+            if (distanceFromCenter > 1.5) {
+                item.style.opacity = '0';
+                item.style.pointerEvents = 'none';
+            } else {
+                // Scale: center = 1.3, adjacent = 0.7
+                const scale = distanceFromCenter < 0.5
+                    ? 1.3
+                    : 1.3 - (distanceFromCenter * 0.6);
+
+                // Opacity: center = 1, adjacent = 0.4
+                const opacity = distanceFromCenter < 0.5
+                    ? 1
+                    : 1 - (distanceFromCenter * 0.6);
+
+                item.style.transform = `scale(${Math.max(0.7, scale)})`;
+                item.style.opacity = Math.max(0.4, opacity);
+                item.style.pointerEvents = 'auto';
+            }
+
+            // Mark as active (currently playing)
+            if (idx === this.currentTrackIndex) {
+                item.classList.add('active');
+            } else {
+                item.classList.remove('active');
+            }
+        });
+    }
+
+    setupWheelScroll() {
+        const overlay = document.getElementById('track-wheel-overlay');
+        if (!overlay || this.wheelScrollSetup) return;
+
+        let scrollTimeout;
+        let touchStartY = 0;
+        let touchLastY = 0;
+        let velocity = 0;
+
+        // Mouse wheel scrolling
+        overlay.addEventListener('wheel', (e) => {
+            e.preventDefault();
+            this.isSnapping = false;
+            this.scrollWheel(e.deltaY * 0.15);
+
+            clearTimeout(scrollTimeout);
+            scrollTimeout = setTimeout(() => this.snapWheel(), 200);
+        }, { passive: false });
+
+        // Touch start
+        overlay.addEventListener('touchstart', (e) => {
+            touchStartY = e.touches[0].clientY;
+            touchLastY = touchStartY;
+            velocity = 0;
+        }, { passive: true });
+
+        // Touch move
+        overlay.addEventListener('touchmove', (e) => {
+            e.preventDefault();
+            this.isSnapping = false;
+            const touchY = e.touches[0].clientY;
+            const deltaY = touchLastY - touchY;
+            velocity = deltaY;
+            touchLastY = touchY;
+
+            this.scrollWheel(deltaY * 0.5);
+        }, { passive: false });
+
+        // Touch end
+        overlay.addEventListener('touchend', () => {
+            // Add momentum
+            if (Math.abs(velocity) > 5) {
+                this.scrollWheel(velocity * 0.8);
+            }
+
+            clearTimeout(scrollTimeout);
+            scrollTimeout = setTimeout(() => this.snapWheel(), 200);
+        }, { passive: true });
+
+        this.wheelScrollSetup = true;
+    }
+
+    scrollWheel(delta) {
+        this.wheelOffset -= delta;
+
+        // Clamp to valid range
+        const maxOffset = 0;
+        const minOffset = -(this.tracks.length - 1) * this.itemHeight;
+        this.wheelOffset = Math.max(minOffset, Math.min(maxOffset, this.wheelOffset));
+
+        this.updateWheelPosition();
+    }
+
+    snapWheel() {
+        // Find nearest snap point
+        const nearestIndex = Math.round(-this.wheelOffset / this.itemHeight);
+        const clampedIndex = Math.max(0, Math.min(this.tracks.length - 1, nearestIndex));
+
+        const targetOffset = -clampedIndex * this.itemHeight;
+
+        // Animate to snap position
+        this.isSnapping = true;
+        const wheel = document.getElementById('track-wheel');
+        if (wheel) {
+            wheel.classList.add('snapping');
+        }
+
+        this.wheelOffset = targetOffset;
+        this.wheelSelectedIndex = clampedIndex;
+        this.updateWheelPosition();
+
+        // Remove snapping class after animation
+        setTimeout(() => {
+            if (wheel) {
+                wheel.classList.remove('snapping');
+            }
+            this.isSnapping = false;
+        }, 400);
+    }
+
+    openTrackWheel() {
+        const overlay = document.getElementById('track-wheel-overlay');
+        if (overlay) {
+            this.renderTrackWheel();
+            this.setupWheelScroll();
+            // Reset to current track
+            this.wheelOffset = -this.currentTrackIndex * this.itemHeight;
+            this.wheelSelectedIndex = this.currentTrackIndex;
+            this.updateWheelPosition();
+            overlay.classList.add('open');
+            console.log('🎰 Track wheel opened');
+        }
+    }
+
+    closeTrackWheel() {
+        const overlay = document.getElementById('track-wheel-overlay');
+        if (overlay) {
+            overlay.classList.remove('open');
+            console.log('🎰 Track wheel closed');
+        }
+    }
+
+    toggleTrackWheel() {
+        const overlay = document.getElementById('track-wheel-overlay');
+        if (overlay && overlay.classList.contains('open')) {
+            this.closeTrackWheel();
+        } else {
+            this.openTrackWheel();
+        }
+    }
+
+    async selectTrack(index) {
+        this.closeTrackWheel();
+
+        const wasPlaying = this.isPlaying;
+
+        // If playing, slide in then out for visual effect (like next/prev)
+        if (wasPlaying && this.recordVisible) {
+            await this.slideRecordIn();
+            this.loadTrack(index, true);
+            this.updateActiveTrack();
+            await this.slideRecordOut();
+        } else {
+            // If not playing, just load and autoplay
+            this.loadTrack(index, true);
+            this.updateActiveTrack();
+        }
+    }
+
+    updateActiveTrack() {
+        const items = document.querySelectorAll('.track-item');
+        items.forEach((item) => {
+            const idx = parseInt(item.dataset.index);
+            if (idx === this.currentTrackIndex) {
+                item.classList.add('active');
+            } else {
+                item.classList.remove('active');
+            }
+        });
     }
 
     setupEventListeners() {
@@ -570,6 +810,18 @@ class Player {
         const nextBtn = document.getElementById('next-btn');
         if (nextBtn) {
             nextBtn.addEventListener('click', () => this.nextTrack());
+        }
+
+        // Library button
+        const libraryBtn = document.getElementById('library-btn');
+        if (libraryBtn) {
+            libraryBtn.addEventListener('click', () => this.toggleTrackWheel());
+        }
+
+        // Wheel close button
+        const wheelClose = document.getElementById('wheel-close');
+        if (wheelClose) {
+            wheelClose.addEventListener('click', () => this.closeTrackWheel());
         }
 
         // Progress bar click and drag to seek

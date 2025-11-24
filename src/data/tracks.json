@@ -19,6 +19,40 @@
     },
     {
       "id": 2,
+      "title": "Skydive (I Feel Wonderful)",
+      "artist": "Freefall",
+      "album": "Skydive (I Feel Wonderful) (Including Hi-Fi Bugs Remixes)",
+      "duration": "8:50",
+      "image": null,
+      "audio": "music/Freefall-skydive_(i_feel_wonderful).opus",
+      "colors": {
+        "primary": "#6366f1",
+        "secondary": "#4f46e5",
+        "accent": "#a78bfa",
+        "muted": "#94a3b8",
+        "dark": "#1e293b",
+        "light": "#e2e8f0"
+      }
+    },
+    {
+      "id": 3,
+      "title": "Flash (DJ Elite's That Fuct Camera Mix)",
+      "artist": "Green Velvet",
+      "album": "Flash",
+      "duration": "7:21",
+      "image": null,
+      "audio": "music/Green Velvet - Flash (DJ Elite That Fuct Camera Mix).opus",
+      "colors": {
+        "primary": "#6366f1",
+        "secondary": "#4f46e5",
+        "accent": "#a78bfa",
+        "muted": "#94a3b8",
+        "dark": "#1e293b",
+        "light": "#e2e8f0"
+      }
+    },
+    {
+      "id": 4,
       "title": "Lifesigns",
       "artist": "Rodd-Y-Ler",
       "album": "The Art Work EP",
@@ -35,7 +69,7 @@
       }
     },
     {
-      "id": 3,
+      "id": 5,
       "title": "Take Me",
       "artist": "The Pumpkin",
       "album": "Unknown Album",
@@ -52,7 +86,7 @@
       }
     },
     {
-      "id": 4,
+      "id": 6,
       "title": "Forever",
       "artist": "Ron Hagen & Pascal M",
       "album": "Keepin' It Real",
@@ -66,6 +100,23 @@
         "muted": "#a46b62",
         "dark": "#2c535f",
         "light": "#a49591"
+      }
+    },
+    {
+      "id": 7,
+      "title": "Silence (Club Mix)",
+      "artist": "Taiko",
+      "album": "Silence",
+      "duration": "7:48",
+      "image": null,
+      "audio": "music/taiko_-_silence_(club_mix)-nme.opus",
+      "colors": {
+        "primary": "#6366f1",
+        "secondary": "#4f46e5",
+        "accent": "#a78bfa",
+        "muted": "#94a3b8",
+        "dark": "#1e293b",
+        "light": "#e2e8f0"
       }
     }
   ]
