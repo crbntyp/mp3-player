@@ -10,7 +10,7 @@
     "build:img": "node scripts/optimize-images.js",
     "build:music": "node scripts/optimize-music.js",
     "build:data": "cpx \"src/data/**/*.json\" dist/data",
-    "build:fonts": "cpx \"node_modules/line-awesome/dist/line-awesome/fonts/**/*\" dist/fonts",
+    "build:fonts": "cpx \"node_modules/line-awesome/dist/line-awesome/fonts/**/*\" dist/fonts && cpx \"src/fonts/**/*\" dist/fonts",
     "build": "npm run generate-palettes && npm run build:scss && npm run build:html && npm run build:js && npm run build:img && npm run build:music && npm run build:data && npm run build:fonts",
     "generate-palettes": "node scripts/generate-palettes.js",
     "watch:scss": "sass src/styles:dist/styles --no-source-map --watch",

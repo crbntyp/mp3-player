@@ -1,6 +1,25 @@
 // Import Line Awesome icons
 @import 'vendor/line-awesome/line-awesome';
 
+// Britanica Font (for crbntyp logo)
+@font-face {
+  font-family: "Britanica";
+  src: url("../fonts/britanica-bold.woff2") format("woff2"),
+       url("../fonts/britanica-bold.woff") format("woff");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Britanica";
+  src: url("../fonts/britanica-extra-bold.woff2") format("woff2"),
+       url("../fonts/britanica-extra-bold.woff") format("woff");
+  font-weight: 800;
+  font-style: normal;
+  font-display: swap;
+}
+
 // CSS Variables for dynamic theming
 :root {
   --color-primary: #6366f1;
@@ -621,16 +640,17 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 8px;
-  color: rgba(255, 255, 255, 0.6);
-  font-size: 14px;
   margin-top: 40px;
+}
 
-  img {
-    width: 50px;
-    height: auto;
-    display: block;
-  }
+.credit-logo {
+  font-family: "Britanica", Arial, sans-serif;
+  font-size: 48px;
+  font-weight: 800;
+  color: white;
+  clip-path: inset(0 0 44% 0);
+  line-height: 1;
+  margin-bottom: -20px;
 }
 
 // Responsive Design
