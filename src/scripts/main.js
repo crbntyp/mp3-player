@@ -128,8 +128,9 @@ class Player {
     setupAudioEvents() {
         // Update progress bar as audio plays
         this.audio.addEventListener('timeupdate', () => {
-            if (this.audio.duration) {
-                const progress = (this.audio.currentTime / this.audio.duration) * 100;
+            const duration = this.getTrackDuration();
+            if (duration > 0) {
+                const progress = (this.audio.currentTime / duration) * 100;
                 this.updateProgress(progress);
                 this.updateTimeDisplay();
             }
@@ -406,8 +407,9 @@ class Player {
     }
 
     seek(percent) {
-        if (this.audio.duration) {
-            this.audio.currentTime = (percent / 100) * this.audio.duration;
+        const duration = this.getTrackDuration();
+        if (duration > 0) {
+            this.audio.currentTime = (percent / 100) * duration;
         }
     }
 
@@ -527,6 +529,28 @@ class Player {
         const mins = Math.floor(seconds / 60);
         const secs = Math.floor(seconds % 60);
         return `${mins}:${secs.toString().padStart(2, '0')}`;
+    }
+
+    // Parse duration string (e.g., "8:22") to seconds
+    parseDuration(durationStr) {
+        if (!durationStr) return 0;
+        const parts = durationStr.split(':');
+        if (parts.length === 2) {
+            return parseInt(parts[0]) * 60 + parseInt(parts[1]);
+        }
+        return 0;
+    }
+
+    // Get valid duration - prefer audio.duration if valid, else use track data
+    getTrackDuration() {
+        if (this.audio.duration && isFinite(this.audio.duration)) {
+            return this.audio.duration;
+        }
+        const track = this.tracks[this.currentTrackIndex];
+        if (track && track.duration) {
+            return this.parseDuration(track.duration);
+        }
+        return 0;
     }
 
     setupEventListeners() {
