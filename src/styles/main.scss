@@ -1,7 +1,25 @@
 // Import Line Awesome icons
 @import 'vendor/line-awesome/line-awesome';
 
-// Britanica Font (for crbntyp logo)
+// Britanica Font (all weights)
+@font-face {
+  font-family: "Britanica";
+  src: url("../fonts/britanica-light.woff2") format("woff2"),
+       url("../fonts/britanica-light.woff") format("woff");
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Britanica";
+  src: url("../fonts/britanica-regular.woff2") format("woff2"),
+       url("../fonts/britanica-regular.woff") format("woff");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
 @font-face {
   font-family: "Britanica";
   src: url("../fonts/britanica-bold.woff2") format("woff2"),
@@ -16,6 +34,24 @@
   src: url("../fonts/britanica-extra-bold.woff2") format("woff2"),
        url("../fonts/britanica-extra-bold.woff") format("woff");
   font-weight: 800;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Britanica";
+  src: url("../fonts/britanica-heavy.woff2") format("woff2"),
+       url("../fonts/britanica-heavy.woff") format("woff");
+  font-weight: 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Britanica";
+  src: url("../fonts/britanica-black.woff2") format("woff2"),
+       url("../fonts/britanica-black.woff") format("woff");
+  font-weight: 950;
   font-style: normal;
   font-display: swap;
 }
