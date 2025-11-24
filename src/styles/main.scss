@@ -123,8 +123,9 @@ body {
 }
 
 .player-title {
+  font-family: "Britanica", Arial, sans-serif;
   font-size: 36px;
-  font-weight: bold;
+  font-weight: 700;
   color: white;
   display: flex;
   align-items: center;
@@ -370,6 +371,7 @@ body {
 }
 
 .track-title {
+  font-family: "Britanica", Arial, sans-serif;
   font-size: 32px;
   font-weight: 700;
   color: white;
@@ -385,6 +387,7 @@ body {
 }
 
 .track-artist {
+  font-family: "Britanica", Arial, sans-serif;
   color: #ffffff;
   font-size: 18px;
   text-align: center;
