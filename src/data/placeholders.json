@@ -4,121 +4,281 @@
       "id": 1268530,
       "url": "https://images.pexels.com/photos/1268530/pexels-photo-1268530.jpeg?auto=compress&cs=tinysrgb&h=650&w=940",
       "photographer": "Daniele Assenza",
-      "photographer_url": "https://www.pexels.com/@daniele-assenza-532263"
+      "photographer_url": "https://www.pexels.com/@daniele-assenza-532263",
+      "colors": {
+        "primary": "#e311c5",
+        "secondary": "#140478",
+        "accent": "#f17dcf",
+        "muted": "#bc70c0",
+        "dark": "#442c5c",
+        "light": "#8a0e66"
+      }
     },
     {
       "id": 2331536,
       "url": "https://images.pexels.com/photos/2331536/pexels-photo-2331536.jpeg?auto=compress&cs=tinysrgb&h=650&w=940",
       "photographer": "Seyed Ali Hosseini",
-      "photographer_url": "https://www.pexels.com/@seyed-ali-hosseini-1226419"
+      "photographer_url": "https://www.pexels.com/@seyed-ali-hosseini-1226419",
+      "colors": {
+        "primary": "#248dca",
+        "secondary": "#0447a9",
+        "accent": "#f49b4e",
+        "muted": "#82534f",
+        "dark": "#573e3d",
+        "light": "#94aecd"
+      }
     },
     {
       "id": 17483850,
       "url": "https://images.pexels.com/photos/17483850/pexels-photo-17483850.png?auto=compress&cs=tinysrgb&h=650&w=940",
       "photographer": "Google DeepMind",
-      "photographer_url": "https://www.pexels.com/@googledeepmind"
+      "photographer_url": "https://www.pexels.com/@googledeepmind",
+      "colors": {
+        "primary": "#eed20e",
+        "secondary": "#197334",
+        "accent": "#f48cf2",
+        "muted": "#5b9058",
+        "dark": "#3f8347",
+        "light": "#cfb7c1"
+      }
     },
     {
       "id": 12089403,
       "url": "https://images.pexels.com/photos/12089403/pexels-photo-12089403.jpeg?auto=compress&cs=tinysrgb&h=650&w=940",
       "photographer": "Yusuf P",
-      "photographer_url": "https://www.pexels.com/@artyusufpatel"
+      "photographer_url": "https://www.pexels.com/@artyusufpatel",
+      "colors": {
+        "primary": "#e93116",
+        "secondary": "#79161b",
+        "accent": "#faac37",
+        "muted": "#344c74",
+        "dark": "#30395f",
+        "light": "#955b03"
+      }
     },
     {
       "id": 20614307,
       "url": "https://images.pexels.com/photos/20614307/pexels-photo-20614307.jpeg?auto=compress&cs=tinysrgb&h=650&w=940",
       "photographer": "Hyundai Motor Group",
-      "photographer_url": "https://www.pexels.com/@hyundaimotorgroup"
+      "photographer_url": "https://www.pexels.com/@hyundaimotorgroup",
+      "colors": {
+        "primary": "#dc7434",
+        "secondary": "#143a78",
+        "accent": "#d4bea0",
+        "muted": "#6c589c",
+        "dark": "#332b4d",
+        "light": "#cb9895"
+      }
     },
     {
       "id": 190482,
       "url": "https://images.pexels.com/photos/190482/pexels-photo-190482.jpeg?auto=compress&cs=tinysrgb&h=650&w=940",
       "photographer": "Zukiman Mohamad",
-      "photographer_url": "https://www.pexels.com/@umaraffan499"
+      "photographer_url": "https://www.pexels.com/@umaraffan499",
+      "colors": {
+        "primary": "#7f7f7f",
+        "secondary": "#424242",
+        "accent": "#bcbcbc",
+        "muted": "#787878",
+        "dark": "#474747",
+        "light": "#bdbdbd"
+      }
     },
     {
       "id": 3297835,
       "url": "https://images.pexels.com/photos/3297835/pexels-photo-3297835.jpeg?auto=compress&cs=tinysrgb&h=650&w=940",
       "photographer": "Julien Jensen",
-      "photographer_url": "https://www.pexels.com/@julien-jensen-1732026"
+      "photographer_url": "https://www.pexels.com/@julien-jensen-1732026",
+      "colors": {
+        "primary": "#c84930",
+        "secondary": "#153c6e",
+        "accent": "#e9a595",
+        "muted": "#656f94",
+        "dark": "#4f3d30",
+        "light": "#94acc4"
+      }
     },
     {
       "id": 2919579,
       "url": "https://images.pexels.com/photos/2919579/pexels-photo-2919579.jpeg?auto=compress&cs=tinysrgb&h=650&w=940",
       "photographer": "Chase Stine",
-      "photographer_url": "https://www.pexels.com/@chase-stine-1513571"
+      "photographer_url": "https://www.pexels.com/@chase-stine-1513571",
+      "colors": {
+        "primary": "#f4d144",
+        "secondary": "#0c396c",
+        "accent": "#e8519e",
+        "muted": "#5e71a7",
+        "dark": "#46323c",
+        "light": "#c29bc6"
+      }
     },
     {
       "id": 1677786,
       "url": "https://images.pexels.com/photos/1677786/pexels-photo-1677786.png?auto=compress&cs=tinysrgb&h=650&w=940",
       "photographer": "Tuesday Temptation",
-      "photographer_url": "https://www.pexels.com/@tuesday-temptation-190692"
+      "photographer_url": "https://www.pexels.com/@tuesday-temptation-190692",
+      "colors": {
+        "primary": "#efcb0a",
+        "secondary": "#075c95",
+        "accent": "#edd35d",
+        "muted": "#94944c",
+        "dark": "#523c28",
+        "light": "#a9cad6"
+      }
     },
     {
       "id": 291539,
       "url": "https://images.pexels.com/photos/291539/pexels-photo-291539.jpeg?auto=compress&cs=tinysrgb&h=650&w=940",
       "photographer": "Abhinav Goswami",
-      "photographer_url": "https://www.pexels.com/@abhinavcoca"
+      "photographer_url": "https://www.pexels.com/@abhinavcoca",
+      "colors": {
+        "primary": "#eac240",
+        "secondary": "#04041c",
+        "accent": "#f4f0a4",
+        "muted": "#74848c",
+        "dark": "#4e3c33",
+        "light": "#c6cdbe"
+      }
     },
     {
       "id": 1687516,
       "url": "https://images.pexels.com/photos/1687516/pexels-photo-1687516.png?auto=compress&cs=tinysrgb&h=650&w=940",
       "photographer": "Tuesday Temptation",
-      "photographer_url": "https://www.pexels.com/@tuesday-temptation-190692"
+      "photographer_url": "https://www.pexels.com/@tuesday-temptation-190692",
+      "colors": {
+        "primary": "#10edc8",
+        "secondary": "#088270",
+        "accent": "#c4d99d",
+        "muted": "#678b49",
+        "dark": "#25403c",
+        "light": "#566e2a"
+      }
     },
     {
       "id": 912592,
       "url": "https://images.pexels.com/photos/912592/pexels-photo-912592.jpeg?auto=compress&cs=tinysrgb&h=650&w=940",
       "photographer": "D0N MIL04K",
-      "photographer_url": "https://www.pexels.com/@d0nmil0"
+      "photographer_url": "https://www.pexels.com/@d0nmil0",
+      "colors": {
+        "primary": "#f14c6a",
+        "secondary": "#6b1e4b",
+        "accent": "#f4b96e",
+        "muted": "#9454b4",
+        "dark": "#272446",
+        "light": "#ccbc9c"
+      }
     },
     {
       "id": 3010775,
       "url": "https://images.pexels.com/photos/3010775/pexels-photo-3010775.jpeg?auto=compress&cs=tinysrgb&h=650&w=940",
       "photographer": "Nugroho  Wahyu",
-      "photographer_url": "https://www.pexels.com/@whynugrohou"
+      "photographer_url": "https://www.pexels.com/@whynugrohou",
+      "colors": {
+        "primary": "#b63e8d",
+        "secondary": "#0a5a74",
+        "accent": "#f1d4fa",
+        "muted": "#6472a8",
+        "dark": "#232847",
+        "light": "#6c0f89"
+      }
     },
     {
       "id": 2181230,
       "url": "https://images.pexels.com/photos/2181230/pexels-photo-2181230.jpeg?auto=compress&cs=tinysrgb&h=650&w=940",
       "photographer": "Giovanni Calia",
-      "photographer_url": "https://www.pexels.com/@giovanni-calia-1140926"
+      "photographer_url": "https://www.pexels.com/@giovanni-calia-1140926",
+      "colors": {
+        "primary": "#dd410f",
+        "secondary": "#049ca4",
+        "accent": "#f4dc74",
+        "muted": "#92505c",
+        "dark": "#284954",
+        "light": "#8d750b"
+      }
     },
     {
       "id": 32446182,
       "url": "https://images.pexels.com/photos/32446182/pexels-photo-32446182.jpeg?auto=compress&cs=tinysrgb&h=650&w=940",
       "photographer": "天 明",
-      "photographer_url": "https://www.pexels.com/@2152880966"
+      "photographer_url": "https://www.pexels.com/@2152880966",
+      "colors": {
+        "primary": "#cc7d24",
+        "secondary": "#893d04",
+        "accent": "#fcdc84",
+        "muted": "#a38061",
+        "dark": "#947151",
+        "light": "#dac2ae"
+      }
     },
     {
       "id": 22809495,
       "url": "https://images.pexels.com/photos/22809495/pexels-photo-22809495.jpeg?auto=compress&cs=tinysrgb&h=650&w=940",
       "photographer": "Lee Dunican",
-      "photographer_url": "https://www.pexels.com/@lee-dunican-1157198995"
+      "photographer_url": "https://www.pexels.com/@lee-dunican-1157198995",
+      "colors": {
+        "primary": "#f13310",
+        "secondary": "#0c3c6e",
+        "accent": "#68cfe6",
+        "muted": "#6553b2",
+        "dark": "#405c28",
+        "light": "#c0ccdd"
+      }
     },
     {
       "id": 31460661,
       "url": "https://images.pexels.com/photos/31460661/pexels-photo-31460661.jpeg?auto=compress&cs=tinysrgb&h=650&w=940",
       "photographer": "travelers_tw",
-      "photographer_url": "https://www.pexels.com/@travelers_tw-1445512897"
+      "photographer_url": "https://www.pexels.com/@travelers_tw-1445512897",
+      "colors": {
+        "primary": "#6690c4",
+        "secondary": "#243f5f",
+        "accent": "#cbe4fb",
+        "muted": "#6b7c98",
+        "dark": "#414d63",
+        "light": "#a6b9d8"
+      }
     },
     {
       "id": 22809492,
       "url": "https://images.pexels.com/photos/22809492/pexels-photo-22809492.jpeg?auto=compress&cs=tinysrgb&h=650&w=940",
       "photographer": "Lee Dunican",
-      "photographer_url": "https://www.pexels.com/@lee-dunican-1157198995"
+      "photographer_url": "https://www.pexels.com/@lee-dunican-1157198995",
+      "colors": {
+        "primary": "#11bbd4",
+        "secondary": "#0c3667",
+        "accent": "#64c0d8",
+        "muted": "#635ca6",
+        "dark": "#3f3366",
+        "light": "#c5c0ab"
+      }
     },
     {
       "id": 33596415,
       "url": "https://images.pexels.com/photos/33596415/pexels-photo-33596415.jpeg?auto=compress&cs=tinysrgb&h=650&w=940",
       "photographer": "PROSOPO",
-      "photographer_url": "https://www.pexels.com/@prosopo-2154802359"
+      "photographer_url": "https://www.pexels.com/@prosopo-2154802359",
+      "colors": {
+        "primary": "#6839c5",
+        "secondary": "#241444",
+        "accent": "#c8acdc",
+        "muted": "#835991",
+        "dark": "#472b58",
+        "light": "#9a7ebc"
+      }
     },
     {
       "id": 6119104,
       "url": "https://images.pexels.com/photos/6119104/pexels-photo-6119104.jpeg?auto=compress&cs=tinysrgb&h=650&w=940",
       "photographer": "Anna Seipert",
-      "photographer_url": "https://www.pexels.com/@anna-seipert-9756361"
+      "photographer_url": "https://www.pexels.com/@anna-seipert-9756361",
+      "colors": {
+        "primary": "#d02016",
+        "secondary": "#6b0606",
+        "accent": "#dfe887",
+        "muted": "#6e9e4f",
+        "dark": "#2b3c50",
+        "light": "#bcc4d4"
+      }
     }
   ]
 }

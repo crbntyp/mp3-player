@@ -181,10 +181,22 @@ class Player {
         // Stop current audio
         this.pause();
 
+        // If track has no image, get random placeholder with colors
+        let placeholderColors = null;
+        if (!track.image && this.placeholderImages.length > 0) {
+            const randomIndex = Math.floor(Math.random() * this.placeholderImages.length);
+            const placeholder = this.placeholderImages[randomIndex];
+            this.currentPlaceholder = placeholder; // Store for updateAlbumArt
+            placeholderColors = placeholder.colors;
+        } else {
+            this.currentPlaceholder = null;
+        }
+
         // Update UI
         this.updateAlbumArt(track.image);
         this.updateTrackInfo(track);
-        this.updateTheme(track.colors);
+        // Use placeholder colors if no track image, otherwise use track colors
+        this.updateTheme(placeholderColors || track.colors);
 
         // Set duration from track data (more reliable than audio metadata for opus)
         const durationEl = document.getElementById('duration');
@@ -267,11 +279,10 @@ class Player {
     }
 
     updateAlbumArt(imageSrc) {
-        // Use random neon placeholder if no image provided
+        // Use stored placeholder if no image provided
         let imageUrl = imageSrc;
-        if (!imageUrl && this.placeholderImages.length > 0) {
-            const randomIndex = Math.floor(Math.random() * this.placeholderImages.length);
-            imageUrl = this.placeholderImages[randomIndex].url;
+        if (!imageUrl && this.currentPlaceholder) {
+            imageUrl = this.currentPlaceholder.url;
         }
 
         const img = document.getElementById('album-art');
