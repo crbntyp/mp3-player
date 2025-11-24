@@ -2,7 +2,7 @@ const fs = require('fs');
 const https = require('https');
 
 const PEXELS_API_KEY = 'vTST9e7OjHJBkzipEIm5gFCofIiNeQ5XfRlPU8zk4yN7xLt5qRMv25Zu';
-const SEARCH_QUERIES = ['techno music', 'dj turntable', 'electronic music', 'nightclub lights', 'rave'];
+const SEARCH_QUERIES = ['techno'];
 const TARGET_COUNT = 20;
 
 console.log('🎨 Fetching techno placeholder images from Pexels...\n');
@@ -14,7 +14,7 @@ function fetchImages(query, page = 1) {
     return new Promise((resolve, reject) => {
         const options = {
             hostname: 'api.pexels.com',
-            path: `/v1/search?query=${encodeURIComponent(query)}&per_page=80&page=${page}&orientation=square`,
+            path: `/v1/search?query=${encodeURIComponent(query)}&per_page=80&page=${page}`,
             headers: {
                 'Authorization': PEXELS_API_KEY
             }
@@ -44,23 +44,31 @@ async function fetchAllImages() {
         if (allPlaceholders.length >= TARGET_COUNT) break;
 
         console.log(`Searching: "${query}"...`);
-        const photos = await fetchImages(query);
 
-        for (const photo of photos) {
-            if (allPlaceholders.length >= TARGET_COUNT) break;
+        // Fetch multiple pages if needed
+        let page = 1;
+        while (allPlaceholders.length < TARGET_COUNT) {
+            const photos = await fetchImages(query, page);
 
-            // Skip duplicates
-            if (allPlaceholders.some(p => p.id === photo.id)) continue;
+            if (!photos || photos.length === 0) break;
 
-            allPlaceholders.push({
-                id: photo.id,
-                url: photo.src.large,
-                photographer: photo.photographer,
-                photographer_url: photo.photographer_url
-            });
+            for (const photo of photos) {
+                if (allPlaceholders.length >= TARGET_COUNT) break;
+
+                // Skip duplicates
+                if (allPlaceholders.some(p => p.id === photo.id)) continue;
+
+                allPlaceholders.push({
+                    id: photo.id,
+                    url: photo.src.large,
+                    photographer: photo.photographer,
+                    photographer_url: photo.photographer_url
+                });
+            }
+
+            console.log(`  Page ${page}: Found ${photos.length} images (${allPlaceholders.length}/${TARGET_COUNT} collected)`);
+            page++;
         }
-
-        console.log(`  Found ${photos.length} images (${allPlaceholders.length}/${TARGET_COUNT} collected)`);
     }
 
     // Save to JSON file
