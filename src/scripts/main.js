@@ -877,6 +877,9 @@ class Player {
                 e.preventDefault();
                 this.togglePlayPause();
             }
+            if (e.key === 'Escape') {
+                this.closeTrackWheel();
+            }
         });
     }
 }
