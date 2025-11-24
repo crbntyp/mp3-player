@@ -427,7 +427,8 @@ class Player {
 
     updateDuration() {
         const durationEl = document.getElementById('duration');
-        if (durationEl && this.audio.duration) {
+        // Only update if audio.duration is valid (not Infinity or NaN)
+        if (durationEl && this.audio.duration && isFinite(this.audio.duration)) {
             durationEl.textContent = this.formatTime(this.audio.duration);
         }
     }
