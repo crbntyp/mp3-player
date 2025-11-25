@@ -4,10 +4,11 @@ const { Vibrant } = require('node-vibrant/node');
 const path = require('path');
 
 const PEXELS_API_KEY = 'vTST9e7OjHJBkzipEIm5gFCofIiNeQ5XfRlPU8zk4yN7xLt5qRMv25Zu';
-const SEARCH_QUERIES = ['dark surreal'];
-const TARGET_COUNT = 50;
+const SEARCH_QUERIES = ['neon lights'];
+const TARGET_COUNT = 150;
+const IMAGE_SIZE = 1024;
 
-console.log('🎨 Fetching dark+surreal images from Pexels...\n');
+console.log('🎨 Fetching neon lights images from Pexels...\n');
 
 let allPlaceholders = [];
 let currentQueryIndex = 0;
@@ -104,13 +105,15 @@ async function fetchAllImages() {
 
                 // Download image temporarily to extract color palette
                 const tempPath = path.join(__dirname, `temp_${photo.id}.jpg`);
+                // Construct 1024x1024 URL
+                const imageUrl = `https://images.pexels.com/photos/${photo.id}/pexels-photo-${photo.id}.jpeg?auto=compress&cs=tinysrgb&w=${IMAGE_SIZE}&h=${IMAGE_SIZE}&fit=crop`;
                 try {
-                    await downloadImage(photo.src.large, tempPath);
+                    await downloadImage(imageUrl, tempPath);
                     const colors = await extractColorPalette(tempPath);
 
                     allPlaceholders.push({
                         id: photo.id,
-                        url: photo.src.large,
+                        url: imageUrl,
                         photographer: photo.photographer,
                         photographer_url: photo.photographer_url,
                         colors: colors

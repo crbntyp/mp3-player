@@ -195,6 +195,9 @@ class Player {
             this.loadTrack(0);
 
             console.log(`✓ Loaded ${this.tracks.length} track(s) from Drive`);
+
+            // Show toast notification
+            this.showToast(`${this.tracks.length} songs loaded`);
         } catch (error) {
             console.error('Failed to load from Drive:', error);
             alert(`Failed to load tracks: ${error.message}`);
@@ -237,6 +240,18 @@ class Player {
         if (overlay) {
             overlay.style.display = 'none';
         }
+    }
+
+    showToast(message, duration = 3000) {
+        const toast = document.getElementById('toast');
+        if (!toast) return;
+
+        toast.textContent = message;
+        toast.classList.add('show');
+
+        setTimeout(() => {
+            toast.classList.remove('show');
+        }, duration);
     }
 
     initVisualizer() {
