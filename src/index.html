@@ -82,6 +82,23 @@
             </button>
         </div>
 
+        <!-- Era Selector -->
+        <div class="era-selector">
+            <button id="era-btn" class="era-btn">
+                <i class="las la-folder-open"></i>
+                <span id="era-label">Select Era</span>
+            </button>
+            <div id="era-menu" class="era-menu">
+                <button class="era-option" data-source="local">
+                    <i class="las la-music"></i>
+                    <span>Local Tracks</span>
+                </button>
+                <div class="era-divider"></div>
+                <div class="era-menu-title">Google Drive</div>
+                <!-- Drive folders populated by JavaScript -->
+            </div>
+        </div>
+
         <div class="credit">
             <span class="credit-logo">crbntyp</span>
         </div>
@@ -102,6 +119,7 @@
     </div>
 
     <script src="scripts/visualizer.js"></script>
+    <script src="scripts/drive.js"></script>
     <script src="scripts/main.js"></script>
 </body>
 </html>

@@ -1,6 +1,6 @@
-# MP3 Player
+# plyr
 
-A classic MP3 player web application with vinyl record aesthetics and audio visualizer.
+A music player with vinyl record aesthetics, audio visualizer, and Google Drive integration.
 
 ### Check it out
 
@@ -9,16 +9,42 @@ A classic MP3 player web application with vinyl record aesthetics and audio visu
 ## Features
 
 - Audio playback with play/pause, next/previous track controls
-- Vinyl record rotation animation
+- Vinyl record rotation animation with sliding effect
 - Real-time audio visualizer
-- Dynamic color palettes generated from album artwork
+- Dynamic color palettes from album artwork or placeholders
+- **Google Drive integration** - Stream music from Drive folders organized by year/era
+- Server-side proxy with caching for Drive files
+- Track wheel for browsing library
 - Responsive design
-- Playlist management
+
+## Music Sources
+
+### Local Tracks
+Place MP3 files in `src/music/`. Run `npm run generate-palettes` to extract metadata and album art, then build.
+
+### Google Drive
+Stream from public Google Drive folders. Configured in `src/scripts/drive.js`:
+
+```javascript
+this.folders = [
+    { id: 'FOLDER_ID', label: '1993-97', years: '1993-97' },
+    { id: 'FOLDER_ID', label: '1998', years: '1998' },
+    // ...
+];
+```
+
+**Requirements:**
+- Google Cloud project with Drive API enabled
+- API key with domain restrictions
+- Folders shared as "Anyone with the link"
+
+**File naming:** `Artist - Track Title.mp3` (parsed automatically)
 
 ## Prerequisites
 
-- Node.js (v14 or higher)
+- Node.js (v14+)
 - npm
+- FFmpeg (for audio optimization)
 
 ## Installation
 
@@ -26,131 +52,40 @@ A classic MP3 player web application with vinyl record aesthetics and audio visu
 npm install
 ```
 
-## Available Scripts
-
-### Development
-
-Start the development server with live reload:
+## Development
 
 ```bash
 npm run dev
 ```
 
-This will:
-- Watch for changes in SCSS, HTML, JS, images, music, and data files
-- Automatically rebuild on changes
-- Start a live server at `http://localhost:8080`
+Watches all files and serves at `http://localhost:8080`
 
-### Building
-
-Build the entire project for production:
+## Build
 
 ```bash
 npm run build
 ```
 
-This runs all build tasks in sequence:
-1. Generate color palettes from album artwork
-2. Compile SCSS to CSS
-3. Copy HTML files
-4. Copy JavaScript files
-5. Optimize images
-6. Convert music files to Opus format
-7. Copy data files
-8. Copy font files
-
-### Individual Build Tasks
-
-#### Generate Color Palettes
-```bash
-npm run generate-palettes
-```
-Generates color palettes from album artwork using the Vibrant library.
-
-#### Build Styles
-```bash
-npm run build:scss
-```
-Compiles SCSS files to CSS without source maps.
-
-#### Build HTML
-```bash
-npm run build:html
-```
-Copies HTML files from `src/` to `dist/`.
-
-#### Build JavaScript
-```bash
-npm run build:js
-```
-Copies JavaScript files from `src/scripts/` to `dist/scripts/`.
-
-#### Build Images
-```bash
-npm run build:img
-```
-Optimizes and copies images using Sharp.
-
-#### Build Music
-```bash
-npm run build:music
-```
-Converts MP3 files to Opus format for optimal web delivery. Uses FFmpeg to transcode audio files from `src/music/` to `dist/music/` with high-quality Opus encoding (128kbps), providing better compression and smaller file sizes compared to MP3.
-
-#### Build Data
-```bash
-npm run build:data
-```
-Copies JSON data files from `src/data/` to `dist/data/`.
-
-#### Build Fonts
-```bash
-npm run build:fonts
-```
-Copies Line Awesome icon fonts to `dist/fonts/`.
-
-### Watch Tasks
-
-Watch individual file types for changes:
-
-- `npm run watch:scss` - Watch and compile SCSS files
-- `npm run watch:html` - Watch and copy HTML files
-- `npm run watch:js` - Watch and copy JavaScript files
-- `npm run watch:img` - Watch and copy images
-- `npm run watch:music` - Watch and convert music files to Opus format
-- `npm run watch:data` - Watch and copy data files
-
-### Serve
-
-Start a local server without watching for changes:
-
-```bash
-npm run serve
-```
-
-Serves the `dist/` directory at `http://localhost:8080`.
-
-### Clean
-
-Remove the build directory:
-
-```bash
-npm run clean
-```
+Runs all tasks: palette generation, SCSS, HTML, JS, images, music optimization, data, fonts.
 
 ## Project Structure
 
 ```
-player/
+plyr/
 ├── src/
 │   ├── data/           # Track metadata (JSON)
 │   ├── img/            # Album artwork and assets
 │   ├── music/          # MP3 source files
-│   ├── scripts/        # JavaScript files
-│   ├── styles/         # SCSS stylesheets
-│   └── index.html      # Main HTML file
-├── dist/               # Build output (generated)
-│   └── music/          # Optimized Opus audio files
+│   ├── scripts/
+│   │   ├── main.js     # Player class
+│   │   ├── drive.js    # Google Drive integration
+│   │   └── visualizer.js
+│   ├── styles/         # SCSS
+│   ├── proxy.php       # Drive caching proxy
+│   └── index.html
+├── dist/               # Build output
+│   ├── cache/          # Cached Drive files (server-side)
+│   └── music/          # Optimized Opus files
 ├── scripts/            # Build scripts
 │   ├── generate-palettes.js
 │   ├── optimize-images.js
@@ -159,17 +94,25 @@ player/
 └── package.json
 ```
 
-## Technologies Used
+## Google Drive Proxy
 
-- **Sass** - CSS preprocessor
-- **Line Awesome** - Icon library
-- **Sharp** - Image optimization
-- **Node Vibrant** - Color palette extraction
-- **FFmpeg** - Audio transcoding and optimization
-- **Fluent-FFmpeg** - Node.js wrapper for FFmpeg
-- **Chokidar** - File system watcher for development
-- **Live Server** - Development server
-- **Concurrently** - Run multiple npm scripts simultaneously
+The proxy (`proxy.php`) handles CORS issues and caches Drive files:
+
+- First play: fetches from Drive, caches locally
+- Subsequent plays: served from cache
+- Auto-cleanup when cache exceeds 2GB
+- 30-day cache expiry
+
+Cache location: `/var/www/crbntyp/plyr/cache/`
+
+## Technologies
+
+- Sass
+- Line Awesome icons
+- Sharp (image optimization)
+- Node Vibrant (color extraction)
+- FFmpeg/Fluent-FFmpeg (audio transcoding)
+- Live Server
 
 ## Author
 

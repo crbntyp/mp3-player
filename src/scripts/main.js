@@ -11,11 +11,18 @@ class Player {
         this.recordVisible = false; // Track if record is visible
         this.isSliding = false; // Track if record is currently sliding
         this.placeholderImages = []; // Neon images (used for all tracks)
+        this.localTracks = []; // Store local tracks separately
+        this.currentSource = 'local'; // 'local' or folder ID
+        this.driveSource = null; // Drive integration
         this.init();
     }
 
     async init() {
         console.log('🎵 Player application initializing...');
+
+        // Initialize Drive source
+        this.initDriveSource();
+
         await this.loadTracks();
         await this.loadPlaceholders();
 
@@ -27,10 +34,208 @@ class Player {
 
         this.setupAudioEvents();
         this.setupEventListeners();
+        this.setupEraSelector();
+
         if (this.tracks.length > 0) {
             this.loadTrack(0);
             // Start preloading adjacent tracks
             this.preloadAdjacentTracks();
+        }
+    }
+
+    initDriveSource() {
+        console.log('🔧 Initializing Drive source...');
+        if (typeof DriveSource !== 'undefined') {
+            try {
+                this.driveSource = new DriveSource();
+                console.log('✓ Drive source initialized');
+                console.log('📂 Folders:', this.driveSource.getFolders());
+                this.populateEraMenu();
+            } catch (error) {
+                console.error('❌ Failed to create DriveSource:', error);
+            }
+        } else {
+            console.error('❌ DriveSource class not found - drive.js may not have loaded');
+        }
+    }
+
+    populateEraMenu() {
+        console.log('🔧 Populating era menu...');
+        const menu = document.getElementById('era-menu');
+
+        if (!menu) {
+            console.error('❌ Era menu element not found');
+            return;
+        }
+
+        if (!this.driveSource) {
+            console.error('❌ DriveSource not available');
+            return;
+        }
+
+        // Add Drive folder options
+        const folders = this.driveSource.getFolders();
+        console.log(`📂 Adding ${folders.length} folders to menu`);
+
+        folders.forEach(folder => {
+            const btn = document.createElement('button');
+            btn.className = 'era-option';
+            btn.dataset.source = 'drive';
+            btn.dataset.folderId = folder.id;
+            btn.innerHTML = `
+                <i class="las la-calendar"></i>
+                <span>${folder.label}</span>
+            `;
+            menu.appendChild(btn);
+            console.log(`  + Added: ${folder.label}`);
+        });
+
+        console.log(`✓ Era menu populated with ${folders.length} folders`);
+    }
+
+    setupEraSelector() {
+        const eraBtn = document.getElementById('era-btn');
+        const eraMenu = document.getElementById('era-menu');
+
+        if (!eraBtn || !eraMenu) return;
+
+        // Toggle menu on button click
+        eraBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            eraMenu.classList.toggle('open');
+        });
+
+        // Close menu when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!eraMenu.contains(e.target) && !eraBtn.contains(e.target)) {
+                eraMenu.classList.remove('open');
+            }
+        });
+
+        // Handle option selection
+        eraMenu.addEventListener('click', async (e) => {
+            const option = e.target.closest('.era-option');
+            if (!option) return;
+
+            const source = option.dataset.source;
+            const folderId = option.dataset.folderId;
+
+            // Update active state
+            eraMenu.querySelectorAll('.era-option').forEach(opt => opt.classList.remove('active'));
+            option.classList.add('active');
+
+            // Update button label
+            const label = document.getElementById('era-label');
+            if (label) {
+                label.textContent = option.querySelector('span').textContent;
+            }
+
+            // Close menu
+            eraMenu.classList.remove('open');
+
+            // Switch source
+            if (source === 'local') {
+                await this.switchToLocal();
+            } else if (source === 'drive' && folderId) {
+                await this.switchToDrive(folderId);
+            }
+        });
+    }
+
+    async switchToLocal() {
+        if (this.currentSource === 'local') return;
+
+        console.log('📂 Switching to local tracks...');
+        this.currentSource = 'local';
+
+        // Stop current playback
+        this.pause();
+
+        // Restore local tracks
+        this.tracks = [...this.localTracks];
+
+        // Reset wheel
+        this.wheelRendered = false;
+
+        if (this.tracks.length > 0) {
+            this.loadTrack(0);
+        }
+
+        console.log(`✓ Loaded ${this.tracks.length} local track(s)`);
+    }
+
+    async switchToDrive(folderId) {
+        if (this.currentSource === folderId) return;
+
+        console.log(`📂 Switching to Drive folder: ${folderId}`);
+
+        // Show loading state
+        this.showLoadingState('Loading from Google Drive...');
+
+        try {
+            // Stop current playback
+            this.pause();
+
+            // Fetch tracks from Drive
+            const driveTracks = await this.driveSource.fetchTracks(folderId);
+
+            if (driveTracks.length === 0) {
+                this.hideLoadingState();
+                alert('No audio files found in this folder.');
+                return;
+            }
+
+            this.currentSource = folderId;
+            this.tracks = driveTracks;
+
+            // Reset wheel
+            this.wheelRendered = false;
+
+            // Load first track
+            this.loadTrack(0);
+
+            console.log(`✓ Loaded ${this.tracks.length} track(s) from Drive`);
+        } catch (error) {
+            console.error('Failed to load from Drive:', error);
+            alert(`Failed to load tracks: ${error.message}`);
+        }
+
+        this.hideLoadingState();
+    }
+
+    showLoadingState(message) {
+        // Create a simple loading overlay
+        let overlay = document.getElementById('drive-loading');
+        if (!overlay) {
+            overlay = document.createElement('div');
+            overlay.id = 'drive-loading';
+            overlay.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: rgba(0, 0, 0, 0.8);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                z-index: 9999;
+                color: white;
+                font-size: 18px;
+            `;
+            document.body.appendChild(overlay);
+        }
+        overlay.innerHTML = `<div style="text-align: center;">
+            <i class="las la-spinner la-spin" style="font-size: 48px; display: block; margin-bottom: 16px;"></i>
+            ${message}
+        </div>`;
+        overlay.style.display = 'flex';
+    }
+
+    hideLoadingState() {
+        const overlay = document.getElementById('drive-loading');
+        if (overlay) {
+            overlay.style.display = 'none';
         }
     }
 
@@ -51,6 +256,7 @@ class Player {
             const response = await fetch('data/tracks.json');
             const data = await response.json();
             this.tracks = data.tracks;
+            this.localTracks = [...data.tracks]; // Store copy for switching back
             console.log(`✓ Loaded ${this.tracks.length} track(s)`);
         } catch (error) {
             console.error('Error loading tracks:', error);
@@ -157,6 +363,11 @@ class Player {
 
         // Handle loading
         this.audio.addEventListener('loadedmetadata', () => {
+            this.updateDuration();
+        });
+
+        // Handle duration change (for streaming audio like Drive files)
+        this.audio.addEventListener('durationchange', () => {
             this.updateDuration();
         });
 
@@ -571,16 +782,23 @@ class Player {
         return 0;
     }
 
-    // Get valid duration - prefer track JSON data (Opus metadata is unreliable)
+    // Get valid duration - prefer track JSON data, but fall back to audio element
     getTrackDuration() {
         const track = this.tracks[this.currentTrackIndex];
+
+        // Try track metadata first (only if it has a real duration, not "0:00")
         if (track && track.duration) {
-            return this.parseDuration(track.duration);
+            const parsed = this.parseDuration(track.duration);
+            if (parsed > 0) {
+                return parsed;
+            }
         }
-        // Fallback to audio.duration only if no track data
+
+        // Fall back to audio.duration (works for Drive tracks after loading)
         if (this.audio.duration && isFinite(this.audio.duration)) {
             return this.audio.duration;
         }
+
         return 0;
     }
 
