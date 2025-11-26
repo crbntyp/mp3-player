@@ -76,6 +76,21 @@ class AudioVisualizer {
 
                 this.dataArray = new Uint8Array(this.analyser.frequencyBinCount);
 
+                // iOS: Auto-resume AudioContext when system suspends it
+                this.audioContext.onstatechange = () => {
+                    console.log('AudioContext state:', this.audioContext.state);
+                    if (this.audioContext.state === 'interrupted' || this.audioContext.state === 'suspended') {
+                        // Try to resume after a short delay
+                        setTimeout(() => {
+                            if (this.audioContext.state !== 'running') {
+                                this.audioContext.resume().then(() => {
+                                    console.log('✓ AudioContext auto-resumed');
+                                }).catch(e => console.log('Resume failed:', e));
+                            }
+                        }, 100);
+                    }
+                };
+
                 console.log('✓ Audio context connected to pulse visualizer');
             }
         } catch (error) {

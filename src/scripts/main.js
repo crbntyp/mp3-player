@@ -18,47 +18,7 @@ class Player {
         this.localTracks = []; // Store local tracks separately
         this.currentSource = 'local'; // 'local' or folder ID
         this.driveSource = null; // Drive integration
-        this.keepAliveContext = null; // iOS audio keep-alive
-        this.keepAliveOscillator = null;
         this.init();
-    }
-
-    // iOS audio keep-alive - plays silent tone to prevent audio session from being killed
-    startKeepAlive() {
-        if (this.keepAliveContext) return; // Already running
-
-        try {
-            this.keepAliveContext = new (window.AudioContext || window.webkitAudioContext)();
-            this.keepAliveOscillator = this.keepAliveContext.createOscillator();
-            const gainNode = this.keepAliveContext.createGain();
-
-            // Silent - gain at 0
-            gainNode.gain.value = 0.001; // Nearly silent
-
-            this.keepAliveOscillator.connect(gainNode);
-            gainNode.connect(this.keepAliveContext.destination);
-            this.keepAliveOscillator.start();
-
-            console.log('✓ iOS keep-alive audio started');
-        } catch (e) {
-            console.warn('Could not start keep-alive:', e);
-        }
-    }
-
-    stopKeepAlive() {
-        if (this.keepAliveOscillator) {
-            try {
-                this.keepAliveOscillator.stop();
-                this.keepAliveOscillator = null;
-            } catch (e) {}
-        }
-        if (this.keepAliveContext) {
-            try {
-                this.keepAliveContext.close();
-                this.keepAliveContext = null;
-            } catch (e) {}
-        }
-        console.log('✓ iOS keep-alive audio stopped');
     }
 
     async init() {
@@ -587,12 +547,9 @@ class Player {
                         this.audio.play().catch(e => {
                             console.log('Could not auto-resume:', e);
                         });
-                        // Also resume audio contexts
+                        // Also resume audio context
                         if (this.visualizer?.audioContext?.state === 'suspended') {
                             this.visualizer.audioContext.resume();
-                        }
-                        if (this.keepAliveContext?.state === 'suspended') {
-                            this.keepAliveContext.resume();
                         }
                     }
                 }, 100);
@@ -801,19 +758,11 @@ class Player {
 
     play() {
         if (this.audio.src) {
-            // Start iOS keep-alive to prevent audio session from being killed
-            this.startKeepAlive();
-
             // Resume AudioContext if suspended (required by browsers)
             if (this.visualizer && this.visualizer.audioContext && this.visualizer.audioContext.state === 'suspended') {
                 this.visualizer.audioContext.resume().then(() => {
                     console.log('✓ AudioContext resumed');
                 });
-            }
-
-            // Resume keep-alive context if suspended
-            if (this.keepAliveContext && this.keepAliveContext.state === 'suspended') {
-                this.keepAliveContext.resume();
             }
 
             this.audio.play();
@@ -844,9 +793,6 @@ class Player {
         if ('mediaSession' in navigator) {
             navigator.mediaSession.playbackState = 'paused';
         }
-
-        // Don't stop keep-alive on pause - only when explicitly stopped
-        // This helps maintain audio session on iOS
 
         // Slide record in when pausing
         if (this.recordVisible) {
