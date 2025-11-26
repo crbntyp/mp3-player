@@ -4,6 +4,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>plyr__ Classics you can't find online!</title>
+
+    <!-- PWA -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#1a1a2e">
+
+    <!-- iOS PWA -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="plyr">
+    <link rel="apple-touch-icon" href="img/assets/icon-192.png">
+
     <link rel="icon" type="image/png" href="img/assets/fav.png">
     <link rel="stylesheet" href="styles/main.css">
     <link rel="stylesheet" href="https://use.typekit.net/abs2nmm.css">
@@ -124,5 +135,14 @@
     <script src="scripts/visualizer.js"></script>
     <script src="scripts/drive.js"></script>
     <script src="scripts/main.js"></script>
+
+    <!-- Register Service Worker for PWA -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('sw.js')
+                .then(() => console.log('PWA: Service Worker registered'))
+                .catch((err) => console.log('PWA: Service Worker failed', err));
+        }
+    </script>
 </body>
 </html>
