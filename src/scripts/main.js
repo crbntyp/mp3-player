@@ -428,14 +428,22 @@ class Player {
             return;
         }
 
-        // Set up action handlers for lock screen / notification controls
-        navigator.mediaSession.setActionHandler('play', () => this.play());
-        navigator.mediaSession.setActionHandler('pause', () => this.pause());
-        navigator.mediaSession.setActionHandler('previoustrack', () => this.previousTrack());
-        navigator.mediaSession.setActionHandler('nexttrack', () => this.nextTrack());
+        // Helper to safely set handlers
+        const setHandler = (action, handler) => {
+            try {
+                navigator.mediaSession.setActionHandler(action, handler);
+                console.log(`✓ Media Session: ${action} supported`);
+            } catch (e) {
+                console.log(`✗ Media Session: ${action} not supported`);
+            }
+        };
 
-        // Seekto for scrubbing
-        navigator.mediaSession.setActionHandler('seekto', (details) => {
+        // Set up action handlers for lock screen / notification controls
+        setHandler('play', () => this.play());
+        setHandler('pause', () => this.pause());
+        setHandler('previoustrack', () => this.previousTrack());
+        setHandler('nexttrack', () => this.nextTrack());
+        setHandler('seekto', (details) => {
             if (details.seekTime !== undefined) {
                 this.audio.currentTime = details.seekTime;
             }
