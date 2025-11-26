@@ -576,6 +576,28 @@ class Player {
                 }
             }
         });
+
+        // iOS auto-resume: when audio gets paused by the system, try to resume
+        this.audio.addEventListener('pause', () => {
+            // Only auto-resume if we think we should be playing
+            if (this.isPlaying && !this.audio.ended) {
+                console.log('⚠️ Audio paused unexpectedly, attempting resume...');
+                setTimeout(() => {
+                    if (this.isPlaying && this.audio.paused && !this.audio.ended) {
+                        this.audio.play().catch(e => {
+                            console.log('Could not auto-resume:', e);
+                        });
+                        // Also resume audio contexts
+                        if (this.visualizer?.audioContext?.state === 'suspended') {
+                            this.visualizer.audioContext.resume();
+                        }
+                        if (this.keepAliveContext?.state === 'suspended') {
+                            this.keepAliveContext.resume();
+                        }
+                    }
+                }, 100);
+            }
+        });
     }
 
     loadTrack(index, autoplay = false) {
