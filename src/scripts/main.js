@@ -32,15 +32,73 @@ class Player {
         // Initialize visualizer
         this.initVisualizer();
 
+        this.setupMediaSession();
         this.setupAudioEvents();
         this.setupEventListeners();
         this.setupEraSelector();
 
-        if (this.tracks.length > 0) {
+        // Check for URL hash to load specific track
+        const hashLoaded = await this.loadFromHash();
+
+        if (!hashLoaded && this.tracks.length > 0) {
             this.loadTrack(0);
             // Start preloading adjacent tracks
             this.preloadAdjacentTracks();
         }
+    }
+
+    async loadFromHash() {
+        const hash = window.location.hash.slice(1); // Remove #
+        if (!hash) return false;
+
+        const parts = hash.split('/');
+        if (parts.length < 2) return false;
+
+        const source = parts[0];
+        const trackIndex = parseInt(parts[1]) - 1; // Convert to 0-based
+
+        if (isNaN(trackIndex) || trackIndex < 0) return false;
+
+        console.log(`🔗 Loading from hash: ${source}/${trackIndex + 1}`);
+
+        if (source === 'local') {
+            // Load local track
+            if (trackIndex < this.tracks.length) {
+                this.loadTrack(trackIndex);
+                return true;
+            }
+        } else {
+            // Find matching Drive folder by label
+            if (this.driveSource) {
+                const folder = this.driveSource.getFolders().find(f => f.label === source);
+                if (folder) {
+                    await this.switchToDrive(folder.id);
+                    if (trackIndex < this.tracks.length) {
+                        this.loadTrack(trackIndex);
+                    }
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    updateHash() {
+        let source = 'local';
+
+        if (this.currentSource !== 'local' && this.driveSource) {
+            const folder = this.driveSource.getFolders().find(f => f.id === this.currentSource);
+            if (folder) {
+                source = folder.label;
+            }
+        }
+
+        const trackNum = this.currentTrackIndex + 1; // 1-based for URLs
+        const newHash = `${source}/${trackNum}`;
+
+        // Update URL without triggering page reload
+        history.replaceState(null, '', `#${newHash}`);
     }
 
     initDriveSource() {
@@ -360,6 +418,55 @@ class Player {
         }, 300); // Small delay to show 100% complete
     }
 
+    setupMediaSession() {
+        if (!('mediaSession' in navigator)) {
+            console.warn('Media Session API not supported');
+            return;
+        }
+
+        // Set up action handlers for lock screen / notification controls
+        navigator.mediaSession.setActionHandler('play', () => this.play());
+        navigator.mediaSession.setActionHandler('pause', () => this.pause());
+        navigator.mediaSession.setActionHandler('previoustrack', () => this.previousTrack());
+        navigator.mediaSession.setActionHandler('nexttrack', () => this.nextTrack());
+        navigator.mediaSession.setActionHandler('seekto', (details) => {
+            if (details.seekTime !== undefined) {
+                this.audio.currentTime = details.seekTime;
+            }
+        });
+
+        console.log('✓ Media Session API configured');
+    }
+
+    updateMediaSessionMetadata() {
+        if (!('mediaSession' in navigator)) return;
+
+        const track = this.tracks[this.currentTrackIndex];
+        if (!track) return;
+
+        // Get artwork URL - use placeholder if available
+        let artworkUrl = track.image;
+        if (this.currentPlaceholder) {
+            artworkUrl = this.currentPlaceholder.url;
+        }
+
+        // Make artwork URL absolute if it's relative
+        if (artworkUrl && !artworkUrl.startsWith('http')) {
+            artworkUrl = new URL(artworkUrl, window.location.href).href;
+        }
+
+        navigator.mediaSession.metadata = new MediaMetadata({
+            title: track.title,
+            artist: track.artist,
+            album: 'plyr',
+            artwork: artworkUrl ? [
+                { src: artworkUrl, sizes: '512x512', type: 'image/jpeg' }
+            ] : []
+        });
+
+        console.log('✓ Media Session metadata updated:', track.title);
+    }
+
     setupAudioEvents() {
         // Update progress bar as audio plays
         this.audio.addEventListener('timeupdate', () => {
@@ -417,12 +524,14 @@ class Player {
             this.updateAlbumArt(null); // Pass null to force placeholder usage
             this.updateTrackInfo(track);
             this.updateTheme(placeholder.colors);
+            this.updateMediaSessionMetadata();
         } else {
             // Fallback to original behavior if placeholders not loaded
             this.currentPlaceholder = null;
             this.updateAlbumArt(track.image);
             this.updateTrackInfo(track);
             this.updateTheme(track.colors);
+            this.updateMediaSessionMetadata();
         }
 
         // Set duration from track data (more reliable than audio metadata for opus)
@@ -457,6 +566,9 @@ class Player {
         }
 
         this.updatePlayButton();
+
+        // Update URL hash for sharing
+        this.updateHash();
 
         // Preload next/previous tracks
         this.preloadAdjacentTracks();
