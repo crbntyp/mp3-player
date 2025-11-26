@@ -433,10 +433,26 @@ class Player {
         navigator.mediaSession.setActionHandler('pause', () => this.pause());
         navigator.mediaSession.setActionHandler('previoustrack', () => this.previousTrack());
         navigator.mediaSession.setActionHandler('nexttrack', () => this.nextTrack());
+
+        // Seek handlers - iOS uses these for skip buttons
+        navigator.mediaSession.setActionHandler('seekbackward', (details) => {
+            const skipTime = details.seekOffset || 10;
+            this.audio.currentTime = Math.max(this.audio.currentTime - skipTime, 0);
+        });
+        navigator.mediaSession.setActionHandler('seekforward', (details) => {
+            const skipTime = details.seekOffset || 10;
+            this.audio.currentTime = Math.min(this.audio.currentTime + skipTime, this.audio.duration || 0);
+        });
         navigator.mediaSession.setActionHandler('seekto', (details) => {
             if (details.seekTime !== undefined) {
                 this.audio.currentTime = details.seekTime;
             }
+        });
+
+        // Stop handler
+        navigator.mediaSession.setActionHandler('stop', () => {
+            this.pause();
+            this.audio.currentTime = 0;
         });
 
         console.log('✓ Media Session API configured');
