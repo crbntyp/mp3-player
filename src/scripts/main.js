@@ -4,6 +4,10 @@ class Player {
         this.tracks = [];
         this.currentTrackIndex = 0;
         this.audio = new Audio();
+        // iOS-friendly audio settings
+        this.audio.setAttribute('playsinline', '');
+        this.audio.setAttribute('webkit-playsinline', '');
+        this.audio.preload = 'auto';
         this.isPlaying = false;
         this.preloadCache = new Map(); // Cache for preloaded audio elements
         this.imageCache = new Map(); // Cache for preloaded images
@@ -496,14 +500,18 @@ class Player {
             this.nextTrack();
         });
 
-        // Handle loading
+        // Handle loading - set duration once
         this.audio.addEventListener('loadedmetadata', () => {
             this.updateDuration();
         });
 
-        // Handle duration change (for streaming audio like Drive files)
+        // Handle duration change - only update if we don't have a valid duration yet
         this.audio.addEventListener('durationchange', () => {
-            this.updateDuration();
+            const durationEl = document.getElementById('duration');
+            // Only update if current display is 0:00 or empty
+            if (durationEl && (durationEl.textContent === '0:00' || !durationEl.textContent)) {
+                this.updateDuration();
+            }
         });
 
         // Handle errors
@@ -512,6 +520,20 @@ class Player {
             const track = this.tracks[this.currentTrackIndex];
             if (!track.audio) {
                 console.log('ℹ️  No audio file linked to this track');
+            }
+        });
+
+        // Handle visibility change for iOS background audio
+        document.addEventListener('visibilitychange', () => {
+            if (document.visibilityState === 'visible' && this.isPlaying) {
+                // Resume audio context if suspended
+                if (this.visualizer?.audioContext?.state === 'suspended') {
+                    this.visualizer.audioContext.resume();
+                }
+                // Sync Media Session state
+                if ('mediaSession' in navigator) {
+                    navigator.mediaSession.playbackState = 'playing';
+                }
             }
         });
     }
