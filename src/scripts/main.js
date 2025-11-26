@@ -475,6 +475,19 @@ class Player {
                 const progress = (this.audio.currentTime / duration) * 100;
                 this.updateProgress(progress);
                 this.updateTimeDisplay();
+
+                // Update Media Session position state for lock screen scrubbing
+                if ('mediaSession' in navigator && 'setPositionState' in navigator.mediaSession) {
+                    try {
+                        navigator.mediaSession.setPositionState({
+                            duration: duration,
+                            playbackRate: this.audio.playbackRate,
+                            position: this.audio.currentTime
+                        });
+                    } catch (e) {
+                        // Ignore errors from invalid state
+                    }
+                }
             }
         });
 
@@ -715,6 +728,11 @@ class Player {
             this.isPlaying = true;
             this.updatePlayButton();
 
+            // Update Media Session playback state
+            if ('mediaSession' in navigator) {
+                navigator.mediaSession.playbackState = 'playing';
+            }
+
             // Slide record out if not already visible
             if (!this.recordVisible) {
                 this.slideRecordOut();
@@ -729,6 +747,11 @@ class Player {
         this.audio.pause();
         this.isPlaying = false;
         this.updatePlayButton();
+
+        // Update Media Session playback state
+        if ('mediaSession' in navigator) {
+            navigator.mediaSession.playbackState = 'paused';
+        }
 
         // Slide record in when pausing
         if (this.recordVisible) {
