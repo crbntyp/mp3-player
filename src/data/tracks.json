@@ -70,23 +70,6 @@
     },
     {
       "id": 5,
-      "title": "Take Me",
-      "artist": "The Pumpkin",
-      "album": "Unknown Album",
-      "duration": "7:10",
-      "image": "img/The_Pumpkin_-_Take_Me.jpg",
-      "audio": "music/The Pumpkin - Take Me.opus",
-      "colors": {
-        "primary": "#40abb0",
-        "secondary": "#0b4c69",
-        "accent": "#9dd8db",
-        "muted": "#a17569",
-        "dark": "#2c3556",
-        "light": "#286d70"
-      }
-    },
-    {
-      "id": 6,
       "title": "Forever",
       "artist": "Ron Hagen & Pascal M",
       "album": "Keepin' It Real",
@@ -103,7 +86,7 @@
       }
     },
     {
-      "id": 7,
+      "id": 6,
       "title": "Silence (Club Mix)",
       "artist": "Taiko",
       "album": "Silence",
@@ -117,6 +100,23 @@
         "muted": "#94a3b8",
         "dark": "#1e293b",
         "light": "#e2e8f0"
+      }
+    },
+    {
+      "id": 7,
+      "title": "Take Me",
+      "artist": "The Pumpkin",
+      "album": "Unknown Album",
+      "duration": "7:10",
+      "image": "img/The_Pumpkin_-_Take_Me.jpg",
+      "audio": "music/The Pumpkin - Take Me.opus",
+      "colors": {
+        "primary": "#40abb0",
+        "secondary": "#0b4c69",
+        "accent": "#9dd8db",
+        "muted": "#a17569",
+        "dark": "#2c3556",
+        "light": "#286d70"
       }
     }
   ]

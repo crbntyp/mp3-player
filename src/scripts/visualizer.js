@@ -1,5 +1,5 @@
 // Audio Visualizer with Pulse Line (Heart Rate Monitor Style)
-class AudioVisualizer {
+export class AudioVisualizer {
     constructor() {
         this.canvas = document.getElementById('visualizer-canvas');
         this.ctx = null;

@@ -1,5 +1,5 @@
 // Google Drive Integration for plyr
-class DriveSource {
+export class DriveSource {
     constructor() {
         this.API_KEY = 'AIzaSyAghiQd7JdtMk0x9iWzdbYZsAihcK8Pvb4';
         this.API_BASE = 'https://www.googleapis.com/drive/v3';
@@ -167,5 +167,3 @@ class DriveSource {
     }
 }
 
-// Export for use in main.js
-window.DriveSource = DriveSource;

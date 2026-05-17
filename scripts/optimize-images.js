@@ -3,7 +3,7 @@ const path = require('path');
 const sharp = require('sharp');
 
 const inputDir = path.join(__dirname, '../src/img');
-const outputDir = path.join(__dirname, '../dist/img');
+const outputDir = path.join(__dirname, '../public/img');
 
 // Ensure output directory exists
 if (!fs.existsSync(outputDir)) {

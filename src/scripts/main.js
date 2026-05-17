@@ -1,3 +1,7 @@
+import '../styles/main.scss';
+import { AudioVisualizer } from './visualizer.js';
+import { DriveSource } from './drive.js';
+
 // Player Application
 class Player {
     constructor() {

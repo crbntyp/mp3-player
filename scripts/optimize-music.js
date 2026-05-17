@@ -7,7 +7,7 @@ const ffmpegPath = require('@ffmpeg-installer/ffmpeg').path;
 ffmpeg.setFfmpegPath(ffmpegPath);
 
 const inputDir = path.join(__dirname, '../src/music');
-const outputDir = path.join(__dirname, '../dist/music');
+const outputDir = path.join(__dirname, '../public/music');
 
 // Ensure output directory exists
 if (!fs.existsSync(outputDir)) {

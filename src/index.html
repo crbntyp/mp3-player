@@ -16,7 +16,6 @@
     <link rel="apple-touch-icon" href="img/assets/icon-192.png">
 
     <link rel="icon" type="image/png" href="img/assets/fav.png">
-    <link rel="stylesheet" href="styles/main.css">
     <link rel="stylesheet" href="https://use.typekit.net/abs2nmm.css">
 </head>
 <body>
@@ -132,13 +131,13 @@
     <!-- Toast Notification -->
     <div id="toast" class="toast"></div>
 
-    <script src="scripts/visualizer.js"></script>
-    <script src="scripts/drive.js"></script>
-    <script src="scripts/main.js"></script>
+    <script type="module" src="./scripts/main.js"></script>
 
-    <!-- Register Service Worker for PWA -->
+    <!-- Register Service Worker for PWA. Dev-mode skip avoids caching the
+         Vite dev bundle, which would mask hot-reloaded changes behind a
+         stale install. Re-enabled in production where paths are stable. -->
     <script>
-        if ('serviceWorker' in navigator) {
+        if ('serviceWorker' in navigator && location.hostname !== 'localhost' && location.hostname !== '127.0.0.1') {
             navigator.serviceWorker.register('sw.js')
                 .then(() => console.log('PWA: Service Worker registered'))
                 .catch((err) => console.log('PWA: Service Worker failed', err));

@@ -10,6 +10,14 @@ dist/
 build/
 *.log
 
+# Vite public dir: ignore generated content (optimized album art, transcoded
+# music, copied data JSON) but keep tracked static files (manifest.json,
+# sw.js, proxy.php, and the UI icons in public/img/assets/).
+/public/img/*
+!/public/img/assets/
+/public/music/
+/public/data/
+
 # OS files
 .DS_Store
 Thumbs.db

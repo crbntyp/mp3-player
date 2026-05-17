@@ -1,5 +1,7 @@
-// Import Line Awesome icons
-@import 'vendor/line-awesome/line-awesome';
+// Import Line Awesome from node_modules — Vite resolves the url(...) font
+// references through the module graph, so the font files come along in the
+// bundle automatically without needing a separate copy step.
+@import 'line-awesome/dist/line-awesome/css/line-awesome.css';
 
 // Britanica Font (all weights)
 @font-face {
