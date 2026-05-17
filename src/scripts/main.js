@@ -499,13 +499,26 @@ class Player {
         const titleEl = document.getElementById('track-title');
         const artistEl = document.getElementById('track-artist');
 
-        if (titleEl) titleEl.textContent = track.title;
+        if (titleEl) {
+            // Rebuild the title element so "(Original Mix)" / "(Club Mix)"
+            // gets pushed to its own line below the title — easier to
+            // read at a glance than one long string.
+            titleEl.replaceChildren();
+            titleEl.appendChild(document.createTextNode(track.title));
+            if (track.version) {
+                titleEl.appendChild(document.createElement('br'));
+                const versionEl = document.createElement('span');
+                versionEl.className = 'track-version';
+                versionEl.textContent = `(${track.version})`;
+                titleEl.appendChild(versionEl);
+            }
+        }
         if (artistEl) artistEl.textContent = track.artist;
 
-        // Update record label text
+        // Record-label SVG textPath can only carry one curved line, so
+        // we keep the version off it.
         const recordLabelTitle = document.getElementById('record-label-title-path');
         const recordLabelArtist = document.getElementById('record-label-artist-path');
-
         if (recordLabelTitle) recordLabelTitle.textContent = track.title;
         if (recordLabelArtist) recordLabelArtist.textContent = track.artist;
     }

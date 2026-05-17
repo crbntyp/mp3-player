@@ -69,15 +69,10 @@ export class DriveSource {
 
     fileToTrack(file, index) {
         const parsed = formatTrackName(file.name);
-        // Mix label, when present, is appended to the title in italic via
-        // a unicode word-joiner so the visible string stays one line.
-        const title = parsed.version
-            ? `${parsed.title} (${parsed.version})`
-            : parsed.title;
-
         return {
             id:        index + 1,
-            title,
+            title:     parsed.title,
+            version:   parsed.version, // rendered on its own line by the player
             artist:    parsed.artist,
             album:     'Google Drive',
             duration:  '0:00',
