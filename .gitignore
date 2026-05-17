@@ -15,6 +15,7 @@ build/
 # sw.js, proxy.php, and the UI icons in public/img/assets/).
 /public/img/*
 !/public/img/assets/
+!/public/img/placeholders/
 /public/music/
 /public/data/
 
