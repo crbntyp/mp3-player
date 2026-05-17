@@ -6,22 +6,21 @@ const { Vibrant } = require('node-vibrant/node');
 
 const PEXELS_API_KEY = 'vTST9e7OjHJBkzipEIm5gFCofIiNeQ5XfRlPU8zk4yN7xLt5qRMv25Zu';
 
-// Dark music-gear aesthetic — moody studio shots of mixers, synths,
-// DJ booths with neon accent lighting. Reference:
-// https://www.pexels.com/photo/lights-on-music-mixer-17225445/
+// Neon lights in dark rooms — moody interior shots, neon strips,
+// glowing signage, dark club-like spaces. Reference:
+// https://www.pexels.com/search/neon%20lights%20in%20dark%20rooms/
 const SEARCH_QUERIES = [
-    'music mixer',
-    'audio mixer',
-    'dj booth',
-    'mixing console',
-    'synthesizer dark',
+    'neon lights dark room',
+    'neon lights interior',
+    'neon dark room',
+    'neon sign dark',
 ];
-const PINNED_PHOTO_IDS = [17225445]; // always include the user's reference.
+const PINNED_PHOTO_IDS = []; // no specific pin this round.
 
-const TARGET_COUNT  = 10;
+const TARGET_COUNT  = 20;
 const IMAGE_SIZE    = 1024;
-const PER_QUERY_MAX = 3;   // round-robin so each subject is represented
-const MAX_LUMINANCE = 0.55; // allow neon-accented dark scenes through
+const PER_QUERY_MAX = 6;   // round-robin so each query is represented
+const MAX_LUMINANCE = 0.55; // dark scenes with neon accents are fine
 
 const OUT_DIR  = path.join(__dirname, '..', 'public', 'img', 'placeholders');
 const OUT_JSON = path.join(__dirname, '..', 'src', 'data', 'placeholders.json');

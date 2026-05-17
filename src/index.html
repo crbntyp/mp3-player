@@ -67,38 +67,46 @@
                 <canvas id="visualizer-canvas" class="visualizer-canvas"></canvas>
                 <p id="track-artist" class="track-artist"></p>
             </div>
-        </div>
 
-        <div class="progress-container-wrapper">
-            <span id="current-time" class="progress-time">0:00</span>
-            <div id="progress-container" class="progress-container">
-                <div id="progress-bar" class="progress-bar">
-                    <div class="progress-handle"></div>
+            <!-- Unified player bar at the bottom of the album art:
+                 [play] [time progress time] [prev] [next]. Library button
+                 is parked for now — will return when the drawer arrives. -->
+            <div class="player-bar">
+                <button id="play-btn" class="control-btn control-btn--play" aria-label="Play / pause">
+                    <svg class="control-icon" viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M7 5v14l12-7L7 5z" />
+                    </svg>
+                </button>
+                <div class="progress-strip">
+                    <span id="current-time" class="progress-time">0:00</span>
+                    <div id="progress-container" class="progress-container">
+                        <div id="progress-bar" class="progress-bar">
+                            <div class="progress-handle"></div>
+                        </div>
+                    </div>
+                    <span id="duration" class="progress-time">0:00</span>
                 </div>
+                <button id="prev-btn" class="control-btn" aria-label="Previous">
+                    <svg class="control-icon" viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M6 6h2v12H6V6zm3 6l10-6v12L9 12z" />
+                    </svg>
+                </button>
+                <button id="next-btn" class="control-btn" aria-label="Next">
+                    <svg class="control-icon" viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M16 6h2v12h-2V6zM5 6l10 6L5 18V6z" />
+                    </svg>
+                </button>
             </div>
-            <span id="duration" class="progress-time">0:00</span>
         </div>
 
-        <div class="player-controls">
-            <button id="prev-btn" class="control-btn control-btn--small">
-                <i class="las la-backward"></i>
-            </button>
-            <button id="play-btn" class="control-btn control-btn--large">
-                <i class="las la-play"></i>
-            </button>
-            <button id="next-btn" class="control-btn control-btn--small">
-                <i class="las la-forward"></i>
-            </button>
-            <button id="library-btn" class="control-btn control-btn--small">
-                <i class="las la-bars"></i>
-            </button>
-        </div>
-
-        <!-- Era Selector -->
+        <!-- Era selector — fixed bottom-left of the viewport. Mitsubishi
+             three-diamond mark stands in for the era / source switcher. -->
         <div class="era-selector">
-            <button id="era-btn" class="era-btn">
-                <i class="las la-folder-open"></i>
-                <span id="era-label">Select Era</span>
+            <button id="era-btn" class="control-btn control-btn--utility" aria-label="Select era">
+                <svg class="control-icon" viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M12 1L16 5 12 9 8 5ZM6 11L10 15 6 19 2 15ZM18 11L22 15 18 19 14 15Z"/>
+                </svg>
+                <span id="era-label" class="era-label-hidden">Era</span>
             </button>
             <div id="era-menu" class="era-menu">
                 <button class="era-option" data-source="local">

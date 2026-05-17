@@ -653,14 +653,16 @@ class Player {
 
     updatePlayButton() {
         const playBtn = document.getElementById('play-btn');
-        const playIcon = playBtn?.querySelector('i');
-        if (playIcon) {
-            if (this.isPlaying) {
-                playIcon.className = 'las la-pause text-white text-3xl';
-            } else {
-                playIcon.className = 'las la-play text-white text-3xl';
-            }
-        }
+        const path = playBtn?.querySelector('svg.control-icon path');
+        if (!path) return;
+        // Play triangle vs pause two-bars — swapping the path `d` instead
+        // of rebuilding the SVG keeps focus state and avoids reflow.
+        path.setAttribute(
+            'd',
+            this.isPlaying
+                ? 'M6 4h4v16H6V4zm8 0h4v16h-4V4z'
+                : 'M7 5v14l12-7L7 5z',
+        );
     }
 
 
