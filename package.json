@@ -11,7 +11,8 @@
     "dev": "vite",
     "build": "npm run prebuild && vite build",
     "preview": "vite preview --port 8080",
-    "clean": "node scripts/clean.js"
+    "clean": "node scripts/clean.js",
+    "deploy": "npm run build && node scripts/deploy.js"
   },
   "keywords": [],
   "author": "Jonny Pyper / Carbontype / Music copyright belongs to respective owners",
