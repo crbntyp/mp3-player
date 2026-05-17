@@ -1,30 +1,37 @@
 const fs = require('fs');
 const path = require('path');
-const ffmpeg = require('fluent-ffmpeg');
+const { spawn } = require('child_process');
 const ffmpegPath = require('@ffmpeg-installer/ffmpeg').path;
-
-// Set ffmpeg path
-ffmpeg.setFfmpegPath(ffmpegPath);
 
 const inputDir = path.join(__dirname, '../src/music');
 const outputDir = path.join(__dirname, '../public/music');
 
-// Ensure output directory exists
 if (!fs.existsSync(outputDir)) {
     fs.mkdirSync(outputDir, { recursive: true });
 }
 
-async function convertToOpus(inputPath, outputPath) {
+// Direct ffmpeg invocation — fluent-ffmpeg was deprecated and its only
+// added value here was builder syntax for the four-arg encode chain below.
+// `-y` overwrites the existing file silently so reruns are idempotent.
+function convertToOpus(inputPath, outputPath) {
     return new Promise((resolve, reject) => {
-        ffmpeg(inputPath)
-            .audioCodec('libopus')
-            .audioBitrate('128k')
-            .audioChannels(2)
-            .audioFrequency(48000)
-            .output(outputPath)
-            .on('end', () => resolve())
-            .on('error', (err) => reject(err))
-            .run();
+        const args = [
+            '-y',
+            '-i', inputPath,
+            '-c:a', 'libopus',
+            '-b:a', '128k',
+            '-ac', '2',
+            '-ar', '48000',
+            outputPath,
+        ];
+        const proc = spawn(ffmpegPath, args, { stdio: ['ignore', 'ignore', 'pipe'] });
+        let stderr = '';
+        proc.stderr.on('data', (chunk) => { stderr += chunk.toString(); });
+        proc.on('error', reject);
+        proc.on('close', (code) => {
+            if (code === 0) resolve();
+            else reject(new Error(`ffmpeg exited ${code}: ${stderr.split('\n').slice(-5).join('\n')}`));
+        });
     });
 }
 
