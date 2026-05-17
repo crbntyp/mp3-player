@@ -12,6 +12,11 @@ const fs = require('fs');
 
 const SERVER = 'root@148.230.122.104';
 const REMOTE_PATH = '/var/www/crbntyp/plyr/';
+// SSH key lives inside WSL at ~/.ssh/carbontype-admin (0600). Referenced
+// explicitly so the deploy doesn't depend on whichever key happens to be
+// the default — also avoids ssh-agent confusion.
+const SSH_KEY_WSL = '~/.ssh/carbontype-admin';
+const SSH_OPTS = `-i ${SSH_KEY_WSL} -o StrictHostKeyChecking=accept-new -o BatchMode=yes`;
 const ROOT = path.join(__dirname, '..');
 const distDir = path.join(ROOT, 'dist');
 
@@ -45,6 +50,7 @@ run(
     "--exclude=.git/",
     "--exclude=node_modules/",
     "--exclude=.DS_Store",
+    '-e', `ssh ${SSH_OPTS}`,
     wslDist,
     `${SERVER}:${REMOTE_PATH}`,
   ],
@@ -55,8 +61,10 @@ run(
 // session is, so Apache (www-data) loses access. Standard pattern: own as
 // www-data, dirs 755, files 644.
 run(
-  'ssh',
+  'wsl',
   [
+    'ssh',
+    ...SSH_OPTS.split(' '),
     SERVER,
     `chown -R www-data:www-data ${REMOTE_PATH} && find ${REMOTE_PATH} -type d -exec chmod 755 {} \\; && find ${REMOTE_PATH} -type f -exec chmod 644 {} \\;`,
   ],
