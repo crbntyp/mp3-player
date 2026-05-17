@@ -34,6 +34,10 @@ Thumbs.db
 .env.local
 .env.*.local
 
+# Server-side secrets — proxy.config.php lives only on the VPS.
+# proxy.config.example.php (committed) shows what shape it should have.
+/public/proxy.config.php
+
 # Claude
 .claude/
 

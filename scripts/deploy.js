@@ -50,6 +50,11 @@ run(
     "--exclude=.git/",
     "--exclude=node_modules/",
     "--exclude=.DS_Store",
+    // Server-only files: proxy.config.php holds secrets, cache/ is the
+    // runtime cache directory the proxy writes to. Excluding them from
+    // --delete keeps server state intact across deploys.
+    "--exclude=proxy.config.php",
+    "--exclude=cache/",
     '-e', `ssh ${SSH_OPTS}`,
     wslDist,
     `${SERVER}:${REMOTE_PATH}`,
