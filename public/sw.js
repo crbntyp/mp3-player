@@ -1,9 +1,9 @@
 // Service Worker for plyr PWA
 //
-// Bumped to v2 alongside the Vite migration — drive.js + visualizer.js are
-// now bundled into scripts/main.js, so they no longer need explicit cache
-// entries. Names are kept stable via vite.config.js rollupOptions.
-const CACHE_NAME = 'plyr-v2';
+// Bumped to v3 alongside Phase 2 — the Drive client got rewritten to talk
+// to proxy.php?action=list instead of calling Google directly, and the
+// previous bundle is stuck in users' caches without a version bump.
+const CACHE_NAME = 'plyr-v3';
 const ASSETS_TO_CACHE = [
   '/plyr/',
   '/plyr/index.html',
