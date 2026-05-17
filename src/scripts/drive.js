@@ -4,6 +4,8 @@
 // proxy.php. The Drive API key lives only on the server (in
 // proxy.config.php) so it never ships to browsers.
 
+import { formatTrackName } from './utils/format-track-name.js';
+
 const PROXY_URL = 'proxy.php';
 
 export class DriveSource {
@@ -66,13 +68,18 @@ export class DriveSource {
     }
 
     fileToTrack(file, index) {
-        const metadata = this.parseFilename(file.name);
+        const parsed = formatTrackName(file.name);
+        // Mix label, when present, is appended to the title in italic via
+        // a unicode word-joiner so the visible string stays one line.
+        const title = parsed.version
+            ? `${parsed.title} (${parsed.version})`
+            : parsed.title;
 
         return {
             id:        index + 1,
-            title:     metadata.title,
-            artist:    metadata.artist,
-            album:     metadata.album || 'Google Drive',
+            title,
+            artist:    parsed.artist,
+            album:     'Google Drive',
             duration:  '0:00',
             image:     null,
             audio:     `${PROXY_URL}?id=${encodeURIComponent(file.id)}`,
@@ -83,28 +90,6 @@ export class DriveSource {
             driveId:   file.id,
             fileName:  file.name,
         };
-    }
-
-    // Parse "Artist - Title" out of a filename. Phase 3 will replace this
-    // with the shared name-formatter utility; the basic split stays here
-    // for now so listings don't show raw "underscore_separated" titles.
-    parseFilename(filename) {
-        let name = filename.replace(/\.(mp3|wav|flac|ogg|opus|m4a|aac)$/i, '');
-        const separators = [' - ', ' – ', ' — ', ' _ '];
-
-        for (const sep of separators) {
-            if (name.includes(sep)) {
-                const parts = name.split(sep);
-                if (parts.length >= 2) {
-                    return {
-                        artist: parts[0].trim(),
-                        title:  parts.slice(1).join(sep).trim(),
-                        album:  null,
-                    };
-                }
-            }
-        }
-        return { artist: 'Unknown Artist', title: name.trim(), album: null };
     }
 
     // Random palette per track-listing. Intentional (per user) — tracks
