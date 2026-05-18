@@ -1,303 +1,303 @@
 {
   "images": [
     {
-      "id": 11811929,
-      "url": "img/placeholders/11811929.jpg",
-      "photographer": "Adib Own",
-      "photographer_url": "https://www.pexels.com/@adib-own-380513",
-      "query": "neon lights dark room",
+      "id": 11300427,
+      "url": "img/placeholders/11300427.jpg",
+      "photographer": "XT7 Core",
+      "photographer_url": "https://www.pexels.com/@xt7core",
+      "query": "synthesizer macro",
       "colors": {
-        "primary": "#ed0426",
-        "secondary": "#6f041b",
-        "accent": "#dfb2a0",
-        "muted": "#960218",
-        "dark": "#2d141f",
-        "light": "#723c26"
+        "primary": "#0572f5",
+        "secondary": "#04087f",
+        "accent": "#8cbce7",
+        "muted": "#849cc4",
+        "dark": "#2c3444",
+        "light": "#c1d2e3"
       }
     },
     {
-      "id": 35849147,
-      "url": "img/placeholders/35849147.jpg",
-      "photographer": "Thomas Hoang",
-      "photographer_url": "https://www.pexels.com/@megatunger",
-      "query": "neon lights dark room",
+      "id": 2480397,
+      "url": "img/placeholders/2480397.jpg",
+      "photographer": "Rô Acunha",
+      "photographer_url": "https://www.pexels.com/@roacunha",
+      "query": "synthesizer macro",
       "colors": {
-        "primary": "#a60606",
+        "primary": "#ea7004",
+        "secondary": "#8d1205",
+        "accent": "#fcb87c",
+        "muted": "#9b7d99",
+        "dark": "#334c64",
+        "light": "#b484a4"
+      }
+    },
+    {
+      "id": 18197122,
+      "url": "img/placeholders/18197122.jpg",
+      "photographer": "XT7 Core",
+      "photographer_url": "https://www.pexels.com/@xt7core",
+      "query": "synthesizer macro",
+      "colors": {
+        "primary": "#0405f8",
+        "secondary": "#041687",
+        "accent": "#76aae7",
+        "muted": "#5f72b4",
+        "dark": "#242c44",
+        "light": "#164882"
+      }
+    },
+    {
+      "id": 7394229,
+      "url": "img/placeholders/7394229.jpg",
+      "photographer": "Julia Fuchs",
+      "photographer_url": "https://www.pexels.com/@julia-fuchs-19936537",
+      "query": "synthesizer macro",
+      "colors": {
+        "primary": "#ac4c05",
+        "secondary": "#79310c",
+        "accent": "#cba86b",
+        "muted": "#9f6d4b",
+        "dark": "#6b4837",
+        "light": "#c9b993"
+      }
+    },
+    {
+      "id": 20488625,
+      "url": "img/placeholders/20488625.jpg",
+      "photographer": "Ramon Perucho",
+      "photographer_url": "https://www.pexels.com/@rperucho",
+      "query": "synthesizer macro",
+      "colors": {
+        "primary": "#7f7f7f",
+        "secondary": "#424242",
+        "accent": "#bcbcbc",
+        "muted": "#7c7c7c",
+        "dark": "#444444",
+        "light": "#c2c2c2"
+      }
+    },
+    {
+      "id": 14517351,
+      "url": "img/placeholders/14517351.jpg",
+      "photographer": "TStudio",
+      "photographer_url": "https://www.pexels.com/@tstudio-34805588",
+      "query": "mixer knobs",
+      "colors": {
+        "primary": "#906c44",
+        "secondary": "#5c241c",
+        "accent": "#d4bda4",
+        "muted": "#8e725a",
+        "dark": "#5e4832",
+        "light": "#ccb9a9"
+      }
+    },
+    {
+      "id": 14745818,
+      "url": "img/placeholders/14745818.jpg",
+      "photographer": "TStudio",
+      "photographer_url": "https://www.pexels.com/@tstudio-34805588",
+      "query": "mixer knobs",
+      "colors": {
+        "primary": "#1a158b",
+        "secondary": "#0f0b62",
+        "accent": "#7e77c4",
+        "muted": "#6d649f",
+        "dark": "#443d64",
+        "light": "#9b9284"
+      }
+    },
+    {
+      "id": 12379594,
+      "url": "img/placeholders/12379594.jpg",
+      "photographer": "Abdullah Alsaibaie",
+      "photographer_url": "https://www.pexels.com/@aalsaibaie",
+      "query": "mixer knobs",
+      "colors": {
+        "primary": "#5404e4",
+        "secondary": "#990474",
+        "accent": "#aa7cfc",
+        "muted": "#85745c",
+        "dark": "#2a355f",
+        "light": "#370296"
+      }
+    },
+    {
+      "id": 12379595,
+      "url": "img/placeholders/12379595.jpg",
+      "photographer": "Abdullah Alsaibaie",
+      "photographer_url": "https://www.pexels.com/@aalsaibaie",
+      "query": "mixer knobs",
+      "colors": {
+        "primary": "#225fa4",
+        "secondary": "#0e3a64",
+        "accent": "#84b4dc",
+        "muted": "#a26957",
+        "dark": "#5b2c30",
+        "light": "#b6c6d0"
+      }
+    },
+    {
+      "id": 34237444,
+      "url": "img/placeholders/34237444.jpg",
+      "photographer": "Eric Joseph",
+      "photographer_url": "https://www.pexels.com/@ericc",
+      "query": "mixer knobs",
+      "colors": {
+        "primary": "#a96941",
+        "secondary": "#642c0f",
+        "accent": "#ba8666",
+        "muted": "#a16454",
+        "dark": "#4c413e",
+        "light": "#c1b3a8"
+      }
+    },
+    {
+      "id": 4167169,
+      "url": "img/placeholders/4167169.jpg",
+      "photographer": "Brett Sayles",
+      "photographer_url": "https://www.pexels.com/@brett-sayles",
+      "query": "audio fader",
+      "colors": {
+        "primary": "#e26b21",
+        "secondary": "#713a1b",
+        "accent": "#ddb072",
+        "muted": "#5178a3",
+        "dark": "#243244",
+        "light": "#dacbb8"
+      }
+    },
+    {
+      "id": 18197120,
+      "url": "img/placeholders/18197120.jpg",
+      "photographer": "XT7 Core",
+      "photographer_url": "https://www.pexels.com/@xt7core",
+      "query": "audio fader",
+      "colors": {
+        "primary": "#f40404",
         "secondary": "#840404",
-        "accent": "#fa7f7f",
-        "muted": "#a5605e",
-        "dark": "#462424",
-        "light": "#b27988"
+        "accent": "#fc7c7c",
+        "muted": "#960202",
+        "dark": "#040404",
+        "light": "#960202"
       }
     },
     {
-      "id": 12089403,
-      "url": "img/placeholders/12089403.jpg",
-      "photographer": "Yusuf P",
-      "photographer_url": "https://www.pexels.com/@artyusufpatel",
-      "query": "neon lights dark room",
+      "id": 14517352,
+      "url": "img/placeholders/14517352.jpg",
+      "photographer": "TStudio",
+      "photographer_url": "https://www.pexels.com/@tstudio-34805588",
+      "query": "audio fader",
       "colors": {
-        "primary": "#e79715",
-        "secondary": "#6e0812",
-        "accent": "#f3c985",
-        "muted": "#8c5b0c",
-        "dark": "#502438",
-        "light": "#8c5b0c"
+        "primary": "#46afb9",
+        "secondary": "#740420",
+        "accent": "#9ed5da",
+        "muted": "#7d7066",
+        "dark": "#573a2e",
+        "light": "#b7a794"
       }
     },
     {
-      "id": 10504462,
-      "url": "img/placeholders/10504462.jpg",
-      "photographer": "Neons45",
-      "photographer_url": "https://www.pexels.com/@neons45-120532067",
-      "query": "neon lights dark room",
+      "id": 31050364,
+      "url": "img/placeholders/31050364.jpg",
+      "photographer": "Somogro Bangladesh",
+      "photographer_url": "https://www.pexels.com/@somogrobangladesh",
+      "query": "audio fader",
       "colors": {
-        "primary": "#1718ec",
-        "secondary": "#741a06",
-        "accent": "#ec7cec",
-        "muted": "#b4a161",
-        "dark": "#3c3c22",
-        "light": "#a9ae89"
+        "primary": "#727e38",
+        "secondary": "#357406",
+        "accent": "#cdd6a3",
+        "muted": "#637285",
+        "dark": "#2a394c",
+        "light": "#ba9a72"
       }
     },
     {
-      "id": 33212968,
-      "url": "img/placeholders/33212968.jpg",
-      "photographer": "Haberdoedas Photography",
-      "photographer_url": "https://www.pexels.com/@haberdoedas",
-      "query": "neon lights dark room",
+      "id": 33298190,
+      "url": "img/placeholders/33298190.jpg",
+      "photographer": "Puru Raj",
+      "photographer_url": "https://www.pexels.com/@puruxraj",
+      "query": "audio fader",
       "colors": {
-        "primary": "#ee0e9e",
-        "secondary": "#8c0434",
-        "accent": "#ec8ad4",
-        "muted": "#90085f",
-        "dark": "#100c0c",
-        "light": "#dcd7ce"
+        "primary": "#7f7f7f",
+        "secondary": "#424242",
+        "accent": "#bcbcbc",
+        "muted": "#757575",
+        "dark": "#404040",
+        "light": "#c4c4c4"
       }
     },
     {
-      "id": 18665831,
-      "url": "img/placeholders/18665831.jpg",
-      "photographer": "Yiğit  KARAALİOĞLU",
-      "photographer_url": "https://www.pexels.com/@ygtphoto",
-      "query": "neon lights dark room",
+      "id": 11317896,
+      "url": "img/placeholders/11317896.jpg",
+      "photographer": "XT7 Core",
+      "photographer_url": "https://www.pexels.com/@xt7core",
+      "query": "led music gear close up",
       "colors": {
-        "primary": "#b74526",
-        "secondary": "#082a66",
-        "accent": "#dca69c",
-        "muted": "#546794",
-        "dark": "#323458",
-        "light": "#8a99b6"
+        "primary": "#0447f7",
+        "secondary": "#061a80",
+        "accent": "#9abce0",
+        "muted": "#61a6a9",
+        "dark": "#040404",
+        "light": "#c2c8df"
       }
     },
     {
-      "id": 9023268,
-      "url": "img/placeholders/9023268.jpg",
-      "photographer": "Charles Aaron Untalan",
-      "photographer_url": "https://www.pexels.com/@charlesuntalan",
-      "query": "neon lights interior",
+      "id": 11317799,
+      "url": "img/placeholders/11317799.jpg",
+      "photographer": "XT7 Core",
+      "photographer_url": "https://www.pexels.com/@xt7core",
+      "query": "led music gear close up",
       "colors": {
-        "primary": "#0737b4",
-        "secondary": "#05227e",
-        "accent": "#9da7d8",
-        "muted": "#9a4d4b",
-        "dark": "#2b2c5e",
-        "light": "#d1d1de"
+        "primary": "#f30417",
+        "secondary": "#730412",
+        "accent": "#ec79dc",
+        "muted": "#96020e",
+        "dark": "#040404",
+        "light": "#dccbde"
       }
     },
     {
-      "id": 35976084,
-      "url": "img/placeholders/35976084.jpg",
-      "photographer": "BLACK IBEX",
-      "photographer_url": "https://www.pexels.com/@blackibex",
-      "query": "neon lights interior",
+      "id": 30529406,
+      "url": "img/placeholders/30529406.jpg",
+      "photographer": "Biekir Litovchenko",
+      "photographer_url": "https://www.pexels.com/@biekir-litovchenko-2148554792",
+      "query": "led music gear close up",
       "colors": {
-        "primary": "#e5121a",
-        "secondary": "#673f06",
-        "accent": "#ec3064",
-        "muted": "#837456",
-        "dark": "#58402c",
-        "light": "#bac5b4"
+        "primary": "#6604e8",
+        "secondary": "#16086d",
+        "accent": "#b183ed",
+        "muted": "#5e5ca6",
+        "dark": "#424a74",
+        "light": "#7a94ba"
       }
     },
     {
-      "id": 31338031,
-      "url": "img/placeholders/31338031.jpg",
-      "photographer": "Pușcaș Adryan",
-      "photographer_url": "https://www.pexels.com/@pu-ca-adryan-163345030",
-      "query": "neon lights interior",
+      "id": 236095,
+      "url": "img/placeholders/236095.jpg",
+      "photographer": "Pixabay",
+      "photographer_url": "https://www.pexels.com/@pixabay",
+      "query": "led music gear close up",
       "colors": {
-        "primary": "#b04f2e",
-        "secondary": "#632e09",
-        "accent": "#e3a995",
-        "muted": "#804c3e",
-        "dark": "#604434",
-        "light": "#938f8c"
+        "primary": "#1a41ef",
+        "secondary": "#1b218b",
+        "accent": "#b3a9ec",
+        "muted": "#5f4898",
+        "dark": "#563945",
+        "light": "#bcacd4"
       }
     },
     {
-      "id": 12569413,
-      "url": "img/placeholders/12569413.jpg",
-      "photographer": "Jade Silver",
-      "photographer_url": "https://www.pexels.com/@jade-silver-256425985",
-      "query": "neon lights interior",
+      "id": 31309913,
+      "url": "img/placeholders/31309913.jpg",
+      "photographer": "Biekir Litovchenko",
+      "photographer_url": "https://www.pexels.com/@biekir-litovchenko-2148554792",
+      "query": "led music gear close up",
       "colors": {
-        "primary": "#e71836",
-        "secondary": "#570910",
-        "accent": "#dfa096",
-        "muted": "#70738c",
-        "dark": "#31482f",
-        "light": "#7f9a97"
-      }
-    },
-    {
-      "id": 3010775,
-      "url": "img/placeholders/3010775.jpg",
-      "photographer": "Nugroho  Wahyu",
-      "photographer_url": "https://www.pexels.com/@whynugrohou",
-      "query": "neon lights interior",
-      "colors": {
-        "primary": "#cc0f9a",
-        "secondary": "#86043b",
-        "accent": "#da5bd1",
-        "muted": "#54649c",
-        "dark": "#201936",
-        "light": "#7c1c75"
-      }
-    },
-    {
-      "id": 10316401,
-      "url": "img/placeholders/10316401.jpg",
-      "photographer": "Deb",
-      "photographer_url": "https://www.pexels.com/@deb-1232172",
-      "query": "neon lights interior",
-      "colors": {
-        "primary": "#0478d2",
-        "secondary": "#044977",
-        "accent": "#59a9cb",
-        "muted": "#5c819b",
-        "dark": "#347474",
-        "light": "#bcd7d9"
-      }
-    },
-    {
-      "id": 2331536,
-      "url": "img/placeholders/2331536.jpg",
-      "photographer": "Seyed Ali Hosseini",
-      "photographer_url": "https://www.pexels.com/@seyed-ali-hosseini-1226419",
-      "query": "neon dark room",
-      "colors": {
-        "primary": "#0a7ec2",
-        "secondary": "#04399b",
-        "accent": "#57b6cf",
-        "muted": "#75a35e",
-        "dark": "#4e3836",
-        "light": "#809cb9"
-      }
-    },
-    {
-      "id": 26698229,
-      "url": "img/placeholders/26698229.jpg",
-      "photographer": "Mahdi Daldawala",
-      "photographer_url": "https://www.pexels.com/@md17",
-      "query": "neon dark room",
-      "colors": {
-        "primary": "#0b53ac",
-        "secondary": "#053f8e",
-        "accent": "#82b6f7",
-        "muted": "#505c7c",
-        "dark": "#343454",
-        "light": "#8888a4"
-      }
-    },
-    {
-      "id": 18647355,
-      "url": "img/placeholders/18647355.jpg",
-      "photographer": "Yiğit  KARAALİOĞLU",
-      "photographer_url": "https://www.pexels.com/@ygtphoto",
-      "query": "neon dark room",
-      "colors": {
-        "primary": "#972f07",
-        "secondary": "#0c4c7c",
-        "accent": "#f9a180",
-        "muted": "#647c9c",
-        "dark": "#314150",
-        "light": "#849cbc"
-      }
-    },
-    {
-      "id": 2381872,
-      "url": "img/placeholders/2381872.jpg",
-      "photographer": "Damien Daye",
-      "photographer_url": "https://www.pexels.com/@damien-daye-1240738",
-      "query": "neon dark room",
-      "colors": {
-        "primary": "#3f3fbf",
-        "secondary": "#04040c",
-        "accent": "#9b9bdd",
-        "muted": "#747c84",
-        "dark": "#2c3c44",
-        "light": "#a4b4bc"
-      }
-    },
-    {
-      "id": 16308803,
-      "url": "img/placeholders/16308803.jpg",
-      "photographer": "Yiğit  KARAALİOĞLU",
-      "photographer_url": "https://www.pexels.com/@ygtphoto",
-      "query": "neon dark room",
-      "colors": {
-        "primary": "#84542a",
-        "secondary": "#683310",
-        "accent": "#deba9a",
-        "muted": "#ae876b",
-        "dark": "#2c464d",
-        "light": "#9cb4c4"
-      }
-    },
-    {
-      "id": 34014938,
-      "url": "img/placeholders/34014938.jpg",
-      "photographer": "Reza pix1",
-      "photographer_url": "https://www.pexels.com/@rezapix1",
-      "query": "neon dark room",
-      "colors": {
-        "primary": "#e39c14",
-        "secondary": "#056f80",
-        "accent": "#e49273",
-        "muted": "#5e9993",
-        "dark": "#2c514e",
-        "light": "#cbabb9"
-      }
-    },
-    {
-      "id": 12228569,
-      "url": "img/placeholders/12228569.jpg",
-      "photographer": "Lany-Jade Mondou",
-      "photographer_url": "https://www.pexels.com/@lany",
-      "query": "neon sign dark",
-      "colors": {
-        "primary": "#e61010",
-        "secondary": "#652f0d",
-        "accent": "#e4a092",
-        "muted": "#575c98",
-        "dark": "#292a4c",
-        "light": "#d0bbab"
-      }
-    },
-    {
-      "id": 6842724,
-      "url": "img/placeholders/6842724.jpg",
-      "photographer": "Oluwatoki  Sayf Al-Fattah",
-      "photographer_url": "https://www.pexels.com/@snapmantoks",
-      "query": "neon sign dark",
-      "colors": {
-        "primary": "#de2f0c",
-        "secondary": "#6c2c0c",
-        "accent": "#f89581",
-        "muted": "#977494",
-        "dark": "#442d23",
-        "light": "#d1c8a3"
+        "primary": "#0779cd",
+        "secondary": "#060e26",
+        "accent": "#4e93d2",
+        "muted": "#6f6192",
+        "dark": "#61354c",
+        "light": "#1f4e79"
       }
     }
   ]

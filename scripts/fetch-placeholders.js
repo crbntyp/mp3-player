@@ -6,21 +6,21 @@ const { Vibrant } = require('node-vibrant/node');
 
 const PEXELS_API_KEY = 'vTST9e7OjHJBkzipEIm5gFCofIiNeQ5XfRlPU8zk4yN7xLt5qRMv25Zu';
 
-// Neon lights in dark rooms — moody interior shots, neon strips,
-// glowing signage, dark club-like spaces. Reference:
-// https://www.pexels.com/search/neon%20lights%20in%20dark%20rooms/
+// Synth / mixer macro with neon LEDs — close-ups of knobs, faders,
+// LED meters, jacks. Macro framing keeps subject matter consistent;
+// no wide-angle "whole studio" shots that crowd the frame.
 const SEARCH_QUERIES = [
-    'neon lights dark room',
-    'neon lights interior',
-    'neon dark room',
-    'neon sign dark',
+    'synthesizer macro',
+    'mixer knobs',
+    'audio fader',
+    'led music gear close up',
 ];
-const PINNED_PHOTO_IDS = []; // no specific pin this round.
+const PINNED_PHOTO_IDS = [];
 
 const TARGET_COUNT  = 20;
 const IMAGE_SIZE    = 1024;
-const PER_QUERY_MAX = 6;   // round-robin so each query is represented
-const MAX_LUMINANCE = 0.55; // dark scenes with neon accents are fine
+const PER_QUERY_MAX = 5;   // 5 per query × 4 queries = 20 if all pass
+const MAX_LUMINANCE = 0.5; // tighter — macros stay dark with LED pops
 
 const OUT_DIR  = path.join(__dirname, '..', 'public', 'img', 'placeholders');
 const OUT_JSON = path.join(__dirname, '..', 'src', 'data', 'placeholders.json');
