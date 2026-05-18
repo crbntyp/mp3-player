@@ -68,10 +68,14 @@
                 <p id="track-artist" class="track-artist"></p>
             </div>
 
-            <!-- Unified player bar at the bottom of the album art:
-                 [play] [time progress time] [prev] [next]. Library button
-                 is parked for now — will return when the drawer arrives. -->
+            <!-- Unified player bar at the bottom of the album art.
+                 Order: shuffle · play · progress · prev/next · repeat · volume. -->
             <div class="player-bar">
+                <button id="shuffle-btn" class="control-btn control-btn--utility" aria-label="Toggle shuffle">
+                    <svg class="control-icon" viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M16 4l4 4-4 4v-3h-2.5l-2.1 3.1 1.4 2L14.5 17H17v-3l4 4-4 4v-3h-3.5l-2.4-3.4-2.4 3.4H3v-2h4.5l2.4-3.4-2.4-3.4H3V8h4.5l2.4 3.4L12 8h5V4z" />
+                    </svg>
+                </button>
                 <button id="play-btn" class="control-btn control-btn--play" aria-label="Play / pause">
                     <svg class="control-icon" viewBox="0 0 24 24" aria-hidden="true">
                         <path d="M7 5v14l12-7L7 5z" />
@@ -97,6 +101,34 @@
                             <path d="M16 6h2v12h-2V6zM5 6l10 6L5 18V6z" />
                         </svg>
                     </button>
+                </div>
+                <button id="repeat-btn" class="control-btn control-btn--utility" data-mode="off" aria-label="Toggle repeat">
+                    <svg class="control-icon repeat-icon-all" viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M7 7h10v3l4-4-4-4v3H5v6h2V7zm10 10H7v-3l-4 4 4 4v-3h12v-6h-2v4z" />
+                    </svg>
+                    <svg class="control-icon repeat-icon-one" viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M7 7h10v3l4-4-4-4v3H5v6h2V7zm10 10H7v-3l-4 4 4 4v-3h12v-6h-2v4zm-4-6h-1v4h-1v-3l-1.5 1.1V11l2-1.4h1.5V15z" />
+                    </svg>
+                </button>
+
+                <!-- Volume cluster: speaker icon toggles mute on click;
+                     hovering or focusing reveals a horizontal slider that
+                     pops out to the LEFT of the icon. -->
+                <div class="volume-cluster">
+                    <button id="volume-btn" class="control-btn control-btn--utility" data-level="high" aria-label="Toggle mute">
+                        <svg class="control-icon volume-icon-high" viewBox="0 0 24 24" aria-hidden="true">
+                            <path d="M3 9v6h4l5 4V5L7 9H3zm13.5 3a4.5 4.5 0 00-2.5-4v8a4.5 4.5 0 002.5-4zM14 3.2v2.1a7 7 0 010 13.4v2.1a9 9 0 000-17.6z" />
+                        </svg>
+                        <svg class="control-icon volume-icon-low" viewBox="0 0 24 24" aria-hidden="true">
+                            <path d="M3 9v6h4l5 4V5L7 9H3zm13.5 3a4.5 4.5 0 00-2.5-4v8a4.5 4.5 0 002.5-4z" />
+                        </svg>
+                        <svg class="control-icon volume-icon-mute" viewBox="0 0 24 24" aria-hidden="true">
+                            <path d="M3 9v6h4l5 4V5L7 9H3zm13.6 7L19 18.4 17.4 20 15 17.6 12.6 20 11 18.4 13.4 16 11 13.6 12.6 12 15 14.4 17.4 12 19 13.6 16.6 16z" />
+                        </svg>
+                    </button>
+                    <div class="volume-popout">
+                        <input id="volume-slider" class="volume-slider" type="range" min="0" max="1" step="0.01" aria-label="Volume" />
+                    </div>
                 </div>
             </div>
         </div>

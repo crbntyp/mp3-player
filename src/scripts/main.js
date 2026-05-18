@@ -5,6 +5,7 @@ import { MediaSession } from './media-session.js';
 import { RecordAnimator } from './record-animator.js';
 import { TrackWheel } from './track-wheel.js';
 import { EraSelector } from './era-selector.js';
+import { Persistence } from './persistence.js';
 import { formatTime, parseDuration } from './utils/time.js';
 
 // Player Application
@@ -25,6 +26,15 @@ class Player {
         this.localTracks = []; // Store local tracks separately
         this.currentSource = 'local'; // 'local' or folder ID
         this.driveSource = null; // Drive integration (set by EraSelector.init)
+
+        // Persistence — read on construction so volume/shuffle/repeat
+        // are correct from the very first track load. Last source +
+        // track index + audio position are applied later in init().
+        this.persistence = new Persistence();
+        this.audio.volume = this.persistence.state.muted ? 0 : this.persistence.state.volume;
+        this.shuffle = this.persistence.state.shuffle;
+        this.repeat  = this.persistence.state.repeat;           // 'off' | 'one' | 'all'
+        this.shuffleOrder = null;                                // lazily computed when shuffle is on
 
         // Sub-controllers — each owns its slice of state and DOM. The Player
         // orchestrates and holds shared concerns (tracks list, audio element).
@@ -60,11 +70,55 @@ class Player {
 
         const hashLoaded = await this.hashRouter.load();
 
+        // No URL hash → fall back to persisted state. If the persisted
+        // source is a Drive folder, switch to it first; otherwise stay
+        // on local. Then resume the persisted track index + position.
         if (!hashLoaded && this.tracks.length > 0) {
-            this.loadTrack(0);
-            // Start preloading adjacent tracks
+            const restored = await this.#restoreFromPersistence();
+            if (!restored) {
+                this.loadTrack(0);
+            }
             this.preloadAdjacentTracks();
         }
+
+        // Apply persisted UI state (volume slider, shuffle/repeat icons).
+        this.updateVolumeUI();
+        this.updateModeButtons();
+
+        // Flush the latest position on tab close so refresh resumes near
+        // where the user actually was, not whichever timeupdate tick the
+        // debouncer last persisted.
+        window.addEventListener('pagehide', () => this.persistence.flush());
+    }
+
+    async #restoreFromPersistence() {
+        const { source, trackIndex, audioPosition } = this.persistence.state;
+
+        // Switch to the persisted Drive folder if applicable. switchToDrive
+        // lives on the era selector — call it directly rather than
+        // populating the menu UI.
+        if (source && source !== 'local' && this.eraSelector?.switchToDrive) {
+            await this.eraSelector.switchToDrive(source);
+        }
+
+        if (trackIndex >= 0 && trackIndex < this.tracks.length) {
+            this.loadTrack(trackIndex, /* autoplay */ false);
+
+            if (audioPosition > 0) {
+                // Audio.currentTime is only writable after enough data is
+                // loaded — seekable ranges are empty before then. Wait
+                // for one canplay event, then jump.
+                const onCanPlay = () => {
+                    try {
+                        this.audio.currentTime = audioPosition;
+                    } catch (_) { /* range not seekable yet — give up */ }
+                    this.audio.removeEventListener('canplay', onCanPlay);
+                };
+                this.audio.addEventListener('canplay', onCanPlay);
+            }
+            return true;
+        }
+        return false;
     }
 
     showLoadingState(message) {
@@ -230,11 +284,26 @@ class Player {
                 this.updateProgress(progress);
                 this.updateTimeDisplay();
                 this.mediaSession.updatePosition(duration);
+                if (this.audio.currentTime > 0) {
+                    this.persistence.save({ audioPosition: this.audio.currentTime });
+                }
             }
         });
 
-        // Auto-advance to next track
+        // End-of-track behaviour respects repeat mode. 'one' replays the
+        // current track; 'off' stops at the final track of the queue;
+        // anything else advances (shuffle reshuffles when it wraps).
         this.audio.addEventListener('ended', () => {
+            if (this.repeat === 'one') {
+                this.audio.currentTime = 0;
+                this.audio.play();
+                return;
+            }
+            const atEnd = this.peekNextIndex() === null;
+            if (atEnd && this.repeat === 'off') {
+                this.pause();
+                return;
+            }
             this.nextTrack();
         });
 
@@ -308,6 +377,7 @@ class Player {
         if (index < 0 || index >= this.tracks.length) return;
 
         this.currentTrackIndex = index;
+        this.persistence.save({ trackIndex: index, source: this.currentSource });
         const track = this.tracks[index];
 
         console.log(`🎵 Loading track: ${track.title}`);
@@ -596,9 +666,43 @@ class Player {
         }
     }
 
+    // Position in the queue we'd land on next, honouring shuffle but not
+    // repeat. Returns null at the end of the queue (caller decides what
+    // to do based on repeat mode).
+    peekNextIndex() {
+        if (this.tracks.length === 0) return null;
+        if (this.shuffle) {
+            this.#ensureShuffleOrder();
+            const pos = this.shuffleOrder.indexOf(this.currentTrackIndex);
+            const nextPos = pos + 1;
+            if (nextPos >= this.shuffleOrder.length) {
+                return this.repeat === 'all' ? this.shuffleOrder[0] : null;
+            }
+            return this.shuffleOrder[nextPos];
+        }
+        const next = this.currentTrackIndex + 1;
+        if (next >= this.tracks.length) {
+            return this.repeat === 'all' ? 0 : null;
+        }
+        return next;
+    }
+
+    peekPrevIndex() {
+        if (this.tracks.length === 0) return null;
+        if (this.shuffle) {
+            this.#ensureShuffleOrder();
+            const pos = this.shuffleOrder.indexOf(this.currentTrackIndex);
+            const prevPos = pos - 1;
+            if (prevPos < 0) return this.shuffleOrder[this.shuffleOrder.length - 1];
+            return this.shuffleOrder[prevPos];
+        }
+        return (this.currentTrackIndex - 1 + this.tracks.length) % this.tracks.length;
+    }
+
     async nextTrack() {
         const wasPlaying = this.isPlaying;
-        const nextIndex = (this.currentTrackIndex + 1) % this.tracks.length;
+        const nextIndex = this.peekNextIndex();
+        if (nextIndex === null) return; // end of queue, repeat off
 
         if (wasPlaying && this.recordAnimator.visible) {
             await this.recordAnimator.slideIn();
@@ -611,7 +715,8 @@ class Player {
 
     async previousTrack() {
         const wasPlaying = this.isPlaying;
-        const prevIndex = (this.currentTrackIndex - 1 + this.tracks.length) % this.tracks.length;
+        const prevIndex = this.peekPrevIndex();
+        if (prevIndex === null) return;
 
         if (wasPlaying && this.recordAnimator.visible) {
             await this.recordAnimator.slideIn();
@@ -619,6 +724,83 @@ class Player {
             await this.recordAnimator.slideOut();
         } else {
             this.loadTrack(prevIndex, wasPlaying);
+        }
+    }
+
+    // Fisher–Yates shuffle of indices [0..tracks.length-1]. Re-computed
+    // when shuffle toggles on or the source changes; persists in memory
+    // only — refresh starts a new shuffle.
+    #ensureShuffleOrder() {
+        if (this.shuffleOrder && this.shuffleOrder.length === this.tracks.length) return;
+        const order = this.tracks.map((_, i) => i);
+        for (let i = order.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [order[i], order[j]] = [order[j], order[i]];
+        }
+        // Pin the current track to position 0 so toggling shuffle on
+        // mid-track doesn't immediately re-shuffle past where you are.
+        const here = order.indexOf(this.currentTrackIndex);
+        if (here > 0) [order[0], order[here]] = [order[here], order[0]];
+        this.shuffleOrder = order;
+    }
+
+    toggleShuffle() {
+        this.shuffle = !this.shuffle;
+        this.shuffleOrder = null; // recompute on next read
+        this.persistence.save({ shuffle: this.shuffle });
+        this.updateModeButtons();
+    }
+
+    // Repeat cycles off → all → one → off. 'all' is the more useful
+    // default state on first toggle (loop the queue), 'one' is the
+    // niche state for putting a track on loop.
+    toggleRepeat() {
+        const order = ['off', 'all', 'one'];
+        this.repeat = order[(order.indexOf(this.repeat) + 1) % order.length];
+        this.persistence.save({ repeat: this.repeat });
+        this.updateModeButtons();
+    }
+
+    // Reflect current shuffle/repeat state in their toolbar icons.
+    updateModeButtons() {
+        const shuffleBtn = document.getElementById('shuffle-btn');
+        if (shuffleBtn) shuffleBtn.classList.toggle('control-btn--active', this.shuffle);
+
+        const repeatBtn = document.getElementById('repeat-btn');
+        if (repeatBtn) {
+            repeatBtn.classList.toggle('control-btn--active', this.repeat !== 'off');
+            repeatBtn.dataset.mode = this.repeat;
+        }
+    }
+
+    setVolume(value, opts = {}) {
+        const v = Math.max(0, Math.min(1, value));
+        this.audio.muted = false;
+        this.audio.volume = v;
+        if (!opts.skipPersist) {
+            this.persistence.save({ volume: v, muted: false });
+        }
+        this.updateVolumeUI();
+    }
+
+    toggleMute() {
+        const muted = !this.audio.muted;
+        this.audio.muted = muted;
+        this.persistence.save({ muted });
+        this.updateVolumeUI();
+    }
+
+    updateVolumeUI() {
+        const slider = document.getElementById('volume-slider');
+        if (slider && document.activeElement !== slider) {
+            slider.value = String(this.audio.muted ? 0 : this.audio.volume);
+        }
+        const speakerBtn = document.getElementById('volume-btn');
+        if (speakerBtn) {
+            const level = this.audio.muted || this.audio.volume === 0
+                ? 'mute'
+                : this.audio.volume < 0.5 ? 'low' : 'high';
+            speakerBtn.dataset.level = level;
         }
     }
 
@@ -705,16 +887,21 @@ class Player {
             nextBtn.addEventListener('click', () => this.nextTrack());
         }
 
-        // Library button
-        const libraryBtn = document.getElementById('library-btn');
-        if (libraryBtn) {
-            libraryBtn.addEventListener('click', () => this.trackWheel.toggle());
-        }
+        // Library button (parked — removed from HTML)
+        document.getElementById('library-btn')?.addEventListener('click', () => this.trackWheel.toggle());
 
-        // Wheel close button
-        const wheelClose = document.getElementById('wheel-close');
-        if (wheelClose) {
-            wheelClose.addEventListener('click', () => this.trackWheel.close());
+        // Wheel close button (parked — removed from HTML)
+        document.getElementById('wheel-close')?.addEventListener('click', () => this.trackWheel.close());
+
+        // Shuffle + repeat toggles.
+        document.getElementById('shuffle-btn')?.addEventListener('click', () => this.toggleShuffle());
+        document.getElementById('repeat-btn')?.addEventListener('click', () => this.toggleRepeat());
+
+        // Volume — speaker button toggles mute; slider sets volume live.
+        document.getElementById('volume-btn')?.addEventListener('click', () => this.toggleMute());
+        const volumeSlider = document.getElementById('volume-slider');
+        if (volumeSlider) {
+            volumeSlider.addEventListener('input', (e) => this.setVolume(parseFloat(e.target.value)));
         }
 
         // Progress bar click and drag to seek
@@ -762,16 +949,42 @@ class Player {
             });
         }
 
-        // Keyboard controls
+        // Keyboard controls. Ignored when focus is in an input/slider so
+        // dragging the volume slider with the keyboard still works.
         document.addEventListener('keydown', (e) => {
-            if (e.key === 'ArrowRight') this.nextTrack();
-            if (e.key === 'ArrowLeft') this.previousTrack();
-            if (e.key === ' ') {
-                e.preventDefault();
-                this.togglePlayPause();
-            }
-            if (e.key === 'Escape') {
-                this.trackWheel.close();
+            const target = e.target;
+            if (target && (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA')) return;
+
+            switch (e.key) {
+                case 'ArrowRight': this.nextTrack(); break;
+                case 'ArrowLeft':  this.previousTrack(); break;
+                case ' ':
+                    e.preventDefault();
+                    this.togglePlayPause();
+                    break;
+                case 'ArrowUp':
+                    e.preventDefault();
+                    this.setVolume(this.audio.volume + 0.05);
+                    break;
+                case 'ArrowDown':
+                    e.preventDefault();
+                    this.setVolume(this.audio.volume - 0.05);
+                    break;
+                case 'm':
+                case 'M':
+                    this.toggleMute();
+                    break;
+                case 's':
+                case 'S':
+                    this.toggleShuffle();
+                    break;
+                case 'r':
+                case 'R':
+                    this.toggleRepeat();
+                    break;
+                case 'Escape':
+                    this.trackWheel.close();
+                    break;
             }
         });
     }

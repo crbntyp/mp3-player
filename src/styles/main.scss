@@ -514,6 +514,13 @@ body {
     .control-icon { width: 18px; height: 18px; }
   }
 
+  // Active state for toggles (shuffle on, repeat on). Brighter than
+  // the default utility opacity + accent-coloured for clarity.
+  &--active {
+    opacity: 1;
+    color: var(--color-accent);
+  }
+
   i { display: block; }
 
   // Inline SVG icons — sized via the SVG itself, filled with currentColor
@@ -523,6 +530,89 @@ body {
     height: 22px;
     display: block;
     fill: currentColor;
+  }
+}
+
+// Repeat: 3 modes (off, all, one). Show the right glyph for each by
+// hiding the other two via the data-mode attribute on the button.
+#repeat-btn {
+  .repeat-icon-one { display: none; }
+  &[data-mode="one"] {
+    .repeat-icon-all { display: none; }
+    .repeat-icon-one { display: block; }
+  }
+}
+
+// Volume cluster: speaker icon swaps glyph by .data-level state.
+// Hovering or focusing the cluster reveals the slider popout.
+#volume-btn {
+  .volume-icon-low,
+  .volume-icon-mute { display: none; }
+  &[data-level="low"]  {
+    .volume-icon-high { display: none; }
+    .volume-icon-low  { display: block; }
+  }
+  &[data-level="mute"] {
+    .volume-icon-high { display: none; }
+    .volume-icon-mute { display: block; }
+  }
+}
+
+.volume-cluster {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+
+.volume-popout {
+  position: absolute;
+  right: 100%;
+  top: 50%;
+  transform: translateY(-50%) translateX(8px);
+  margin-right: 8px;
+  padding: 8px 12px;
+  background: rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(12px);
+  border-radius: 9999px;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.18s ease, transform 0.18s ease, visibility 0.18s;
+  z-index: 4;
+
+  .volume-cluster:hover &,
+  .volume-cluster:focus-within & {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(-50%) translateX(0);
+  }
+}
+
+.volume-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100px;
+  height: 3px;
+  background: rgba(255, 255, 255, 0.25);
+  border-radius: 9999px;
+  outline: none;
+  cursor: pointer;
+
+  &::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: var(--color-accent);
+    border: none;
+    cursor: grab;
+  }
+  &::-moz-range-thumb {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: var(--color-accent);
+    border: none;
+    cursor: grab;
   }
 }
 
