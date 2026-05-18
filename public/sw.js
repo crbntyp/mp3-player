@@ -3,7 +3,7 @@
 // Bumped to v3 alongside Phase 2 — the Drive client got rewritten to talk
 // to proxy.php?action=list instead of calling Google directly, and the
 // previous bundle is stuck in users' caches without a version bump.
-const CACHE_NAME = 'plyr-v5';
+const CACHE_NAME = 'plyr-v6';
 const ASSETS_TO_CACHE = [
   '/plyr/',
   '/plyr/index.html',

@@ -3,7 +3,6 @@ import { AudioVisualizer } from './visualizer.js';
 import { HashRouter } from './hash-router.js';
 import { MediaSession } from './media-session.js';
 import { RecordAnimator } from './record-animator.js';
-import { TrackWheel } from './track-wheel.js';
 import { EraSelector } from './era-selector.js';
 import { Persistence } from './persistence.js';
 import { formatTime, parseDuration } from './utils/time.js';
@@ -41,7 +40,6 @@ class Player {
         this.recordAnimator = new RecordAnimator(this);
         this.hashRouter = new HashRouter(this);
         this.mediaSession = new MediaSession(this);
-        this.trackWheel = new TrackWheel(this);
         this.eraSelector = new EraSelector(this);
 
         this.init();
@@ -894,12 +892,6 @@ class Player {
             nextBtn.addEventListener('click', () => this.nextTrack());
         }
 
-        // Library button (parked — removed from HTML)
-        document.getElementById('library-btn')?.addEventListener('click', () => this.trackWheel.toggle());
-
-        // Wheel close button (parked — removed from HTML)
-        document.getElementById('wheel-close')?.addEventListener('click', () => this.trackWheel.close());
-
         // Shuffle + repeat toggles.
         document.getElementById('shuffle-btn')?.addEventListener('click', () => this.toggleShuffle());
         document.getElementById('repeat-btn')?.addEventListener('click', () => this.toggleRepeat());
@@ -990,7 +982,7 @@ class Player {
                     this.toggleRepeat();
                     break;
                 case 'Escape':
-                    this.trackWheel.close();
+                    document.getElementById('era-menu')?.classList.remove('open');
                     break;
             }
         });

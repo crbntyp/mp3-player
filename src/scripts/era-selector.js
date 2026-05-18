@@ -125,7 +125,6 @@ export class EraSelector {
         this.player.currentSource = 'local';
         this.player.pause();
         this.player.tracks = [...this.player.localTracks];
-        this.player.trackWheel.markDirty();
 
         if (this.player.tracks.length > 0) {
             this.player.loadTrack(startIndex, autoplay);
@@ -148,7 +147,6 @@ export class EraSelector {
             }
             this.player.currentSource = folderId;
             this.player.tracks = driveTracks;
-            this.player.trackWheel.markDirty();
             this.player.loadTrack(startIndex, autoplay);
             this.player.showToast(`${driveTracks.length} songs loaded`);
         } catch (error) {
