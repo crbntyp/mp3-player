@@ -6,21 +6,26 @@ const { Vibrant } = require('node-vibrant/node');
 
 const PEXELS_API_KEY = 'vTST9e7OjHJBkzipEIm5gFCofIiNeQ5XfRlPU8zk4yN7xLt5qRMv25Zu';
 
-// Synth / mixer macro with neon LEDs — close-ups of knobs, faders,
-// LED meters, jacks. Macro framing keeps subject matter consistent;
-// no wide-angle "whole studio" shots that crowd the frame.
+// Music production studio aesthetic — backlit drum-pad controllers,
+// synth keys, dark studio gear with cool ambient lighting.
+// Reference anchor: photo 11317896 (Native Instruments Maschine with
+// glowing pads in a sound-treated studio).
+//
+// Queries deliberately avoid "mixer" / "fader" / generic "music" —
+// Pexels conflates "mixer" with kitchen mixers (yes, popcorn) and
+// generic music returns concerts, sheet music, headphones.
 const SEARCH_QUERIES = [
-    'synthesizer macro',
-    'mixer knobs',
-    'audio fader',
-    'led music gear close up',
+    'drum machine',
+    'synthesizer studio',
+    'midi keyboard dark',
+    'music production studio',
 ];
-const PINNED_PHOTO_IDS = [];
+const PINNED_PHOTO_IDS = [11317896]; // the user's reference shot.
 
 const TARGET_COUNT  = 40;
 const IMAGE_SIZE    = 1024;
-const PER_QUERY_MAX = 10;  // 10 per query × 4 queries = 40 if all pass
-const MAX_LUMINANCE = 0.5; // tighter — macros stay dark with LED pops
+const PER_QUERY_MAX = 10;
+const MAX_LUMINANCE = 0.4; // tighter still — drop bright daytime shots
 
 const OUT_DIR  = path.join(__dirname, '..', 'public', 'img', 'placeholders');
 const OUT_JSON = path.join(__dirname, '..', 'src', 'data', 'placeholders.json');
