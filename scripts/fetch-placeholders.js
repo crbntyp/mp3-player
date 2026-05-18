@@ -17,9 +17,9 @@ const SEARCH_QUERIES = [
 ];
 const PINNED_PHOTO_IDS = [];
 
-const TARGET_COUNT  = 20;
+const TARGET_COUNT  = 40;
 const IMAGE_SIZE    = 1024;
-const PER_QUERY_MAX = 5;   // 5 per query × 4 queries = 20 if all pass
+const PER_QUERY_MAX = 10;  // 10 per query × 4 queries = 40 if all pass
 const MAX_LUMINANCE = 0.5; // tighter — macros stay dark with LED pops
 
 const OUT_DIR  = path.join(__dirname, '..', 'public', 'img', 'placeholders');
