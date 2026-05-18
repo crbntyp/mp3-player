@@ -564,16 +564,22 @@ body {
   align-items: center;
 }
 
+// Vertical-looking volume slider, rendered as a horizontal range input
+// rotated -90deg. Going the "appearance: slider-vertical" route makes
+// Chromium ignore our custom track/thumb styles entirely (it falls back
+// to the OS default), so we keep the input horizontal and rotate it
+// after styling — every browser respects custom horizontal range CSS.
 .volume-popout {
   position: absolute;
-  right: 100%;
-  top: 50%;
-  transform: translateY(-50%) translateX(8px);
-  margin-right: 8px;
-  padding: 8px 12px;
-  background: rgba(0, 0, 0, 0.85);
-  backdrop-filter: blur(12px);
-  border-radius: 9999px;
+  bottom: 100%;
+  left: 50%;
+  margin-bottom: 10px;
+  width: 16px;
+  height: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transform: translateX(-50%) translateY(-4px);
   opacity: 0;
   visibility: hidden;
   transition: opacity 0.18s ease, transform 0.18s ease, visibility 0.18s;
@@ -583,35 +589,49 @@ body {
   .volume-cluster:focus-within & {
     opacity: 1;
     visibility: visible;
-    transform: translateY(-50%) translateX(0);
+    transform: translateX(-50%) translateY(0);
   }
 }
 
 .volume-slider {
   -webkit-appearance: none;
   appearance: none;
-  width: 100px;
-  height: 3px;
-  background: rgba(255, 255, 255, 0.25);
+  width: 100px;          // logical width — visual height after rotation
+  height: 4px;
+  // Two-stop fill: solid white below the thumb, dim white above. After
+  // the -90deg rotate, "to right" becomes "to top", so bottom = quiet,
+  // top = loud. --volume is updated in JS on each value change.
+  --volume: 100%;
+  background: linear-gradient(
+    to right,
+    #ffffff 0%,
+    #ffffff var(--volume),
+    rgba(255, 255, 255, 0.25) var(--volume),
+    rgba(255, 255, 255, 0.25) 100%
+  );
   border-radius: 9999px;
   outline: none;
   cursor: pointer;
+  transform: rotate(-90deg);
+  filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.6));
 
   &::-webkit-slider-thumb {
     -webkit-appearance: none;
     width: 12px;
     height: 12px;
     border-radius: 50%;
-    background: var(--color-accent);
+    background: #ffffff;
     border: none;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.5);
     cursor: grab;
   }
   &::-moz-range-thumb {
     width: 12px;
     height: 12px;
     border-radius: 50%;
-    background: var(--color-accent);
+    background: #ffffff;
     border: none;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.5);
     cursor: grab;
   }
 }
@@ -815,6 +835,19 @@ body {
   z-index: 50;
 }
 
+// Utility cluster — bottom-right counterpart to .era-selector.
+// Houses shuffle, repeat, and the volume button (which pops out its
+// slider to the left).
+.utility-cluster {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
 // The label is updated by JS to reflect the current source but is
 // visually hidden — assistive tech still announces it via aria-label
 // on the parent button. Kept off-screen with the standard a11y idiom.
@@ -841,7 +874,7 @@ body {
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 12px;
   padding: 8px;
-  min-width: 200px;
+  min-width: 240px;
   opacity: 0;
   visibility: hidden;
   transform: translateY(10px);
@@ -853,6 +886,138 @@ body {
     visibility: visible;
     transform: translateY(0);
   }
+}
+
+// Active era option (current playback source) gets the accent treatment.
+.era-option.active {
+  color: var(--color-accent);
+}
+
+// State B — track list inside the era popup.
+.era-tracks-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 4px 8px;
+}
+
+.era-back-btn,
+.era-refresh-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  background: transparent;
+  border: none;
+  color: rgba(255, 255, 255, 0.85);
+  cursor: pointer;
+  border-radius: 6px;
+  transition: background 0.15s ease;
+
+  .control-icon { width: 18px; height: 18px; fill: currentColor; }
+
+  &:hover { background: rgba(255, 255, 255, 0.1); color: #fff; }
+}
+
+.era-tracks-title {
+  flex: 1;
+  font-family: "Mulish", Arial, sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  color: #fff;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.era-tracks-search {
+  width: 100%;
+  padding: 8px 12px;
+  margin-bottom: 8px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  color: #fff;
+  font-family: "Mulish", Arial, sans-serif;
+  font-size: 13px;
+  outline: none;
+
+  &::placeholder { color: rgba(255, 255, 255, 0.4); }
+  &:focus { border-color: var(--color-accent); }
+}
+
+// Scrollable list — caps the popup height so 60+ Drive tracks don't
+// run off the top of the viewport.
+.era-tracks-list {
+  display: flex;
+  flex-direction: column;
+  max-height: min(60vh, 480px);
+  overflow-y: auto;
+  // Subtle inner shadow to hint scrollable when content overflows.
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
+
+  &::-webkit-scrollbar { width: 6px; }
+  &::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 3px;
+  }
+}
+
+.era-track-item {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  text-align: left;
+  padding: 8px 12px;
+  background: transparent;
+  border: none;
+  border-radius: 6px;
+  color: #fff;
+  cursor: pointer;
+  font-family: "Mulish", Arial, sans-serif;
+  transition: background 0.12s ease;
+
+  &:hover { background: rgba(255, 255, 255, 0.08); }
+
+  &--current {
+    background: rgba(255, 255, 255, 0.1);
+    .era-track-item__title { color: var(--color-accent); }
+  }
+
+  &__title {
+    font-size: 13px;
+    font-weight: 600;
+    line-height: 1.3;
+    width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &__version {
+    font-weight: 400;
+    opacity: 0.6;
+    font-size: 0.85em;
+  }
+
+  &__artist {
+    font-size: 11px;
+    color: rgba(255, 255, 255, 0.6);
+    margin-top: 2px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    width: 100%;
+  }
+}
+
+.era-tracks-empty {
+  padding: 24px 12px;
+  text-align: center;
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 13px;
 }
 
 .era-menu-title {

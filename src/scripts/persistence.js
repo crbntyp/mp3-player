@@ -5,7 +5,10 @@
 // timeupdate tick — and there's an explicit flush() the Player can call
 // on pagehide/unload to capture the final audio position.
 
-const STORAGE_KEY = 'plyr:state:v1';
+// Bumped to v2 alongside the repeat-default fix — older keys had stale
+// repeat/shuffle state from feature-testing that re-enabled itself on
+// every visit. v2 starts everyone fresh.
+const STORAGE_KEY = 'plyr:state:v2';
 const DEBOUNCE_MS = 500;
 
 const DEFAULTS = Object.freeze({

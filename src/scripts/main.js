@@ -792,8 +792,15 @@ class Player {
 
     updateVolumeUI() {
         const slider = document.getElementById('volume-slider');
-        if (slider && document.activeElement !== slider) {
-            slider.value = String(this.audio.muted ? 0 : this.audio.volume);
+        const effectiveVolume = this.audio.muted ? 0 : this.audio.volume;
+        if (slider) {
+            if (document.activeElement !== slider) {
+                slider.value = String(effectiveVolume);
+            }
+            // Drive the fill gradient via a CSS variable — the slider's
+            // background uses --volume as the stop position so the
+            // primary/accent fill matches the thumb live.
+            slider.style.setProperty('--volume', `${effectiveVolume * 100}%`);
         }
         const speakerBtn = document.getElementById('volume-btn');
         if (speakerBtn) {
