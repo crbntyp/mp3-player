@@ -74,21 +74,49 @@ function normalizeSeparators(s) {
         .trim();
 }
 
-// Pull out the first parenthesised or bracketed phrase that looks like
-// a mix label. Returns { stripped, version } — caller decides whether to
-// hoist version into a separate field or fold it back into the title.
+// Sentence-case for the mix-label sub-line: only the first word is
+// capitalised, the rest go lowercase. Acronyms (DJ, FM, …) stay upper.
+function sentenceCase(input) {
+    if (!input) return '';
+    const trimmed = input.trim();
+    if (!trimmed) return '';
+    const pieces = trimmed.split(/(\s+|-)/);
+    const wordIdxs = pieces
+        .map((p, i) => (/^[A-Za-z0-9]+$/.test(p) ? i : -1))
+        .filter((i) => i !== -1);
+    return pieces
+        .map((p, i) => {
+            if (!/^[A-Za-z0-9]+$/.test(p)) return p;
+            const up = p.toUpperCase();
+            if (ACRONYMS.has(up)) return up;
+            const isFirst = i === wordIdxs[0];
+            return isFirst
+                ? p.charAt(0).toUpperCase() + p.slice(1).toLowerCase()
+                : p.toLowerCase();
+        })
+        .join('');
+}
+
+// Pull mix labels out of the title. Strips ALL parenthetical/bracketed
+// phrases that match MIX_KEYWORDS — so files like "Song (Club Mix)
+// (Club Mix).mp3" don't leave the second one stuck in the title. The
+// first match becomes the `version` field; later ones are discarded.
 function extractVersion(s) {
-    // Try parens first, then square brackets.
     const groups = [...s.matchAll(/[\(\[]([^()\[\]]+)[\)\]]/g)];
+    let version = null;
+    let stripped = s;
+
     for (const m of groups) {
         if (MIX_KEYWORDS.test(m[1])) {
-            const stripped = (s.slice(0, m.index) + s.slice(m.index + m[0].length))
-                .replace(/\s+/g, ' ')
-                .trim();
-            return { stripped, version: titleCase(normalizeSeparators(m[1])) };
+            if (version === null) version = m[1];
+            stripped = stripped.replace(m[0], '');
         }
     }
-    return { stripped: s.trim(), version: null };
+
+    return {
+        stripped: stripped.replace(/\s+/g, ' ').trim(),
+        version: version ? sentenceCase(normalizeSeparators(version)) : null,
+    };
 }
 
 export function formatTrackName(filename) {

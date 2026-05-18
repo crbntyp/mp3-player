@@ -431,10 +431,9 @@ body {
     font-size: 0.4em;          // ~13px desktop / ~9px mobile — sits under the title
     font-weight: 300;
     opacity: 0.65;
-    letter-spacing: 0.04em;
+    letter-spacing: 0.02em;
     margin-top: 6px;
     line-height: 1.2;
-    text-transform: uppercase;
   }
 }
 
@@ -474,6 +473,14 @@ body {
   align-items: center;
   gap: 10px;
   min-width: 0; // allow flex shrink so timestamps don't push siblings off
+}
+
+// Skip cluster — prev + next belong together visually, tighter than
+// the outer .player-bar gap.
+.player-bar-skip {
+  display: flex;
+  align-items: center;
+  gap: 2px;
 }
 
 // Legacy class kept in case anything still styles against it.
