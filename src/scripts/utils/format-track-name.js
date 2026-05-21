@@ -27,7 +27,7 @@ const ACRONYMS = new Set([
 
 // Mix-version keywords that hint a phrase should be promoted into the
 // `version` field if it appears at the end of the title.
-const MIX_KEYWORDS = /(mix|remix|edit|version|dub|extended|original|club|radio|instrumental|acapella|bootleg|rework)/i;
+const MIX_KEYWORDS = /(mix|remix|edit|version|dub|extended|original|club|radio|instrumental|acapella|bootleg|rework|reconstruction|reconstructed|refix|recut|rebuild|reinterpretation|reinterpreted|vip|flip|treatment|mashup|mash|live|session|rerub)/i;
 
 const AUDIO_EXT = /\.(mp3|wav|flac|ogg|opus|m4a|aac|webm)$/i;
 const TRACK_NUM_PREFIX = /^\s*\d{1,3}\s*[-_.\s]\s*/;
@@ -97,24 +97,41 @@ function sentenceCase(input) {
         .join('');
 }
 
-// Pull mix labels out of the title. Strips ALL parenthetical/bracketed
-// phrases that match MIX_KEYWORDS — so files like "Song (Club Mix)
-// (Club Mix).mp3" don't leave the second one stuck in the title. The
-// first match becomes the `version` field; later ones are discarded.
+// Phrases that ARE meaningful content even when sat alongside a mix label —
+// usually featured-artist credits. We never strip these.
+const CREDIT_RE = /\b(feat|ft|featuring|with|prod|produced|presents|pres)\b\.?/i;
+
+// Pull mix labels out of the title. Once a mix-keyword parenthetical is
+// found, ALL other parentheticals are stripped too (except featured-artist
+// credits) — that's how we collapse jank like
+// "Deep (I M Falling Deeper) (Ariel Vocal Mix).mp3" down to a clean
+// title + version, rather than dragging the stray paren into the title.
 function extractVersion(s) {
     const groups = [...s.matchAll(/[\(\[]([^()\[\]]+)[\)\]]/g)];
     let version = null;
     let stripped = s;
+    const hasMix = groups.some((m) => MIX_KEYWORDS.test(m[1]));
 
     for (const m of groups) {
-        if (MIX_KEYWORDS.test(m[1])) {
-            if (version === null) version = m[1];
+        const inner = m[1];
+        if (MIX_KEYWORDS.test(inner)) {
+            if (version === null) version = inner;
+            stripped = stripped.replace(m[0], '');
+        } else if (hasMix && !CREDIT_RE.test(inner)) {
+            // Secondary paren with no mix term and no artist credit — drop it.
             stripped = stripped.replace(m[0], '');
         }
     }
 
+    // Tidy whitespace AND trailing connector punctuation left behind after
+    // stripping (e.g. "Foo (bar) - " → "Foo").
+    stripped = stripped
+        .replace(/\s+/g, ' ')
+        .replace(/\s*[-–—]\s*$/, '')
+        .trim();
+
     return {
-        stripped: stripped.replace(/\s+/g, ' ').trim(),
+        stripped,
         version: version ? sentenceCase(normalizeSeparators(version)) : null,
     };
 }

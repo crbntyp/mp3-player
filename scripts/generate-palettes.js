@@ -1,29 +1,31 @@
-const { Vibrant } = require('node-vibrant/node');
 const fs = require('fs');
 const path = require('path');
 
 const MUSIC_DIR = path.join(__dirname, '../src/music');
-const IMG_DIR = path.join(__dirname, '../src/img');
 const OUTPUT_FILE = path.join(__dirname, '../src/data/tracks.json');
 
-async function generatePalettes() {
-  console.log('🎵 Generating tracks from MP3 metadata and album art...\n');
+// Pexels neon placeholders carry the artwork — embedded MP3 art is ignored
+// by the player. Tracks ship with a default palette; the runtime swaps in
+// the placeholder's own colour palette when a track is loaded.
+const DEFAULT_COLORS = {
+  primary: '#6366f1',
+  secondary: '#4f46e5',
+  accent: '#a78bfa',
+  muted: '#94a3b8',
+  dark: '#1e293b',
+  light: '#e2e8f0',
+};
 
-  // Dynamically import music-metadata (ES module)
+async function generateTracks() {
+  console.log('🎵 Generating tracks from MP3 metadata...\n');
+
   const { parseFile } = await import('music-metadata');
 
-  // Ensure output directory exists
   const dataDir = path.dirname(OUTPUT_FILE);
   if (!fs.existsSync(dataDir)) {
     fs.mkdirSync(dataDir, { recursive: true });
   }
 
-  // Ensure img directory exists for extracted album art
-  if (!fs.existsSync(IMG_DIR)) {
-    fs.mkdirSync(IMG_DIR, { recursive: true });
-  }
-
-  // Get all music files
   if (!fs.existsSync(MUSIC_DIR)) {
     console.log('❌ No music directory found at src/music/');
     console.log('💡 Create src/music/ and add MP3 files, then run this script again!');
@@ -50,70 +52,13 @@ async function generatePalettes() {
     console.log(`Processing: ${filename}`);
 
     try {
-      // Parse ID3 tags
       const metadata = await parseFile(musicPath);
       const { common, format } = metadata;
 
-      // Extract album art
-      let imagePath = null;
-      let imageFilename = null;
-
-      if (common.picture && common.picture.length > 0) {
-        const picture = common.picture[0];
-        const ext = picture.format.split('/')[1] || 'jpg';
-        // Sanitize filename: replace spaces and special characters
-        const sanitizedName = path.parse(filename).name
-          .replace(/\s+/g, '_')           // Replace spaces with underscores
-          .replace(/[()[\]{}]/g, '')      // Remove parentheses and brackets
-          .replace(/[&]/g, 'and');        // Replace & with 'and'
-        imageFilename = `${sanitizedName}.${ext}`;
-        imagePath = path.join(IMG_DIR, imageFilename);
-
-        // Reference will be .jpg in tracks.json since we optimize to JPG
-        imageFilename = `${sanitizedName}.jpg`;
-
-        // Write album art to img directory
-        fs.writeFileSync(imagePath, picture.data);
-        console.log(`  ✓ Extracted album art: ${imageFilename}`);
-      } else {
-        console.log(`  ⚠️  No album art found in MP3 - will use placeholder`);
-      }
-
-      // Generate color palette from album art
-      let colors = {
-        primary: '#6366f1',
-        secondary: '#4f46e5',
-        accent: '#a78bfa',
-        muted: '#94a3b8',
-        dark: '#1e293b',
-        light: '#e2e8f0'
-      };
-
-      if (imagePath && fs.existsSync(imagePath)) {
-        try {
-          const palette = await Vibrant.from(imagePath).getPalette();
-          colors = {
-            primary: palette.Vibrant?.hex || colors.primary,
-            secondary: palette.DarkVibrant?.hex || colors.secondary,
-            accent: palette.LightVibrant?.hex || colors.accent,
-            muted: palette.Muted?.hex || colors.muted,
-            dark: palette.DarkMuted?.hex || colors.dark,
-            light: palette.LightMuted?.hex || colors.light
-          };
-          console.log(`  ✓ Generated color palette`);
-          console.log(`    Primary: ${colors.primary}`);
-        } catch (error) {
-          console.log(`  ⚠️  Could not generate palette: ${error.message}`);
-        }
-      }
-
-      // Format duration
       const duration = format.duration
         ? `${Math.floor(format.duration / 60)}:${String(Math.floor(format.duration % 60)).padStart(2, '0')}`
         : '0:00';
 
-      // Create track object
-      // Replace audio file extension with .opus for optimized playback
       const audioFilename = filename.replace(/\.(mp3|m4a|wav|ogg|flac)$/i, '.opus');
 
       const track = {
@@ -122,9 +67,9 @@ async function generatePalettes() {
         artist: common.artist || common.artists?.join(', ') || 'Unknown Artist',
         album: common.album || 'Unknown Album',
         duration: duration,
-        image: imageFilename ? `img/${imageFilename}` : null,
+        image: null,
         audio: `music/${audioFilename}`,
-        colors: colors
+        colors: DEFAULT_COLORS,
       };
 
       tracks.push(track);
@@ -134,10 +79,8 @@ async function generatePalettes() {
     } catch (error) {
       console.error(`  ❌ Error processing ${filename}:`, error.message);
 
-      // Create a basic track entry even if metadata extraction fails
       const audioFilename = filename.replace(/\.(mp3|m4a|wav|ogg|flac)$/i, '.opus');
-
-      const track = {
+      tracks.push({
         id: i + 1,
         title: path.parse(filename).name.replace(/[-_]/g, ' '),
         artist: 'Unknown Artist',
@@ -145,27 +88,17 @@ async function generatePalettes() {
         duration: '0:00',
         image: null,
         audio: `music/${audioFilename}`,
-        colors: {
-          primary: '#6366f1',
-          secondary: '#4f46e5',
-          accent: '#a78bfa',
-          muted: '#94a3b8',
-          dark: '#1e293b',
-          light: '#e2e8f0'
-        }
-      };
-      tracks.push(track);
+        colors: DEFAULT_COLORS,
+      });
       console.log(`  ⚠️  Added track with basic info\n`);
     }
   }
 
-  // Write to JSON file
   fs.writeFileSync(OUTPUT_FILE, JSON.stringify({ tracks }, null, 2));
 
   console.log(`✅ Generated tracks.json with ${tracks.length} track(s)`);
-  console.log(`📁 Saved to: ${OUTPUT_FILE}`);
-  console.log(`🎨 Extracted album art saved to: ${IMG_DIR}\n`);
+  console.log(`📁 Saved to: ${OUTPUT_FILE}\n`);
   console.log(`🎉 Ready to play! Run 'npm run dev' to start the player.\n`);
 }
 
-generatePalettes().catch(console.error);
+generateTracks().catch(console.error);

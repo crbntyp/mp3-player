@@ -6,15 +6,15 @@
       "artist": "Chip",
       "album": "Dream Universe",
       "duration": "4:54",
-      "image": "img/CM-Dream_Universe_original_mix.jpg",
+      "image": null,
       "audio": "music/CM-Dream_Universe_original_mix.opus",
       "colors": {
-        "primary": "#62b79f",
-        "secondary": "#14646c",
-        "accent": "#cadaaf",
-        "muted": "#599386",
-        "dark": "#28595d",
-        "light": "#536830"
+        "primary": "#6366f1",
+        "secondary": "#4f46e5",
+        "accent": "#a78bfa",
+        "muted": "#94a3b8",
+        "dark": "#1e293b",
+        "light": "#e2e8f0"
       }
     },
     {
@@ -57,36 +57,53 @@
       "artist": "Rodd-Y-Ler",
       "album": "The Art Work EP",
       "duration": "8:22",
-      "image": "img/Rodd-Y-Ler_-_Lifesigns.jpg",
+      "image": null,
       "audio": "music/Rodd-Y-Ler - Lifesigns.opus",
       "colors": {
-        "primary": "#56afb6",
-        "secondary": "#244658",
-        "accent": "#a1d4d1",
-        "muted": "#4a8897",
-        "dark": "#383a4f",
-        "light": "#e7d8ce"
+        "primary": "#6366f1",
+        "secondary": "#4f46e5",
+        "accent": "#a78bfa",
+        "muted": "#94a3b8",
+        "dark": "#1e293b",
+        "light": "#e2e8f0"
       }
     },
     {
       "id": 5,
-      "title": "Forever",
-      "artist": "Ron Hagen & Pascal M",
-      "album": "Keepin' It Real",
-      "duration": "7:33",
-      "image": "img/ron_hagen_and_pascal_m-forever.jpg",
-      "audio": "music/ron_hagen_and_pascal_m-forever.opus",
+      "title": "Take Me",
+      "artist": "The Pumpkin",
+      "album": "Unknown Album",
+      "duration": "7:10",
+      "image": null,
+      "audio": "music/The Pumpkin - Take Me.opus",
       "colors": {
-        "primary": "#2b6e7a",
-        "secondary": "#23525e",
-        "accent": "#9cd2dc",
-        "muted": "#a46b62",
-        "dark": "#2c535f",
-        "light": "#a49591"
+        "primary": "#6366f1",
+        "secondary": "#4f46e5",
+        "accent": "#a78bfa",
+        "muted": "#94a3b8",
+        "dark": "#1e293b",
+        "light": "#e2e8f0"
       }
     },
     {
       "id": 6,
+      "title": "Forever",
+      "artist": "Ron Hagen & Pascal M",
+      "album": "Keepin' It Real",
+      "duration": "7:33",
+      "image": null,
+      "audio": "music/ron_hagen_and_pascal_m-forever.opus",
+      "colors": {
+        "primary": "#6366f1",
+        "secondary": "#4f46e5",
+        "accent": "#a78bfa",
+        "muted": "#94a3b8",
+        "dark": "#1e293b",
+        "light": "#e2e8f0"
+      }
+    },
+    {
+      "id": 7,
       "title": "Silence (Club Mix)",
       "artist": "Taiko",
       "album": "Silence",
@@ -100,23 +117,6 @@
         "muted": "#94a3b8",
         "dark": "#1e293b",
         "light": "#e2e8f0"
-      }
-    },
-    {
-      "id": 7,
-      "title": "Take Me",
-      "artist": "The Pumpkin",
-      "album": "Unknown Album",
-      "duration": "7:10",
-      "image": "img/The_Pumpkin_-_Take_Me.jpg",
-      "audio": "music/The Pumpkin - Take Me.opus",
-      "colors": {
-        "primary": "#40abb0",
-        "secondary": "#0b4c69",
-        "accent": "#9dd8db",
-        "muted": "#a17569",
-        "dark": "#2c3556",
-        "light": "#286d70"
       }
     }
   ]
