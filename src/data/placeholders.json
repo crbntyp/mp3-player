@@ -1,603 +1,333 @@
 {
   "images": [
     {
-      "id": 11317896,
-      "url": "img/placeholders/11317896.jpg",
-      "photographer": "XT7 Core",
-      "photographer_url": "https://www.pexels.com/@xt7core",
+      "id": 13259293,
+      "url": "img/placeholders/13259293.jpg",
+      "photographer": "Sabbir Ahasan",
+      "photographer_url": "https://www.pexels.com/@shabbirahasan",
       "query": "pinned",
       "colors": {
-        "primary": "#0447f7",
-        "secondary": "#061a80",
-        "accent": "#9abce0",
-        "muted": "#61a6a9",
-        "dark": "#040404",
-        "light": "#c2c8df"
+        "primary": "#3fbfaf",
+        "secondary": "#040c0b",
+        "accent": "#9bddd5",
+        "muted": "#747d84",
+        "dark": "#34444c",
+        "light": "#bbbcbf"
       }
     },
     {
-      "id": 18197120,
-      "url": "img/placeholders/18197120.jpg",
-      "photographer": "XT7 Core",
-      "photographer_url": "https://www.pexels.com/@xt7core",
-      "query": "drum machine",
+      "id": 11710172,
+      "url": "img/placeholders/11710172.jpg",
+      "photographer": "Connor Scott McManus",
+      "photographer_url": "https://www.pexels.com/@connorscottmcmanus",
+      "query": "pinned",
       "colors": {
-        "primary": "#f40404",
-        "secondary": "#840404",
-        "accent": "#fc7c7c",
-        "muted": "#960202",
-        "dark": "#040404",
-        "light": "#960202"
+        "primary": "#63b846",
+        "secondary": "#1c3414",
+        "accent": "#adda9f",
+        "muted": "#7a8180",
+        "dark": "#243921",
+        "light": "#3b6e2a"
       }
     },
     {
-      "id": 18197122,
-      "url": "img/placeholders/18197122.jpg",
-      "photographer": "XT7 Core",
-      "photographer_url": "https://www.pexels.com/@xt7core",
-      "query": "drum machine",
+      "id": 7630930,
+      "url": "img/placeholders/7630930.jpg",
+      "photographer": "Zafer Erdoğan",
+      "photographer_url": "https://www.pexels.com/@zafer-erdogan-49915050",
+      "query": "pinned",
       "colors": {
-        "primary": "#0405f8",
-        "secondary": "#041687",
-        "accent": "#76aae7",
-        "muted": "#5f72b4",
-        "dark": "#242c44",
-        "light": "#164882"
+        "primary": "#7f7f7f",
+        "secondary": "#424242",
+        "accent": "#bcbcbc",
+        "muted": "#7c7c7c",
+        "dark": "#3c3c3c",
+        "light": "#8f8f8f"
       }
     },
     {
-      "id": 11300427,
-      "url": "img/placeholders/11300427.jpg",
-      "photographer": "XT7 Core",
-      "photographer_url": "https://www.pexels.com/@xt7core",
-      "query": "drum machine",
+      "id": 11101129,
+      "url": "img/placeholders/11101129.jpg",
+      "photographer": "Tahir Osman",
+      "photographer_url": "https://www.pexels.com/@tahir-osman-109306362",
+      "query": "pinned",
       "colors": {
-        "primary": "#0572f5",
-        "secondary": "#04087f",
-        "accent": "#8cbce7",
-        "muted": "#849cc4",
-        "dark": "#2c3444",
-        "light": "#c1d2e3"
+        "primary": "#9d4c2c",
+        "secondary": "#6a290f",
+        "accent": "#e1ac97",
+        "muted": "#8c847c",
+        "dark": "#543628",
+        "light": "#773921"
       }
     },
     {
-      "id": 30529406,
-      "url": "img/placeholders/30529406.jpg",
-      "photographer": "Biekir Litovchenko",
-      "photographer_url": "https://www.pexels.com/@biekir-litovchenko-2148554792",
-      "query": "drum machine",
+      "id": 13582399,
+      "url": "img/placeholders/13582399.jpg",
+      "photographer": "Elsa Puga",
+      "photographer_url": "https://www.pexels.com/@elsa-puga-226042808",
+      "query": "pinned",
       "colors": {
-        "primary": "#6604e8",
-        "secondary": "#16086d",
-        "accent": "#b183ed",
-        "muted": "#5e5ca6",
-        "dark": "#424a74",
-        "light": "#7a94ba"
+        "primary": "#7a8482",
+        "secondary": "#3f4444",
+        "accent": "#babfbe",
+        "muted": "#828686",
+        "dark": "#3c4444",
+        "light": "#9da4a3"
       }
     },
     {
-      "id": 9463075,
-      "url": "img/placeholders/9463075.jpg",
-      "photographer": "ASBA DRUMS",
-      "photographer_url": "https://www.pexels.com/@asba-drums-56315550",
-      "query": "drum machine",
+      "id": 7140997,
+      "url": "img/placeholders/7140997.jpg",
+      "photographer": "Ekaterina Astakhova",
+      "photographer_url": "https://www.pexels.com/@octoptimist",
+      "query": "pinned",
       "colors": {
-        "primary": "#da1b38",
-        "secondary": "#9b0412",
-        "accent": "#e49ca4",
-        "muted": "#b4ac64",
-        "dark": "#51422e",
-        "light": "#c8b2b4"
+        "primary": "#bf3f3f",
+        "secondary": "#0c0404",
+        "accent": "#dd9b9b",
+        "muted": "#722626",
+        "dark": "#2c2422",
+        "light": "#722626"
       }
     },
     {
-      "id": 12379594,
-      "url": "img/placeholders/12379594.jpg",
-      "photographer": "Abdullah Alsaibaie",
-      "photographer_url": "https://www.pexels.com/@aalsaibaie",
-      "query": "drum machine",
+      "id": 16955371,
+      "url": "img/placeholders/16955371.jpg",
+      "photographer": "Masood Aslami",
+      "photographer_url": "https://www.pexels.com/@masoodaslami",
+      "query": "pinned",
       "colors": {
-        "primary": "#5404e4",
-        "secondary": "#990474",
-        "accent": "#aa7cfc",
-        "muted": "#85745c",
-        "dark": "#2a355f",
-        "light": "#370296"
+        "primary": "#886c3b",
+        "secondary": "#6e4d1f",
+        "accent": "#d6c3a2",
+        "muted": "#a5916d",
+        "dark": "#443624",
+        "light": "#c4bca8"
       }
     },
     {
-      "id": 2480397,
-      "url": "img/placeholders/2480397.jpg",
-      "photographer": "Rô Acunha",
-      "photographer_url": "https://www.pexels.com/@roacunha",
-      "query": "drum machine",
+      "id": 11984251,
+      "url": "img/placeholders/11984251.jpg",
+      "photographer": "Nishant Meena",
+      "photographer_url": "https://www.pexels.com/@nishant-meena-186119433",
+      "query": "pinned",
       "colors": {
-        "primary": "#ea7004",
-        "secondary": "#8d1205",
-        "accent": "#fcb87c",
-        "muted": "#9b7d99",
-        "dark": "#334c64",
-        "light": "#b484a4"
+        "primary": "#b68860",
+        "secondary": "#543414",
+        "accent": "#d5baa4",
+        "muted": "#998459",
+        "dark": "#51432b",
+        "light": "#b39f82"
       }
     },
     {
-      "id": 9655363,
-      "url": "img/placeholders/9655363.jpg",
-      "photographer": "ASBA DRUMS",
-      "photographer_url": "https://www.pexels.com/@asba-drums-56315550",
-      "query": "drum machine",
+      "id": 5068758,
+      "url": "img/placeholders/5068758.jpg",
+      "photographer": "Max Avans",
+      "photographer_url": "https://www.pexels.com/@maxavans",
+      "query": "pinned",
       "colors": {
-        "primary": "#4c7eb2",
-        "secondary": "#22384f",
-        "accent": "#a2bcd7",
-        "muted": "#546e8c",
-        "dark": "#344f65",
-        "light": "#c7c5b8"
+        "primary": "#a46c34",
+        "secondary": "#743c14",
+        "accent": "#dfbc9a",
+        "muted": "#8a7d68",
+        "dark": "#375258",
+        "light": "#b2b4b2"
       }
     },
     {
-      "id": 9463072,
-      "url": "img/placeholders/9463072.jpg",
-      "photographer": "ASBA DRUMS",
-      "photographer_url": "https://www.pexels.com/@asba-drums-56315550",
-      "query": "drum machine",
+      "id": 16355722,
+      "url": "img/placeholders/16355722.jpg",
+      "photographer": "Marlon Castor",
+      "photographer_url": "https://www.pexels.com/@marlon-castor-500639215",
+      "query": "pinned",
       "colors": {
-        "primary": "#e4254d",
-        "secondary": "#850f15",
-        "accent": "#e4587c",
-        "muted": "#a88f4d",
-        "dark": "#483937",
-        "light": "#ccbcac"
+        "primary": "#7f7f7f",
+        "secondary": "#424242",
+        "accent": "#bcbcbc",
+        "muted": "#7f7f7f",
+        "dark": "#474747",
+        "light": "#4c4c4c"
       }
     },
     {
-      "id": 9655365,
-      "url": "img/placeholders/9655365.jpg",
-      "photographer": "ASBA DRUMS",
-      "photographer_url": "https://www.pexels.com/@asba-drums-56315550",
-      "query": "drum machine",
+      "id": 5587174,
+      "url": "img/placeholders/5587174.jpg",
+      "photographer": "Ekaterina Astakhova",
+      "photographer_url": "https://www.pexels.com/@octoptimist",
+      "query": "pinned",
       "colors": {
-        "primary": "#345c6e",
-        "secondary": "#213f5c",
-        "accent": "#a4c5d4",
-        "muted": "#627c8c",
-        "dark": "#2c3d4b",
-        "light": "#bcb2a9"
+        "primary": "#3fbfaf",
+        "secondary": "#040c0b",
+        "accent": "#9bddd5",
+        "muted": "#a48c74",
+        "dark": "#4c3c2c",
+        "light": "#adacac"
       }
     },
     {
-      "id": 4167169,
-      "url": "img/placeholders/4167169.jpg",
-      "photographer": "Brett Sayles",
-      "photographer_url": "https://www.pexels.com/@brett-sayles",
-      "query": "synthesizer studio",
+      "id": 4977562,
+      "url": "img/placeholders/4977562.jpg",
+      "photographer": "Ekaterina Astakhova",
+      "photographer_url": "https://www.pexels.com/@octoptimist",
+      "query": "pinned",
       "colors": {
-        "primary": "#e26b21",
-        "secondary": "#713a1b",
-        "accent": "#ddb072",
-        "muted": "#5178a3",
-        "dark": "#243244",
-        "light": "#dacbb8"
+        "primary": "#6e442b",
+        "secondary": "#642c1c",
+        "accent": "#d9b59f",
+        "muted": "#99806f",
+        "dark": "#4a3928",
+        "light": "#999b9c"
       }
     },
     {
-      "id": 12379595,
-      "url": "img/placeholders/12379595.jpg",
-      "photographer": "Abdullah Alsaibaie",
-      "photographer_url": "https://www.pexels.com/@aalsaibaie",
-      "query": "synthesizer studio",
+      "id": 5596458,
+      "url": "img/placeholders/5596458.jpg",
+      "photographer": "Ekaterina Astakhova",
+      "photographer_url": "https://www.pexels.com/@octoptimist",
+      "query": "pinned",
       "colors": {
-        "primary": "#225fa4",
-        "secondary": "#0e3a64",
-        "accent": "#84b4dc",
-        "muted": "#a26957",
-        "dark": "#5b2c30",
-        "light": "#b6c6d0"
+        "primary": "#3fbf7f",
+        "secondary": "#040c08",
+        "accent": "#9bddbc",
+        "muted": "#565d5d",
+        "dark": "#3c2d24",
+        "light": "#26724c"
       }
     },
     {
-      "id": 32098834,
-      "url": "img/placeholders/32098834.jpg",
-      "photographer": "Arbiansyah Sulud",
-      "photographer_url": "https://www.pexels.com/@arbiansyah-sulud-1302117685",
-      "query": "synthesizer studio",
+      "id": 2630772,
+      "url": "img/placeholders/2630772.jpg",
+      "photographer": "Kris Lucas",
+      "photographer_url": "https://www.pexels.com/@krislucas90",
+      "query": "pinned",
       "colors": {
-        "primary": "#ec1225",
-        "secondary": "#320408",
-        "accent": "#f5848e",
-        "muted": "#84847d",
-        "dark": "#5d4d3c",
-        "light": "#9daca3"
+        "primary": "#8f4813",
+        "secondary": "#763410",
+        "accent": "#efb589",
+        "muted": "#9ca474",
+        "dark": "#2f5f4e",
+        "light": "#a8c4bc"
       }
     },
     {
-      "id": 14517351,
-      "url": "img/placeholders/14517351.jpg",
-      "photographer": "TStudio",
-      "photographer_url": "https://www.pexels.com/@tstudio-34805588",
-      "query": "synthesizer studio",
+      "id": 19466345,
+      "url": "img/placeholders/19466345.jpg",
+      "photographer": "Damien Snyers",
+      "photographer_url": "https://www.pexels.com/@damien-snyers-833341403",
+      "query": "pinned",
       "colors": {
-        "primary": "#906c44",
-        "secondary": "#5c241c",
-        "accent": "#d4bda4",
-        "muted": "#8e725a",
-        "dark": "#5e4832",
-        "light": "#ccb9a9"
+        "primary": "#b49f4a",
+        "secondary": "#443c1c",
+        "accent": "#d8cda1",
+        "muted": "#51565c",
+        "dark": "#4c4c3c",
+        "light": "#6c5f2c"
       }
     },
     {
-      "id": 9646751,
-      "url": "img/placeholders/9646751.jpg",
-      "photographer": "Hakim  Santoso",
-      "photographer_url": "https://www.pexels.com/@hakimsatoso",
-      "query": "synthesizer studio",
+      "id": 6333850,
+      "url": "img/placeholders/6333850.jpg",
+      "photographer": "Happy Donut",
+      "photographer_url": "https://www.pexels.com/@happy-donut-9996232",
+      "query": "pinned",
       "colors": {
-        "primary": "#8f581d",
-        "secondary": "#854c0b",
-        "accent": "#e8be90",
-        "muted": "#9d8c75",
-        "dark": "#5d5037",
-        "light": "#c4baab"
+        "primary": "#7f7f7f",
+        "secondary": "#424242",
+        "accent": "#bcbcbc",
+        "muted": "#7c7c7c",
+        "dark": "#434343",
+        "light": "#9b9b9b"
       }
     },
     {
-      "id": 14517352,
-      "url": "img/placeholders/14517352.jpg",
-      "photographer": "TStudio",
-      "photographer_url": "https://www.pexels.com/@tstudio-34805588",
-      "query": "synthesizer studio",
+      "id": 19466344,
+      "url": "img/placeholders/19466344.jpg",
+      "photographer": "Damien Snyers",
+      "photographer_url": "https://www.pexels.com/@damien-snyers-833341403",
+      "query": "pinned",
       "colors": {
-        "primary": "#46afb9",
-        "secondary": "#740420",
-        "accent": "#9ed5da",
-        "muted": "#7d7066",
-        "dark": "#573a2e",
-        "light": "#b7a794"
+        "primary": "#34547c",
+        "secondary": "#243d56",
+        "accent": "#a1b9d7",
+        "muted": "#5c7cac",
+        "dark": "#2c3c55",
+        "light": "#728cad"
       }
     },
     {
-      "id": 31050364,
-      "url": "img/placeholders/31050364.jpg",
-      "photographer": "Somogro Bangladesh",
-      "photographer_url": "https://www.pexels.com/@somogrobangladesh",
-      "query": "synthesizer studio",
-      "colors": {
-        "primary": "#727e38",
-        "secondary": "#357406",
-        "accent": "#cdd6a3",
-        "muted": "#637285",
-        "dark": "#2a394c",
-        "light": "#ba9a72"
-      }
-    },
-    {
-      "id": 34237444,
-      "url": "img/placeholders/34237444.jpg",
-      "photographer": "Eric Joseph",
-      "photographer_url": "https://www.pexels.com/@ericc",
-      "query": "synthesizer studio",
-      "colors": {
-        "primary": "#a96941",
-        "secondary": "#642c0f",
-        "accent": "#ba8666",
-        "muted": "#a16454",
-        "dark": "#4c413e",
-        "light": "#c1b3a8"
-      }
-    },
-    {
-      "id": 33418887,
-      "url": "img/placeholders/33418887.jpg",
-      "photographer": "Đức Trung Đào",
-      "photographer_url": "https://www.pexels.com/@macnalodao",
-      "query": "synthesizer studio",
-      "colors": {
-        "primary": "#04a7c5",
-        "secondary": "#095670",
-        "accent": "#e45c84",
-        "muted": "#607094",
-        "dark": "#2d253c",
-        "light": "#831535"
-      }
-    },
-    {
-      "id": 28962928,
-      "url": "img/placeholders/28962928.jpg",
-      "photographer": "Leandro Queiroz",
-      "photographer_url": "https://www.pexels.com/@leandro-queiroz-441796143",
-      "query": "synthesizer studio",
-      "colors": {
-        "primary": "#bf7d24",
-        "secondary": "#9b4a09",
-        "accent": "#e9c38f",
-        "muted": "#9c946e",
-        "dark": "#5d512e",
-        "light": "#baad7b"
-      }
-    },
-    {
-      "id": 20488625,
-      "url": "img/placeholders/20488625.jpg",
-      "photographer": "Ramon Perucho",
-      "photographer_url": "https://www.pexels.com/@rperucho",
-      "query": "midi keyboard dark",
+      "id": 29330242,
+      "url": "img/placeholders/29330242.jpg",
+      "photographer": "Wolfgang Weiser",
+      "photographer_url": "https://www.pexels.com/@wolfgang-weiser-467045605",
+      "query": "pinned",
       "colors": {
         "primary": "#7f7f7f",
         "secondary": "#424242",
         "accent": "#bcbcbc",
         "muted": "#7c7c7c",
         "dark": "#444444",
-        "light": "#c2c2c2"
+        "light": "#afafaf"
       }
     },
     {
-      "id": 13012666,
-      "url": "img/placeholders/13012666.jpg",
-      "photographer": "Image Hunter",
-      "photographer_url": "https://www.pexels.com/@image-hunter-281453274",
-      "query": "midi keyboard dark",
+      "id": 31557560,
+      "url": "img/placeholders/31557560.jpg",
+      "photographer": "Daniel Lee",
+      "photographer_url": "https://www.pexels.com/@capturavisualmoment",
+      "query": "pinned",
       "colors": {
         "primary": "#7f7f7f",
         "secondary": "#424242",
         "accent": "#bcbcbc",
-        "muted": "#7c847c",
-        "dark": "#444c4c",
-        "light": "#9a9a9a"
+        "muted": "#7c7c7c",
+        "dark": "#444444",
+        "light": "#cbcbcb"
       }
     },
     {
-      "id": 1928744,
-      "url": "img/placeholders/1928744.jpg",
-      "photographer": "Flo Dnd",
-      "photographer_url": "https://www.pexels.com/@flo-dnd-989753",
-      "query": "midi keyboard dark",
+      "id": 6357147,
+      "url": "img/placeholders/6357147.jpg",
+      "photographer": "Enzo",
+      "photographer_url": "https://www.pexels.com/@enzocarada",
+      "query": "pinned",
       "colors": {
-        "primary": "#e42209",
-        "secondary": "#78141d",
-        "accent": "#f98d7f",
-        "muted": "#946468",
-        "dark": "#2c445c",
-        "light": "#c4cbca"
+        "primary": "#b48a4a",
+        "secondary": "#44341c",
+        "accent": "#d8c2a1",
+        "muted": "#947b62",
+        "dark": "#493b2c",
+        "light": "#b5b3a9"
       }
     },
     {
-      "id": 12877898,
-      "url": "img/placeholders/12877898.jpg",
-      "photographer": "Kasra  Askari",
-      "photographer_url": "https://www.pexels.com/@kasra-askari-273404874",
-      "query": "midi keyboard dark",
+      "id": 20180314,
+      "url": "img/placeholders/20180314.jpg",
+      "photographer": "selin yağcı",
+      "photographer_url": "https://www.pexels.com/@selin-yagci-986913530",
+      "query": "pinned",
       "colors": {
-        "primary": "#df1f1f",
-        "secondary": "#1c0404",
-        "accent": "#ee8a8a",
-        "muted": "#847a7c",
-        "dark": "#5c3030",
-        "light": "#bdb4af"
+        "primary": "#846434",
+        "secondary": "#391f04",
+        "accent": "#c9b48a",
+        "muted": "#927e63",
+        "dark": "#67573f",
+        "light": "#bfa57a"
       }
     },
     {
-      "id": 6623763,
-      "url": "img/placeholders/6623763.jpg",
-      "photographer": ".M.Q Huang",
-      "photographer_url": "https://www.pexels.com/@hrvvv1994",
-      "query": "midi keyboard dark",
+      "id": 6165616,
+      "url": "img/placeholders/6165616.jpg",
+      "photographer": "KELLY LEONARD",
+      "photographer_url": "https://www.pexels.com/@thevisualgriot",
+      "query": "spiral staircase monochrome",
       "colors": {
-        "primary": "#a03336",
-        "secondary": "#5d0c0d",
-        "accent": "#de9a9c",
-        "muted": "#a76369",
-        "dark": "#522d2a",
-        "light": "#aec4c6"
-      }
-    },
-    {
-      "id": 14063089,
-      "url": "img/placeholders/14063089.jpg",
-      "photographer": "Dave Chia",
-      "photographer_url": "https://www.pexels.com/@dave-chia-342796438",
-      "query": "midi keyboard dark",
-      "colors": {
-        "primary": "#c6960d",
-        "secondary": "#ac5404",
-        "accent": "#f6d882",
-        "muted": "#63859d",
-        "dark": "#53462d",
-        "light": "#a2bacc"
-      }
-    },
-    {
-      "id": 18311171,
-      "url": "img/placeholders/18311171.jpg",
-      "photographer": "Esmihel  Muhammed",
-      "photographer_url": "https://www.pexels.com/@esmihel",
-      "query": "midi keyboard dark",
-      "colors": {
-        "primary": "#d47404",
-        "secondary": "#8b3b08",
-        "accent": "#c4a382",
-        "muted": "#898479",
-        "dark": "#624b37",
-        "light": "#b1a698"
-      }
-    },
-    {
-      "id": 20440055,
-      "url": "img/placeholders/20440055.jpg",
-      "photographer": "Ata Daftarifard",
-      "photographer_url": "https://www.pexels.com/@ata-daftarifard-1052963579",
-      "query": "midi keyboard dark",
-      "colors": {
-        "primary": "#7e4c30",
-        "secondary": "#580522",
-        "accent": "#dab49e",
-        "muted": "#976d61",
-        "dark": "#60382c",
-        "light": "#c2bda8"
-      }
-    },
-    {
-      "id": 6580251,
-      "url": "img/placeholders/6580251.jpg",
-      "photographer": "Alejandro Angel Garcia",
-      "photographer_url": "https://www.pexels.com/@alejandro-angel-garcia-21435531",
-      "query": "midi keyboard dark",
-      "colors": {
-        "primary": "#3fbf6f",
-        "secondary": "#040c07",
-        "accent": "#9bddb4",
-        "muted": "#6c7c84",
-        "dark": "#34444c",
-        "light": "#bacad3"
-      }
-    },
-    {
-      "id": 32377242,
-      "url": "img/placeholders/32377242.jpg",
-      "photographer": "Jordi Costa Tomé",
-      "photographer_url": "https://www.pexels.com/@jordicosta",
-      "query": "midi keyboard dark",
-      "colors": {
-        "primary": "#a4874b",
-        "secondary": "#7c3404",
-        "accent": "#d5c5a4",
-        "muted": "#5891a8",
-        "dark": "#2c5454",
-        "light": "#80a7b3"
-      }
-    },
-    {
-      "id": 36203599,
-      "url": "img/placeholders/36203599.jpg",
-      "photographer": "Michael Cohn",
-      "photographer_url": "https://www.pexels.com/@michael-cohn-757715543",
-      "query": "music production studio",
-      "colors": {
-        "primary": "#775f38",
-        "secondary": "#604d1c",
-        "accent": "#d4c2a4",
-        "muted": "#a1705c",
-        "dark": "#604d2d",
-        "light": "#a79d8c"
-      }
-    },
-    {
-      "id": 15113819,
-      "url": "img/placeholders/15113819.jpg",
-      "photographer": "ROMBO",
-      "photographer_url": "https://www.pexels.com/@rombo-1510555",
-      "query": "music production studio",
-      "colors": {
-        "primary": "#049499",
-        "secondary": "#04848d",
-        "accent": "#99ccd1",
-        "muted": "#549d9d",
-        "dark": "#645c3c",
-        "light": "#bebcac"
-      }
-    },
-    {
-      "id": 15126879,
-      "url": "img/placeholders/15126879.jpg",
-      "photographer": "ROMBO",
-      "photographer_url": "https://www.pexels.com/@rombo-1510555",
-      "query": "music production studio",
-      "colors": {
-        "primary": "#04aca3",
-        "secondary": "#047f7e",
-        "accent": "#58bcc4",
-        "muted": "#976373",
-        "dark": "#344454",
-        "light": "#b7c5c8"
-      }
-    },
-    {
-      "id": 36203600,
-      "url": "img/placeholders/36203600.jpg",
-      "photographer": "Michael Cohn",
-      "photographer_url": "https://www.pexels.com/@michael-cohn-757715543",
-      "query": "music production studio",
-      "colors": {
-        "primary": "#d4902a",
-        "secondary": "#644414",
-        "accent": "#e8c590",
-        "muted": "#7b6748",
-        "dark": "#52442d",
-        "light": "#c49691"
-      }
-    },
-    {
-      "id": 11317799,
-      "url": "img/placeholders/11317799.jpg",
-      "photographer": "XT7 Core",
-      "photographer_url": "https://www.pexels.com/@xt7core",
-      "query": "music production studio",
-      "colors": {
-        "primary": "#f30417",
-        "secondary": "#730412",
-        "accent": "#ec79dc",
-        "muted": "#96020e",
-        "dark": "#040404",
-        "light": "#dccbde"
-      }
-    },
-    {
-      "id": 9655369,
-      "url": "img/placeholders/9655369.jpg",
-      "photographer": "ASBA DRUMS",
-      "photographer_url": "https://www.pexels.com/@asba-drums-56315550",
-      "query": "music production studio",
-      "colors": {
-        "primary": "#34647d",
-        "secondary": "#0c2f4c",
-        "accent": "#a1c5d8",
-        "muted": "#647c94",
-        "dark": "#315469",
-        "light": "#c4c4bc"
-      }
-    },
-    {
-      "id": 17624447,
-      "url": "img/placeholders/17624447.jpg",
-      "photographer": "ROMBO",
-      "photographer_url": "https://www.pexels.com/@rombo-1510555",
-      "query": "music production studio",
-      "colors": {
-        "primary": "#c8a405",
-        "secondary": "#b08304",
-        "accent": "#d0bd72",
-        "muted": "#6c9a6b",
-        "dark": "#525a36",
-        "light": "#a9b0ab"
-      }
-    },
-    {
-      "id": 33418889,
-      "url": "img/placeholders/33418889.jpg",
-      "photographer": "Đức Trung Đào",
-      "photographer_url": "https://www.pexels.com/@macnalodao",
-      "query": "music production studio",
-      "colors": {
-        "primary": "#e73f27",
-        "secondary": "#095f7a",
-        "accent": "#ec843c",
-        "muted": "#9c6464",
-        "dark": "#24263c",
-        "light": "#8b410d"
-      }
-    },
-    {
-      "id": 36203597,
-      "url": "img/placeholders/36203597.jpg",
-      "photographer": "Michael Cohn",
-      "photographer_url": "https://www.pexels.com/@michael-cohn-757715543",
-      "query": "music production studio",
-      "colors": {
-        "primary": "#876738",
-        "secondary": "#5c4322",
-        "accent": "#d8c1a1",
-        "muted": "#b78b7c",
-        "dark": "#57432c",
-        "light": "#97978a"
+        "primary": "#7f7f7f",
+        "secondary": "#424242",
+        "accent": "#bcbcbc",
+        "muted": "#878787",
+        "dark": "#3c3c3c",
+        "light": "#a9a9a9"
       }
     }
   ]
