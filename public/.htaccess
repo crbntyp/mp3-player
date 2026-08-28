@@ -1,0 +1,43 @@
+# Caching policy.
+#
+# vite.config.js deliberately pins stable output names (scripts/main.js,
+# styles/main.css) so the service worker's precache list stays valid across
+# builds — which means there is no content hash to bust a cache with.
+#
+# Apache was sending no Cache-Control at all, only ETag/Last-Modified. With no
+# explicit policy browsers fall back to *heuristic* caching, roughly 10% of the
+# time since Last-Modified. A three-month-old bundle therefore counted as fresh
+# for over a week after a deploy: the browser served the old file without
+# asking, and the service worker cached those stale bytes as if they were new.
+#
+# So: revalidate anything whose name stays the same while its content changes,
+# and cache hard only what gets a new name when it changes.
+
+<IfModule mod_headers.c>
+
+  # App shell and data. "no-cache" does not mean "don't store" — it means
+  # "always revalidate first", which the ETag turns into a cheap 304.
+  <FilesMatch "\.(html|js|css|json|webmanifest)$">
+    Header set Cache-Control "no-cache"
+  </FilesMatch>
+
+  # Artwork. Sleeves and covers keep stable filenames across regeneration, so
+  # they need revalidating too — but they're big enough to be worth a short
+  # window first.
+  <FilesMatch "\.(jpg|jpeg|png|webp)$">
+    Header set Cache-Control "public, max-age=3600, must-revalidate"
+  </FilesMatch>
+
+  # Audio and fonts are named from a content slug (or effectively never change),
+  # so a long lifetime is safe and saves re-downloading megabytes.
+  <FilesMatch "\.(opus|mp3|woff2?)$">
+    Header set Cache-Control "public, max-age=31536000"
+  </FilesMatch>
+
+  # The service worker must never be served from cache, or a deploy can't ship
+  # a replacement for a broken one.
+  <Files "sw.js">
+    Header set Cache-Control "no-cache, no-store, must-revalidate"
+  </Files>
+
+</IfModule>

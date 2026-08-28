@@ -1,5 +1,5 @@
 // Service Worker for plyr PWA
-const CACHE_NAME = 'plyr-v7';
+const CACHE_NAME = 'plyr-v8';
 
 // App-shell paths are derived from the registration scope rather than
 // hardcoded to /plyr/. vite.config.js deliberately builds with `base: './'`
@@ -26,9 +26,16 @@ self.addEventListener('install', (event) => {
       console.log('PWA: Caching app shell');
       // Added individually so one missing asset degrades to "that file isn't
       // precached" instead of aborting the entire install.
+      //
+      // `cache: 'reload'` is what makes this correct: a plain cache.add() goes
+      // through the HTTP cache, so a new worker version can precache the
+      // previous deploy's files and be none the wiser. Bypassing it means the
+      // precache always reflects what the server has right now.
       await Promise.all(
         ASSETS_TO_CACHE.map((url) =>
-          cache.add(url).catch((err) => console.warn('PWA: skipped', url, err.message))
+          cache
+            .add(new Request(url, { cache: 'reload' }))
+            .catch((err) => console.warn('PWA: skipped', url, err.message))
         )
       );
     })
@@ -64,8 +71,12 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
+  // 'no-cache' forces a revalidation rather than a blind HTTP-cache hit. The
+  // server's ETag turns that into a 304 in the common case, so this costs a
+  // round trip, not a re-download — and it stops the worker from caching a
+  // stale copy the browser handed it without asking the server.
   event.respondWith(
-    fetch(event.request)
+    fetch(event.request, { cache: 'no-cache' })
       .then((response) => {
         if (response.status === 200) {
           const responseClone = response.clone();
