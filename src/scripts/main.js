@@ -68,15 +68,31 @@ class Player {
 
         const hashLoaded = await this.hashRouter.load();
 
-        // No URL hash → fall back to persisted state. If the persisted
-        // source is a Drive folder, switch to it first; otherwise stay
-        // on local. Then resume the persisted track index + position.
+        // Two restore paths, and the hash used to swallow the other one.
+        //
+        // loadTrack() replaceState()s a hash on every track change, so after
+        // the first load the URL *always* has one — which meant persistence
+        // never ran again and the saved audio position was dead code.
+        //
+        // Now: the hash decides source + track (that's what a shared link
+        // carries), and persistence still contributes the playback position,
+        // but only when it points at the very track the hash selected. A
+        // shared link to someone else's track starts at 0:00; your own reload
+        // picks up where you left off.
         if (!hashLoaded && this.tracks.length > 0) {
-            const restored = await this.#restoreFromPersistence();
+            // Only resume a persisted Drive crate. 'local' is the default value
+            // of that field and now means "no crate chosen yet", since local
+            // tracks are a fallback rather than somewhere you navigate to.
+            const persistedDrive = this.persistence.state.source
+                && this.persistence.state.source !== 'local';
+
+            const restored = persistedDrive ? await this.#restoreFromPersistence() : false;
             if (!restored) {
-                this.loadTrack(0);
+                await this.#openDefaultCrate();
             }
             this.preloadAdjacentTracks();
+        } else if (hashLoaded) {
+            this.#restorePositionIfSameTrack();
         }
 
         // Apply persisted UI state (volume slider, shuffle/repeat icons).
@@ -101,22 +117,86 @@ class Player {
 
         if (trackIndex >= 0 && trackIndex < this.tracks.length) {
             this.loadTrack(trackIndex, /* autoplay */ false);
-
-            if (audioPosition > 0) {
-                // Audio.currentTime is only writable after enough data is
-                // loaded — seekable ranges are empty before then. Wait
-                // for one canplay event, then jump.
-                const onCanPlay = () => {
-                    try {
-                        this.audio.currentTime = audioPosition;
-                    } catch (_) { /* range not seekable yet — give up */ }
-                    this.audio.removeEventListener('canplay', onCanPlay);
-                };
-                this.audio.addEventListener('canplay', onCanPlay);
-            }
+            this.#seekWhenReady(audioPosition);
             return true;
         }
         return false;
+    }
+
+    // Open the first Drive era on a cold start. The bundled local tracks stay
+    // as a genuine fallback: if the proxy is down, the API key is missing or
+    // there's no network, switchToDrive leaves currentSource as 'local' and we
+    // play what's on disk rather than showing an empty player.
+    async #openDefaultCrate() {
+        const folders = this.driveSource?.getFolders?.() ?? [];
+
+        if (folders.length) {
+            await this.eraSelector.switchToDrive(folders[0].id);
+            if (this.currentSource !== 'local') return;
+            console.warn('Drive unavailable — falling back to the bundled local tracks.');
+        }
+
+        this.loadTrack(0);
+    }
+
+    // Apply the saved position on top of a hash-selected track, but only if
+    // the hash landed on the same track we were last playing. Otherwise the
+    // link came from somewhere else and should start at the beginning.
+    #restorePositionIfSameTrack() {
+        const { source, trackIndex, audioPosition } = this.persistence.state;
+        if (source !== this.currentSource || trackIndex !== this.currentTrackIndex) return;
+        this.#seekWhenReady(audioPosition);
+    }
+
+    // Audio.currentTime is only writable once enough data is loaded —
+    // seekable ranges are empty before then.
+    //
+    // Waiting unconditionally for `canplay` isn't enough: when the file is
+    // already buffered (served from cache, or preloaded into this element)
+    // canplay has fired before we get here and never fires again, so the
+    // listener sits there forever and the position is silently dropped.
+    // Check readyState first and only fall back to the event.
+    #seekWhenReady(position) {
+        if (!(position > 0)) return;
+
+        const audio = this.audio;
+
+        // Seeking past the end of the seekable range doesn't fail — it
+        // silently clamps. Early in a load the range may only cover the first
+        // few seconds, so "readyState is high enough" isn't the question;
+        // "does the range actually reach where we're going" is.
+        const attempt = () => {
+            if (!audio.seekable.length) return false;
+            if (audio.seekable.end(audio.seekable.length - 1) < position) return false;
+            try {
+                audio.currentTime = position;
+            } catch (_) {
+                return false;
+            }
+            return Math.abs(audio.currentTime - position) < 1;
+        };
+
+        if (attempt()) return;
+
+        // Otherwise retry as more of the file arrives.
+        const onBuffer = () => { if (attempt()) cleanup(); };
+        const cleanup = () => {
+            clearTimeout(timer);
+            audio.removeEventListener('progress', onBuffer);
+            audio.removeEventListener('canplay', onBuffer);
+            audio.removeEventListener('loadedmetadata', onBuffer);
+            audio.removeEventListener('play', cleanup);
+        };
+
+        // Bail out if the user starts playback first — yanking them back to a
+        // restored position after they've already begun listening is worse
+        // than losing the position. Also time-boxed so a stalled load doesn't
+        // leave listeners attached for the life of the page.
+        const timer = setTimeout(cleanup, 15000);
+        audio.addEventListener('progress', onBuffer);
+        audio.addEventListener('canplay', onBuffer);
+        audio.addEventListener('loadedmetadata', onBuffer);
+        audio.addEventListener('play', cleanup, { once: true });
     }
 
     showLoadingState(message) {
@@ -141,9 +221,13 @@ class Player {
             `;
             document.body.appendChild(overlay);
         }
-        overlay.innerHTML = `<div style="text-align: center;">
-            <i class="las la-spinner la-spin" style="font-size: 48px; display: block; margin-bottom: 16px;"></i>
-            ${message}
+        overlay.innerHTML = `<div class="drive-loading-inner">
+            <svg class="drive-loading-spinner" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                 stroke-width="1.5" aria-hidden="true">
+                <circle cx="12" cy="12" r="9" opacity=".25" />
+                <path d="M21 12a9 9 0 0 0-9-9" stroke-linecap="round" />
+            </svg>
+            <span>${message}</span>
         </div>`;
         overlay.style.display = 'flex';
     }
@@ -213,51 +297,40 @@ class Player {
             return;
         }
 
-        const totalImages = this.tracks.length;
+        // Only tracks that actually have cover art are worth waiting on.
+        // Counting the whole track list here used to make the bar sprint
+        // through skipped entries and report progress for work never done.
+        const covers = [...new Set(this.tracks.map((t) => t.image).filter(Boolean))];
+        const totalImages = covers.length;
+
+        if (totalImages === 0) {
+            loadingOverlay.classList.add('hidden');
+            setTimeout(() => loadingOverlay.remove(), 500);
+            return;
+        }
+
         let loadedImages = 0;
-
         console.log(`🖼️  Preloading ${totalImages} cover image(s)...`);
+        loadingStatus.textContent = `Loading artwork ${loadedImages}/${totalImages}`;
 
-        // Update initial status
-        loadingStatus.textContent = `Loading cover images... ${loadedImages}/${totalImages}`;
-
-        // Load images sequentially (one at a time) for visible progress
-        for (const track of this.tracks) {
-            if (!track.image) {
-                // Skip if no image
-                loadedImages++;
-                const progress = (loadedImages / totalImages) * 100;
-                loadingProgressBar.style.width = `${progress}%`;
-                loadingStatus.textContent = `Loading cover images... ${loadedImages}/${totalImages}`;
-                continue;
-            }
-
-            // Load image and wait for it to complete
+        // Sequential so the progress bar reflects real work rather than
+        // finishing all at once.
+        for (const src of covers) {
             await new Promise((resolve) => {
                 const img = new Image();
 
-                img.onload = () => {
-                    // Store the loaded image in cache
-                    this.imageCache.set(track.image, img);
-
+                const done = (ok) => {
+                    if (ok) this.imageCache.set(src, img);
+                    else console.warn(`✗ Failed to load: ${src}`);
                     loadedImages++;
-                    const progress = (loadedImages / totalImages) * 100;
-                    loadingProgressBar.style.width = `${progress}%`;
-                    loadingStatus.textContent = `Loading cover images... ${loadedImages}/${totalImages}`;
-                    console.log(`✓ Loaded: ${track.image} (${loadedImages}/${totalImages})`);
+                    loadingProgressBar.style.width = `${(loadedImages / totalImages) * 100}%`;
+                    loadingStatus.textContent = `Loading artwork ${loadedImages}/${totalImages}`;
                     resolve();
                 };
 
-                img.onerror = () => {
-                    loadedImages++;
-                    const progress = (loadedImages / totalImages) * 100;
-                    loadingProgressBar.style.width = `${progress}%`;
-                    loadingStatus.textContent = `Loading cover images... ${loadedImages}/${totalImages}`;
-                    console.warn(`✗ Failed to load: ${track.image}`);
-                    resolve(); // Continue even if image fails
-                };
-
-                img.src = track.image;
+                img.onload  = () => done(true);
+                img.onerror = () => done(false);
+                img.src = src;
             });
         }
 
@@ -383,25 +456,14 @@ class Player {
         // Stop current audio
         this.pause();
 
-        // Always use random neon image for all tracks
-        if (this.placeholderImages.length > 0) {
-            const randomIndex = Math.floor(Math.random() * this.placeholderImages.length);
-            const placeholder = this.placeholderImages[randomIndex];
-            this.currentPlaceholder = placeholder; // Store for updateAlbumArt
-
-            // Update UI with neon image and its colors
-            this.updateAlbumArt(null); // Pass null to force placeholder usage
-            this.updateTrackInfo(track);
-            this.updateTheme(placeholder.colors);
-            this.mediaSession.updateMetadata();
-        } else {
-            // Fallback to original behavior if placeholders not loaded
-            this.currentPlaceholder = null;
-            this.updateAlbumArt(track.image);
-            this.updateTrackInfo(track);
-            this.updateTheme(track.colors);
-            this.mediaSession.updateMetadata();
-        }
+        // Artwork + palette for this track. Real cover art always wins; the
+        // placeholder set is only a stand-in for files with none.
+        const art = this.#resolveArtwork(track);
+        this.currentArt = art;
+        this.updateAlbumArt(art);
+        this.updateTrackInfo(track);
+        this.updateTheme(art.colors);
+        this.mediaSession.updateMetadata();
 
         // Set duration from track data (more reliable than audio metadata for opus)
         const durationEl = document.getElementById('duration');
@@ -443,14 +505,17 @@ class Player {
         this.preloadAdjacentTracks();
     }
 
+    // Warm the track the user is most likely to reach next.
+    //
+    // Uses peekNextIndex() rather than index+1 so shuffle actually benefits —
+    // preloading the sequential neighbour while shuffle sends you elsewhere
+    // was pure waste. Only the *next* track is warmed: on the Drive path each
+    // preload is a full server-side download through proxy.php, so
+    // speculatively pulling the previous track too doubled the bandwidth for
+    // a direction people rarely go.
     preloadAdjacentTracks() {
-        // Preload next track
-        const nextIndex = (this.currentTrackIndex + 1) % this.tracks.length;
-        this.preloadTrack(nextIndex);
-
-        // Preload previous track
-        const prevIndex = (this.currentTrackIndex - 1 + this.tracks.length) % this.tracks.length;
-        this.preloadTrack(prevIndex);
+        const nextIndex = this.peekNextIndex();
+        if (nextIndex !== null) this.preloadTrack(nextIndex);
     }
 
     preloadTrack(index) {
@@ -486,53 +551,61 @@ class Player {
         }, { once: true });
     }
 
-    updateAlbumArt(imageSrc) {
-        // Always use neon image from currentPlaceholder (set in loadTrack)
-        let imageUrl = imageSrc;
-        if (!imageUrl && this.currentPlaceholder) {
-            imageUrl = this.currentPlaceholder.url;
+    // Resolve which image and palette a track should wear.
+    //
+    // A track's own embedded cover art always wins — generate-palettes.js
+    // extracts it at build time and derives the palette from it, so the whole
+    // UI recolours to the artwork. The neon placeholder set is the fallback
+    // for files that shipped without art; picking randomly among them is
+    // deliberate, so those tracks look different each visit.
+    #resolveArtwork(track) {
+        if (track.image) {
+            return {
+                cover: track.image,
+                label: track.label || track.image,
+                colors: track.colors,
+                isPlaceholder: false,
+            };
         }
+
+        if (this.placeholderImages.length > 0) {
+            const p = this.placeholderImages[Math.floor(Math.random() * this.placeholderImages.length)];
+            return { cover: p.url, label: p.url, colors: p.colors, isPlaceholder: true };
+        }
+
+        return { cover: null, label: null, colors: track.colors, isPlaceholder: false };
+    }
+
+    updateAlbumArt(art) {
+        if (!art?.cover) return;
+
+        // Prefer the decoded element from the preload pass — its bytes are
+        // already in memory, so swapping src paints without a flash.
+        const cached = this.imageCache.get(art.cover);
+        const coverSrc = cached ? cached.src : art.cover;
 
         const img = document.getElementById('album-art');
         if (img) {
-            // Check if we have this image cached
-            if (this.imageCache.has(imageSrc)) {
-                console.log('✓ Using cached image');
-                const cachedImg = this.imageCache.get(imageSrc);
-                // Use the cached image's src which is already loaded
-                img.src = cachedImg.src;
-            } else {
-                // Fall back to regular loading
-                img.src = imageUrl;
-            }
-            img.alt = 'Album Art';
+            img.src = coverSrc;
+            img.alt = art.isPlaceholder ? '' : 'Album artwork';
         }
 
-        // Update record label art
+        // The vinyl centre label gets the small derivative — it renders at
+        // ~90px and shouldn't decode the full-size cover.
         const recordLabelArt = document.getElementById('record-label-art');
         if (recordLabelArt) {
-            if (this.imageCache.has(imageSrc)) {
-                const cachedImg = this.imageCache.get(imageSrc);
-                recordLabelArt.src = cachedImg.src;
-            } else {
-                recordLabelArt.src = imageUrl;
-            }
-            recordLabelArt.alt = 'Album Art';
+            recordLabelArt.src = art.label || coverSrc;
+            recordLabelArt.alt = '';
         }
 
-        // Set body background to blurred, faded album art
-        // Create or update style element for ::before pseudo-element
-        let styleEl = document.getElementById('body-bg-style');
-        if (!styleEl) {
-            styleEl = document.createElement('style');
-            styleEl.id = 'body-bg-style';
-            document.head.appendChild(styleEl);
-        }
-        styleEl.textContent = `
-            body::before {
-                background-image: url(${imageUrl}) !important;
-            }
-        `;
+        this.setBackdrop(coverSrc);
+    }
+
+    // Drive the full-viewport blurred wash behind everything. A custom
+    // property beats the old injected <style> block with !important — the
+    // styling stays in SCSS and there's no per-track stylesheet churn.
+    setBackdrop(url) {
+        document.documentElement.style.setProperty('--backdrop-image', `url("${url}")`);
     }
 
     // Drive tracks ship with a placeholder neon image — replace it with
@@ -548,15 +621,12 @@ class Player {
         probe.onload = () => {
             if (this.currentTrackIndex !== trackIndex) return;
 
-            const albumImg = document.getElementById('album-art');
-            const recordLabelArt = document.getElementById('record-label-art');
-            if (albumImg) albumImg.src = track.artProbe;
-            if (recordLabelArt) recordLabelArt.src = track.artProbe;
-
-            const styleEl = document.getElementById('body-bg-style');
-            if (styleEl) {
-                styleEl.textContent = `body::before { background-image: url(${track.artProbe}) !important; }`;
-            }
+            this.updateAlbumArt({
+                cover: track.artProbe,
+                label: track.artProbe,
+                colors: track.colors,
+                isPlaceholder: false,
+            });
             console.log('✓ Embedded art swapped in');
         };
         probe.onerror = () => { /* 404 — no embedded art, neon stays */ };
@@ -602,9 +672,9 @@ class Player {
         document.documentElement.style.setProperty('--color-dark', colors.dark);
         document.documentElement.style.setProperty('--color-light', colors.light);
 
-        // Update body background with gradient using palette colors
-        document.body.style.background = `linear-gradient(135deg, ${colors.dark} 0%, ${colors.secondary} 50%, ${colors.dark} 100%)`;
-        document.body.style.transition = 'background 0.5s ease, background-image 0.5s ease';
+        // The body wash is painted in SCSS from these same variables — JS sets
+        // state, the stylesheet decides appearance. Assigning an inline
+        // background here used to override the stylesheet's own layering.
 
         // Update visualizer colors
         if (this.visualizer) {
@@ -952,7 +1022,23 @@ class Player {
         // dragging the volume slider with the keyboard still works.
         document.addEventListener('keydown', (e) => {
             const target = e.target;
-            if (target && (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA')) return;
+            const typing = target && (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA');
+
+            // Escape works even while typing — it's the way out of the era
+            // menu's search box, and the generic typing guard below used to
+            // swallow it there, trapping you in the popup.
+            if (e.key === 'Escape') {
+                const menu = document.getElementById('era-menu');
+                if (menu?.classList.contains('open')) {
+                    menu.classList.remove('open');
+                    document.getElementById('era-btn')?.focus();
+                } else if (typing) {
+                    target.blur();
+                }
+                return;
+            }
+
+            if (typing) return;
 
             switch (e.key) {
                 case 'ArrowRight': this.nextTrack(); break;
@@ -980,9 +1066,6 @@ class Player {
                 case 'r':
                 case 'R':
                     this.toggleRepeat();
-                    break;
-                case 'Escape':
-                    document.getElementById('era-menu')?.classList.remove('open');
                     break;
             }
         });

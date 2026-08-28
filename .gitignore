@@ -3,7 +3,6 @@ node_modules/
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
-package-lock.json
 
 # Build outputs
 dist/
@@ -18,6 +17,11 @@ build/
 !/public/img/placeholders/
 /public/music/
 /public/data/
+/public/img/covers/
+
+# Generated sleeve masters — large PNGs from gpt-image-2. The processed,
+# shipped set in public/img/placeholders/ is what's tracked.
+/_sleeves/
 
 # OS files
 .DS_Store

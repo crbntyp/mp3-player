@@ -1,26 +1,36 @@
 // Service Worker for plyr PWA
-//
-// Bumped to v3 alongside Phase 2 — the Drive client got rewritten to talk
-// to proxy.php?action=list instead of calling Google directly, and the
-// previous bundle is stuck in users' caches without a version bump.
-const CACHE_NAME = 'plyr-v6';
+const CACHE_NAME = 'plyr-v7';
+
+// App-shell paths are derived from the registration scope rather than
+// hardcoded to /plyr/. vite.config.js deliberately builds with `base: './'`
+// so the same bundle works at any mount path — a hardcoded list contradicted
+// that, and because cache.addAll() is atomic, one 404 would have made the
+// whole service worker fail to install with no visible symptom.
+const SCOPE = new URL(self.registration.scope);
+
 const ASSETS_TO_CACHE = [
-  '/plyr/',
-  '/plyr/index.html',
-  '/plyr/scripts/main.js',
-  '/plyr/styles/main.css',
-  '/plyr/data/tracks.json',
-  '/plyr/data/placeholders.json',
-  '/plyr/img/assets/fav.png',
-  '/plyr/img/assets/record.png'
-];
+  '',
+  'index.html',
+  'scripts/main.js',
+  'styles/main.css',
+  'data/tracks.json',
+  'data/placeholders.json',
+  'img/assets/fav.png',
+  'img/assets/record.png',
+].map((p) => new URL(p, SCOPE).pathname);
 
 // Install - cache app shell
 self.addEventListener('install', (event) => {
   event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => {
+    caches.open(CACHE_NAME).then(async (cache) => {
       console.log('PWA: Caching app shell');
-      return cache.addAll(ASSETS_TO_CACHE);
+      // Added individually so one missing asset degrades to "that file isn't
+      // precached" instead of aborting the entire install.
+      await Promise.all(
+        ASSETS_TO_CACHE.map((url) =>
+          cache.add(url).catch((err) => console.warn('PWA: skipped', url, err.message))
+        )
+      );
     })
   );
   self.skipWaiting();
@@ -44,28 +54,27 @@ self.addEventListener('activate', (event) => {
 self.addEventListener('fetch', (event) => {
   const url = new URL(event.request.url);
 
-  // Don't cache audio files or proxy requests (too large)
-  if (url.pathname.includes('/music/') ||
-      url.pathname.includes('proxy.php') ||
-      url.pathname.includes('googleapis.com')) {
+  // Only handle same-origin GETs. Cross-origin (Google Fonts) and non-GET
+  // requests are left to the network — cache.put() rejects on both.
+  if (event.request.method !== 'GET' || url.origin !== self.location.origin) return;
+
+  // Don't cache audio or proxy responses — audio files are tens of MB and
+  // the proxy streams partial (206) responses, which aren't cacheable.
+  if (url.pathname.includes('/music/') || url.pathname.includes('proxy.php')) {
     return;
   }
 
   event.respondWith(
     fetch(event.request)
       .then((response) => {
-        // Cache successful responses
         if (response.status === 200) {
           const responseClone = response.clone();
           caches.open(CACHE_NAME).then((cache) => {
-            cache.put(event.request, responseClone);
+            cache.put(event.request, responseClone).catch(() => { /* uncacheable */ });
           });
         }
         return response;
       })
-      .catch(() => {
-        // Fall back to cache
-        return caches.match(event.request);
-      })
+      .catch(() => caches.match(event.request))
   );
 });

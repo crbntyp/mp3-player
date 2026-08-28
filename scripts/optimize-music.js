@@ -2,6 +2,7 @@ const fs = require('fs');
 const path = require('path');
 const { spawn } = require('child_process');
 const ffmpegPath = require('@ffmpeg-installer/ffmpeg').path;
+const { slugify } = require('./lib/slug');
 
 const inputDir = path.join(__dirname, '../src/music');
 const outputDir = path.join(__dirname, '../public/music');
@@ -18,6 +19,10 @@ function convertToOpus(inputPath, outputPath) {
         const args = [
             '-y',
             '-i', inputPath,
+            // Drop the attached cover picture — generate-palettes.js already
+            // extracted it to a sized WebP, and muxing a 2048px PNG into an
+            // Opus stream only makes the audio bigger.
+            '-vn',
             '-c:a', 'libopus',
             '-b:a', '128k',
             '-ac', '2',
@@ -51,7 +56,9 @@ async function optimizeMusic() {
 
     for (const file of audioFiles) {
         const inputPath = path.join(inputDir, file);
-        const outputFileName = file.replace(/\.mp3$/i, '.opus');
+        // Slugified so the URL needs no escaping and matches the name
+        // generate-palettes.js wrote into tracks.json.
+        const outputFileName = `${slugify(file)}.opus`;
         const outputPath = path.join(outputDir, outputFileName);
 
         try {

@@ -12,7 +12,8 @@
     "build": "npm run prebuild && vite build",
     "preview": "vite preview --port 8080",
     "clean": "node scripts/clean.js",
-    "deploy": "npm run build && node scripts/deploy.js"
+    "deploy": "npm run build && node scripts/deploy.js",
+    "build-sleeves": "node scripts/build-sleeves.js"
   },
   "keywords": [],
   "author": "Jonny Pyper / Carbontype / Music copyright belongs to respective owners",
@@ -25,8 +26,5 @@
     "sass-embedded": "^1.99.0",
     "sharp": "^0.34.4",
     "vite": "^8.0.13"
-  },
-  "dependencies": {
-    "line-awesome": "^1.3.0"
   }
 }

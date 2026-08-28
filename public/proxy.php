@@ -166,7 +166,18 @@ function handleStream($cacheDir, $cacheExpiry, $maxCacheSize) {
         die('File not accessible - check sharing settings');
     }
 
-    file_put_contents($cacheFile, $body);
+    // Write to a unique temp file then rename into place. rename() is atomic
+    // on the same filesystem, so a second request for the same track can only
+    // ever see the complete file — previously two concurrent cache misses
+    // both wrote $cacheFile directly and a client could be served a
+    // half-written stream. The meta file lands first only after the audio is
+    // committed, since its existence is what marks the entry valid.
+    $tmpFile = $cacheFile . '.tmp.' . getmypid();
+    if (file_put_contents($tmpFile, $body) === false || !rename($tmpFile, $cacheFile)) {
+        @unlink($tmpFile);
+        http_response_code(500);
+        die('Failed to cache file');
+    }
     file_put_contents($metaFile, json_encode([
         'cached_at'    => time(),
         'content_type' => $contentType ?: 'audio/mpeg',
@@ -370,6 +381,12 @@ function serveFile($path, $contentType, $filename) {
  * Trims to 80% of the limit so we don't thrash on every new file.
  */
 function cleanCache($dir, $maxSize) {
+    // Sweep abandoned temp files from interrupted downloads first — a killed
+    // request leaves a .tmp.<pid> behind that nothing else will ever claim.
+    foreach (glob($dir . '/*.tmp.*') ?: [] as $stale) {
+        if (time() - filemtime($stale) > 3600) @unlink($stale);
+    }
+
     $files = glob($dir . '/*.mp3');
     if (!$files) return;
 

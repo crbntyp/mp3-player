@@ -55,7 +55,24 @@ export class DriveSource {
             throw new Error(msg);
         }
 
-        const data = await response.json();
+        // The dev server has no PHP, so it happily serves proxy.php as a
+        // static file: HTTP 200 with the raw source as the body. Parsing that
+        // as JSON throws, and the old code let the empty-array fallback report
+        // "No tracks found" — which blames the Drive folder for a missing
+        // backend. Detect it and say what's actually wrong.
+        const raw = await response.text();
+        let data;
+        try {
+            data = JSON.parse(raw);
+        } catch (_) {
+            if (raw.trimStart().startsWith('<?php')) {
+                throw new Error('proxy.php is not being executed — Drive needs a PHP server (see README).');
+            }
+            throw new Error('Drive listing returned a non-JSON response.');
+        }
+
+        if (data.error) throw new Error(data.error);
+
         const files = data.files || [];
         if (files.length === 0) {
             console.warn('No audio files found in folder');

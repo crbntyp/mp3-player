@@ -6,15 +6,17 @@
       "artist": "Chip",
       "album": "Dream Universe",
       "duration": "4:54",
-      "image": null,
-      "audio": "music/CM-Dream_Universe_original_mix.opus",
+      "version": null,
+      "image": "img/covers/cm-dream-universe-original-mix.webp",
+      "label": "img/covers/cm-dream-universe-original-mix-label.webp",
+      "audio": "music/cm-dream-universe-original-mix.opus",
       "colors": {
-        "primary": "#6366f1",
-        "secondary": "#4f46e5",
-        "accent": "#a78bfa",
-        "muted": "#94a3b8",
-        "dark": "#1e293b",
-        "light": "#e2e8f0"
+        "primary": "#62b79f",
+        "secondary": "#14646c",
+        "accent": "#cadaaf",
+        "muted": "#599386",
+        "dark": "#28595d",
+        "light": "#536830"
       }
     },
     {
@@ -23,8 +25,10 @@
       "artist": "Freefall",
       "album": "Skydive (I Feel Wonderful) (Including Hi-Fi Bugs Remixes)",
       "duration": "8:50",
+      "version": null,
       "image": null,
-      "audio": "music/Freefall-skydive_(i_feel_wonderful).opus",
+      "label": null,
+      "audio": "music/freefall-skydive-i-feel-wonderful.opus",
       "colors": {
         "primary": "#6366f1",
         "secondary": "#4f46e5",
@@ -36,12 +40,14 @@
     },
     {
       "id": 3,
-      "title": "Flash (DJ Elite's That Fuct Camera Mix)",
+      "title": "Flash",
       "artist": "Green Velvet",
       "album": "Flash",
       "duration": "7:21",
+      "version": "DJ Elite's That Fuct Camera Mix",
       "image": null,
-      "audio": "music/Green Velvet - Flash (DJ Elite That Fuct Camera Mix).opus",
+      "label": null,
+      "audio": "music/green-velvet-flash-dj-elite-that-fuct-camera-mix.opus",
       "colors": {
         "primary": "#6366f1",
         "secondary": "#4f46e5",
@@ -57,15 +63,17 @@
       "artist": "Rodd-Y-Ler",
       "album": "The Art Work EP",
       "duration": "8:22",
-      "image": null,
-      "audio": "music/Rodd-Y-Ler - Lifesigns.opus",
+      "version": null,
+      "image": "img/covers/rodd-y-ler-lifesigns.webp",
+      "label": "img/covers/rodd-y-ler-lifesigns-label.webp",
+      "audio": "music/rodd-y-ler-lifesigns.opus",
       "colors": {
-        "primary": "#6366f1",
-        "secondary": "#4f46e5",
-        "accent": "#a78bfa",
-        "muted": "#94a3b8",
-        "dark": "#1e293b",
-        "light": "#e2e8f0"
+        "primary": "#56afb6",
+        "secondary": "#244658",
+        "accent": "#a1d4d1",
+        "muted": "#4a8897",
+        "dark": "#383a4f",
+        "light": "#e7d8ce"
       }
     },
     {
@@ -74,15 +82,17 @@
       "artist": "The Pumpkin",
       "album": "Unknown Album",
       "duration": "7:10",
-      "image": null,
-      "audio": "music/The Pumpkin - Take Me.opus",
+      "version": null,
+      "image": "img/covers/the-pumpkin-take-me.webp",
+      "label": "img/covers/the-pumpkin-take-me-label.webp",
+      "audio": "music/the-pumpkin-take-me.opus",
       "colors": {
-        "primary": "#6366f1",
-        "secondary": "#4f46e5",
-        "accent": "#a78bfa",
-        "muted": "#94a3b8",
-        "dark": "#1e293b",
-        "light": "#e2e8f0"
+        "primary": "#40abb0",
+        "secondary": "#0b4c69",
+        "accent": "#9dd8db",
+        "muted": "#a17569",
+        "dark": "#2c3556",
+        "light": "#286d70"
       }
     },
     {
@@ -91,25 +101,29 @@
       "artist": "Ron Hagen & Pascal M",
       "album": "Keepin' It Real",
       "duration": "7:33",
-      "image": null,
-      "audio": "music/ron_hagen_and_pascal_m-forever.opus",
+      "version": null,
+      "image": "img/covers/ron-hagen-and-pascal-m-forever.webp",
+      "label": "img/covers/ron-hagen-and-pascal-m-forever-label.webp",
+      "audio": "music/ron-hagen-and-pascal-m-forever.opus",
       "colors": {
-        "primary": "#6366f1",
-        "secondary": "#4f46e5",
-        "accent": "#a78bfa",
-        "muted": "#94a3b8",
-        "dark": "#1e293b",
-        "light": "#e2e8f0"
+        "primary": "#2b6e7a",
+        "secondary": "#23525e",
+        "accent": "#9cd2dc",
+        "muted": "#a46b62",
+        "dark": "#2c535f",
+        "light": "#a49591"
       }
     },
     {
       "id": 7,
-      "title": "Silence (Club Mix)",
+      "title": "Silence",
       "artist": "Taiko",
       "album": "Silence",
       "duration": "7:48",
+      "version": "Club Mix",
       "image": null,
-      "audio": "music/taiko_-_silence_(club_mix)-nme.opus",
+      "label": null,
+      "audio": "music/taiko-silence-club-mix-nme.opus",
       "colors": {
         "primary": "#6366f1",
         "secondary": "#4f46e5",

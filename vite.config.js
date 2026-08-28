@@ -12,6 +12,25 @@ export default defineConfig({
     port: 8080,
     open: true,
     strictPort: true,
+
+    // The dev server can't run PHP, so it would otherwise serve proxy.php as
+    // a static file — a 200 whose body is raw PHP source. That made every
+    // Drive era show up empty locally while working fine in production.
+    //
+    // Forward those requests to the deployed backend instead, so Drive
+    // listings, audio streaming and art extraction all work in dev without
+    // needing PHP or a copy of DRIVE_API_KEY on this machine (the key stays
+    // server-side, which is the point of the proxy).
+    //
+    // Set PLYR_PROXY_TARGET to point at a local PHP server instead.
+    proxy: {
+      '/proxy.php': {
+        target: process.env.PLYR_PROXY_TARGET || 'https://crbntyp.com',
+        changeOrigin: true,
+        rewrite: (path) =>
+          process.env.PLYR_PROXY_TARGET ? path : path.replace(/^\/proxy\.php/, '/plyr/proxy.php'),
+      },
+    },
   },
 
   build: {

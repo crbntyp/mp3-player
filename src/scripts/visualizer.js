@@ -14,9 +14,11 @@ export class AudioVisualizer {
             accent: '#a78bfa'
         };
 
-        // Waveform history for smooth animation
+        // Waveform history for the trailing-lines effect. drawPulseLine()
+        // only ever renders the newest 5 frames, so retaining 100 was just
+        // holding 95 dead arrays alive.
         this.waveformHistory = [];
-        this.maxHistory = 100; // Keep last 100 frames
+        this.maxHistory = 5;
 
         this.init();
     }
@@ -155,6 +157,9 @@ export class AudioVisualizer {
             this.waveformHistory.pop();
         }
 
+        // One clock read per frame, not one per point per trail line.
+        const time = Date.now() * 0.003;
+
         // Draw multiple lines for trail effect
         for (let h = 0; h < Math.min(this.waveformHistory.length, 5); h++) {
             const historyData = this.waveformHistory[h];
@@ -174,7 +179,6 @@ export class AudioVisualizer {
                 const amplitude = (value / 255) * (height * 0.4);
 
                 // Add some pulse/heartbeat character with sine wave
-                const time = Date.now() * 0.003;
                 const pulse = Math.sin(i * 0.5 + time) * 5;
 
                 const y = centerY + amplitude * Math.sin(i * 0.3) + pulse;

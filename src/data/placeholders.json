@@ -1,333 +1,183 @@
 {
   "images": [
     {
-      "id": 13259293,
-      "url": "img/placeholders/13259293.jpg",
-      "photographer": "Sabbir Ahasan",
-      "photographer_url": "https://www.pexels.com/@shabbirahasan",
-      "query": "pinned",
+      "id": "sleeve-01",
+      "url": "img/placeholders/sleeve-01.jpg",
       "colors": {
-        "primary": "#3fbfaf",
-        "secondary": "#040c0b",
-        "accent": "#9bddd5",
-        "muted": "#747d84",
-        "dark": "#34444c",
-        "light": "#bbbcbf"
+        "primary": "#24a4b1",
+        "secondary": "#2c4e60",
+        "accent": "#dd7c97",
+        "muted": "#aa6782",
+        "dark": "#2e4056",
+        "light": "#b2d8d5"
       }
     },
     {
-      "id": 11710172,
-      "url": "img/placeholders/11710172.jpg",
-      "photographer": "Connor Scott McManus",
-      "photographer_url": "https://www.pexels.com/@connorscottmcmanus",
-      "query": "pinned",
+      "id": "sleeve-02",
+      "url": "img/placeholders/sleeve-02.jpg",
       "colors": {
-        "primary": "#63b846",
-        "secondary": "#1c3414",
-        "accent": "#adda9f",
-        "muted": "#7a8180",
-        "dark": "#243921",
-        "light": "#3b6e2a"
+        "primary": "#883fbf",
+        "secondary": "#4b2369",
+        "accent": "#c19bdd",
+        "muted": "#9551a2",
+        "dark": "#2d334a",
+        "light": "#c2baad"
       }
     },
     {
-      "id": 7630930,
-      "url": "img/placeholders/7630930.jpg",
-      "photographer": "Zafer Erdoğan",
-      "photographer_url": "https://www.pexels.com/@zafer-erdogan-49915050",
-      "query": "pinned",
+      "id": "sleeve-03",
+      "url": "img/placeholders/sleeve-03.jpg",
       "colors": {
-        "primary": "#7f7f7f",
-        "secondary": "#424242",
-        "accent": "#bcbcbc",
-        "muted": "#7c7c7c",
-        "dark": "#3c3c3c",
-        "light": "#8f8f8f"
+        "primary": "#f8a53a",
+        "secondary": "#7f380b",
+        "accent": "#fbce5b",
+        "muted": "#986c49",
+        "dark": "#523c2c",
+        "light": "#956c03"
       }
     },
     {
-      "id": 11101129,
-      "url": "img/placeholders/11101129.jpg",
-      "photographer": "Tahir Osman",
-      "photographer_url": "https://www.pexels.com/@tahir-osman-109306362",
-      "query": "pinned",
+      "id": "sleeve-04",
+      "url": "img/placeholders/sleeve-04.jpg",
       "colors": {
-        "primary": "#9d4c2c",
-        "secondary": "#6a290f",
-        "accent": "#e1ac97",
-        "muted": "#8c847c",
-        "dark": "#543628",
-        "light": "#773921"
+        "primary": "#bd3972",
+        "secondary": "#77144d",
+        "accent": "#ec7aa5",
+        "muted": "#925c6d",
+        "dark": "#5c2c49",
+        "light": "#85133e"
       }
     },
     {
-      "id": 13582399,
-      "url": "img/placeholders/13582399.jpg",
-      "photographer": "Elsa Puga",
-      "photographer_url": "https://www.pexels.com/@elsa-puga-226042808",
-      "query": "pinned",
+      "id": "sleeve-05",
+      "url": "img/placeholders/sleeve-05.jpg",
       "colors": {
-        "primary": "#7a8482",
-        "secondary": "#3f4444",
-        "accent": "#babfbe",
-        "muted": "#828686",
-        "dark": "#3c4444",
-        "light": "#9da4a3"
+        "primary": "#1c5caf",
+        "secondary": "#093374",
+        "accent": "#60aff3",
+        "muted": "#3c588c",
+        "dark": "#1f2132",
+        "light": "#0a518e"
       }
     },
     {
-      "id": 7140997,
-      "url": "img/placeholders/7140997.jpg",
-      "photographer": "Ekaterina Astakhova",
-      "photographer_url": "https://www.pexels.com/@octoptimist",
-      "query": "pinned",
+      "id": "sleeve-06",
+      "url": "img/placeholders/sleeve-06.jpg",
       "colors": {
-        "primary": "#bf3f3f",
-        "secondary": "#0c0404",
-        "accent": "#dd9b9b",
-        "muted": "#722626",
-        "dark": "#2c2422",
-        "light": "#722626"
+        "primary": "#44b0bb",
+        "secondary": "#0f6778",
+        "accent": "#6cdee4",
+        "muted": "#64a4a4",
+        "dark": "#345c6c",
+        "light": "#177b81"
       }
     },
     {
-      "id": 16955371,
-      "url": "img/placeholders/16955371.jpg",
-      "photographer": "Masood Aslami",
-      "photographer_url": "https://www.pexels.com/@masoodaslami",
-      "query": "pinned",
+      "id": "sleeve-07",
+      "url": "img/placeholders/sleeve-07.jpg",
       "colors": {
-        "primary": "#886c3b",
-        "secondary": "#6e4d1f",
-        "accent": "#d6c3a2",
-        "muted": "#a5916d",
-        "dark": "#443624",
-        "light": "#c4bca8"
+        "primary": "#0dbfe7",
+        "secondary": "#0a4a73",
+        "accent": "#a0d4e0",
+        "muted": "#4f88ac",
+        "dark": "#344860",
+        "light": "#256473"
       }
     },
     {
-      "id": 11984251,
-      "url": "img/placeholders/11984251.jpg",
-      "photographer": "Nishant Meena",
-      "photographer_url": "https://www.pexels.com/@nishant-meena-186119433",
-      "query": "pinned",
+      "id": "sleeve-08",
+      "url": "img/placeholders/sleeve-08.jpg",
       "colors": {
-        "primary": "#b68860",
-        "secondary": "#543414",
-        "accent": "#d5baa4",
-        "muted": "#998459",
-        "dark": "#51432b",
-        "light": "#b39f82"
+        "primary": "#63428c",
+        "secondary": "#3f295a",
+        "accent": "#b880c3",
+        "muted": "#895ba8",
+        "dark": "#362345",
+        "light": "#948cc4"
       }
     },
     {
-      "id": 5068758,
-      "url": "img/placeholders/5068758.jpg",
-      "photographer": "Max Avans",
-      "photographer_url": "https://www.pexels.com/@maxavans",
-      "query": "pinned",
+      "id": "sleeve-09",
+      "url": "img/placeholders/sleeve-09.jpg",
       "colors": {
-        "primary": "#a46c34",
-        "secondary": "#743c14",
-        "accent": "#dfbc9a",
-        "muted": "#8a7d68",
-        "dark": "#375258",
-        "light": "#b2b4b2"
+        "primary": "#f1821e",
+        "secondary": "#7e3c0c",
+        "accent": "#fa9927",
+        "muted": "#904808",
+        "dark": "#453224",
+        "light": "#955203"
       }
     },
     {
-      "id": 16355722,
-      "url": "img/placeholders/16355722.jpg",
-      "photographer": "Marlon Castor",
-      "photographer_url": "https://www.pexels.com/@marlon-castor-500639215",
-      "query": "pinned",
+      "id": "sleeve-10",
+      "url": "img/placeholders/sleeve-10.jpg",
       "colors": {
-        "primary": "#7f7f7f",
-        "secondary": "#424242",
-        "accent": "#bcbcbc",
-        "muted": "#7f7f7f",
-        "dark": "#474747",
-        "light": "#4c4c4c"
+        "primary": "#e58065",
+        "secondary": "#274b54",
+        "accent": "#d06e5d",
+        "muted": "#a7665d",
+        "dark": "#344b50",
+        "light": "#b7887f"
       }
     },
     {
-      "id": 5587174,
-      "url": "img/placeholders/5587174.jpg",
-      "photographer": "Ekaterina Astakhova",
-      "photographer_url": "https://www.pexels.com/@octoptimist",
-      "query": "pinned",
+      "id": "sleeve-11",
+      "url": "img/placeholders/sleeve-11.jpg",
       "colors": {
-        "primary": "#3fbfaf",
-        "secondary": "#040c0b",
-        "accent": "#9bddd5",
-        "muted": "#a48c74",
-        "dark": "#4c3c2c",
-        "light": "#adacac"
+        "primary": "#b55d73",
+        "secondary": "#040c1a",
+        "accent": "#f4869d",
+        "muted": "#9c648c",
+        "dark": "#53394a",
+        "light": "#8c0c27"
       }
     },
     {
-      "id": 4977562,
-      "url": "img/placeholders/4977562.jpg",
-      "photographer": "Ekaterina Astakhova",
-      "photographer_url": "https://www.pexels.com/@octoptimist",
-      "query": "pinned",
+      "id": "sleeve-12",
+      "url": "img/placeholders/sleeve-12.jpg",
       "colors": {
-        "primary": "#6e442b",
-        "secondary": "#642c1c",
-        "accent": "#d9b59f",
-        "muted": "#99806f",
-        "dark": "#4a3928",
-        "light": "#999b9c"
+        "primary": "#7e6996",
+        "secondary": "#41364e",
+        "accent": "#bcb1c8",
+        "muted": "#716886",
+        "dark": "#353345",
+        "light": "#b2a5c0"
       }
     },
     {
-      "id": 5596458,
-      "url": "img/placeholders/5596458.jpg",
-      "photographer": "Ekaterina Astakhova",
-      "photographer_url": "https://www.pexels.com/@octoptimist",
-      "query": "pinned",
+      "id": "sleeve-13",
+      "url": "img/placeholders/sleeve-13.jpg",
       "colors": {
-        "primary": "#3fbf7f",
-        "secondary": "#040c08",
-        "accent": "#9bddbc",
-        "muted": "#565d5d",
-        "dark": "#3c2d24",
-        "light": "#26724c"
+        "primary": "#5db455",
+        "secondary": "#136229",
+        "accent": "#a7d6a2",
+        "muted": "#699b64",
+        "dark": "#3b633a",
+        "light": "#336a2e"
       }
     },
     {
-      "id": 2630772,
-      "url": "img/placeholders/2630772.jpg",
-      "photographer": "Kris Lucas",
-      "photographer_url": "https://www.pexels.com/@krislucas90",
-      "query": "pinned",
+      "id": "sleeve-14",
+      "url": "img/placeholders/sleeve-14.jpg",
       "colors": {
-        "primary": "#8f4813",
-        "secondary": "#763410",
-        "accent": "#efb589",
-        "muted": "#9ca474",
-        "dark": "#2f5f4e",
-        "light": "#a8c4bc"
+        "primary": "#6f4faf",
+        "secondary": "#1c142c",
+        "accent": "#b4a3d5",
+        "muted": "#8a6ea5",
+        "dark": "#382d54",
+        "light": "#b79ebe"
       }
     },
     {
-      "id": 19466345,
-      "url": "img/placeholders/19466345.jpg",
-      "photographer": "Damien Snyers",
-      "photographer_url": "https://www.pexels.com/@damien-snyers-833341403",
-      "query": "pinned",
+      "id": "sleeve-15",
+      "url": "img/placeholders/sleeve-15.jpg",
       "colors": {
-        "primary": "#b49f4a",
-        "secondary": "#443c1c",
-        "accent": "#d8cda1",
-        "muted": "#51565c",
-        "dark": "#4c4c3c",
-        "light": "#6c5f2c"
-      }
-    },
-    {
-      "id": 6333850,
-      "url": "img/placeholders/6333850.jpg",
-      "photographer": "Happy Donut",
-      "photographer_url": "https://www.pexels.com/@happy-donut-9996232",
-      "query": "pinned",
-      "colors": {
-        "primary": "#7f7f7f",
-        "secondary": "#424242",
-        "accent": "#bcbcbc",
-        "muted": "#7c7c7c",
-        "dark": "#434343",
-        "light": "#9b9b9b"
-      }
-    },
-    {
-      "id": 19466344,
-      "url": "img/placeholders/19466344.jpg",
-      "photographer": "Damien Snyers",
-      "photographer_url": "https://www.pexels.com/@damien-snyers-833341403",
-      "query": "pinned",
-      "colors": {
-        "primary": "#34547c",
-        "secondary": "#243d56",
-        "accent": "#a1b9d7",
-        "muted": "#5c7cac",
-        "dark": "#2c3c55",
-        "light": "#728cad"
-      }
-    },
-    {
-      "id": 29330242,
-      "url": "img/placeholders/29330242.jpg",
-      "photographer": "Wolfgang Weiser",
-      "photographer_url": "https://www.pexels.com/@wolfgang-weiser-467045605",
-      "query": "pinned",
-      "colors": {
-        "primary": "#7f7f7f",
-        "secondary": "#424242",
-        "accent": "#bcbcbc",
-        "muted": "#7c7c7c",
-        "dark": "#444444",
-        "light": "#afafaf"
-      }
-    },
-    {
-      "id": 31557560,
-      "url": "img/placeholders/31557560.jpg",
-      "photographer": "Daniel Lee",
-      "photographer_url": "https://www.pexels.com/@capturavisualmoment",
-      "query": "pinned",
-      "colors": {
-        "primary": "#7f7f7f",
-        "secondary": "#424242",
-        "accent": "#bcbcbc",
-        "muted": "#7c7c7c",
-        "dark": "#444444",
-        "light": "#cbcbcb"
-      }
-    },
-    {
-      "id": 6357147,
-      "url": "img/placeholders/6357147.jpg",
-      "photographer": "Enzo",
-      "photographer_url": "https://www.pexels.com/@enzocarada",
-      "query": "pinned",
-      "colors": {
-        "primary": "#b48a4a",
-        "secondary": "#44341c",
-        "accent": "#d8c2a1",
-        "muted": "#947b62",
-        "dark": "#493b2c",
-        "light": "#b5b3a9"
-      }
-    },
-    {
-      "id": 20180314,
-      "url": "img/placeholders/20180314.jpg",
-      "photographer": "selin yağcı",
-      "photographer_url": "https://www.pexels.com/@selin-yagci-986913530",
-      "query": "pinned",
-      "colors": {
-        "primary": "#846434",
-        "secondary": "#391f04",
-        "accent": "#c9b48a",
-        "muted": "#927e63",
-        "dark": "#67573f",
-        "light": "#bfa57a"
-      }
-    },
-    {
-      "id": 6165616,
-      "url": "img/placeholders/6165616.jpg",
-      "photographer": "KELLY LEONARD",
-      "photographer_url": "https://www.pexels.com/@thevisualgriot",
-      "query": "spiral staircase monochrome",
-      "colors": {
-        "primary": "#7f7f7f",
-        "secondary": "#424242",
-        "accent": "#bcbcbc",
-        "muted": "#878787",
-        "dark": "#3c3c3c",
-        "light": "#a9a9a9"
+        "primary": "#0f95a5",
+        "secondary": "#046c8c",
+        "accent": "#aeede6",
+        "muted": "#5bb5b3",
+        "dark": "#264c4b",
+        "light": "#a5c3b4"
       }
     }
   ]

@@ -24,12 +24,17 @@
     <!-- Loading Overlay -->
     <div id="loading-overlay" class="loading-overlay">
         <div class="loading-content">
-            <i class="las la-compact-disc loading-icon"></i>
+            <svg class="loading-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                 stroke-width="1.5" aria-hidden="true">
+                <circle cx="12" cy="12" r="9" />
+                <circle cx="12" cy="12" r="3" />
+                <path d="M12 3a9 9 0 0 1 9 9" stroke-linecap="round" opacity=".45" />
+            </svg>
             <h1 class="loading-title">Loading Player</h1>
             <div class="loading-progress-container">
                 <div id="loading-progress-bar" class="loading-progress-bar"></div>
             </div>
-            <p id="loading-status" class="loading-status">Loading cover images... 0/7</p>
+            <p id="loading-status" class="loading-status">Loading artwork</p>
         </div>
     </div>
 
@@ -140,20 +145,24 @@
         <!-- Era selector — fixed bottom-left of the viewport. Mitsubishi
              three-diamond mark stands in for the era / source switcher. -->
         <div class="era-selector">
-            <button id="era-btn" class="control-btn control-btn--utility" aria-label="Select era">
-                <svg class="control-icon" viewBox="0 0 24 24" aria-hidden="true">
-                    <path d="M12 1L16 5 12 9 8 5ZM6 11L10 15 6 19 2 15ZM18 11L22 15 18 19 14 15Z"/>
+            <!-- A record beside a tracklist: this opens the crate. The old
+                 three-diamond mark was borrowed from a car badge and said
+                 nothing about music. -->
+            <button id="era-btn" class="control-btn control-btn--utility" aria-label="Open crate">
+                <svg class="control-icon control-icon--stroke" viewBox="0 0 24 24" fill="none"
+                     stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true">
+                    <circle cx="8" cy="12" r="6.5" />
+                    <circle cx="8" cy="12" r="1.5" />
+                    <path d="M17.5 6.5h4.5M17.5 12h4.5M17.5 17.5h4.5" />
                 </svg>
-                <span id="era-label" class="era-label-hidden">Era</span>
+                <span id="era-label" class="era-label-hidden">Crate</span>
             </button>
             <div id="era-menu" class="era-menu">
                 <!-- State A: pick a source / era. -->
+                <!-- Drive eras only. The bundled local tracks are still there
+                     as an offline fallback (see Player.#openDefaultCrate), but
+                     they aren't a place you'd choose to go. -->
                 <div class="era-menu-view era-menu-view--eras" data-view="eras">
-                    <button class="era-option" data-source="local">
-                        <i class="las la-music"></i>
-                        <span>Local Tracks</span>
-                    </button>
-                    <div class="era-divider"></div>
                     <div class="era-menu-title">Google Drive</div>
                     <!-- Drive folders populated by EraSelector.populateMenu() -->
                 </div>
@@ -161,21 +170,32 @@
                 <!-- State B: track list for the era chosen above. Hidden by
                      default; shown when a folder is picked. -->
                 <div class="era-menu-view era-menu-view--tracks" data-view="tracks" hidden>
-                    <div class="era-tracks-header">
-                        <button id="era-back-btn" class="era-back-btn" aria-label="Back to era picker">
+                    <div class="crate-header">
+                        <button id="era-back-btn" class="crate-nav" aria-label="Back to era picker">
                             <svg class="control-icon" viewBox="0 0 24 24" aria-hidden="true">
                                 <path d="M15 6l-6 6 6 6 1.4-1.4L11.8 12l4.6-4.6z"/>
                             </svg>
                         </button>
-                        <span id="era-tracks-title" class="era-tracks-title">Tracks</span>
-                        <button id="era-refresh-btn" class="era-refresh-btn" aria-label="Refresh listing">
+                        <span class="crate-id">
+                            <span id="era-tracks-title" class="crate-name">Tracks</span>
+                            <span id="era-tracks-count" class="crate-count"></span>
+                        </span>
+                        <button id="era-refresh-btn" class="crate-nav" aria-label="Refresh listing">
                             <svg class="control-icon" viewBox="0 0 24 24" aria-hidden="true">
                                 <path d="M17.65 6.35A8 8 0 1019.73 14h-2.08a6 6 0 11-1.42-6.22L13 11h7V4l-2.35 2.35z"/>
                             </svg>
                         </button>
                     </div>
-                    <input id="era-tracks-search" class="era-tracks-search" type="search" placeholder="Search…" aria-label="Search tracks" />
-                    <div id="era-tracks-list" class="era-tracks-list" role="listbox"></div>
+                    <div class="crate-search">
+                        <svg class="crate-search__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                             stroke-width="1.5" stroke-linecap="round" aria-hidden="true">
+                            <circle cx="11" cy="11" r="6" />
+                            <path d="M20 20l-4.5-4.5" />
+                        </svg>
+                        <input id="era-tracks-search" class="crate-search__input" type="search"
+                               placeholder="Search this crate" aria-label="Search tracks" />
+                    </div>
+                    <div id="era-tracks-list" class="era-tracks-list"></div>
                 </div>
             </div>
         </div>
