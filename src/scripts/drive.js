@@ -1,8 +1,11 @@
 // Drive integration — thin client talking to the server-side proxy.
 //
-// Listing, audio streaming, and album-art fetching all go through
-// proxy.php. The Drive API key lives only on the server (in
-// proxy.config.php) so it never ships to browsers.
+// Listing and audio streaming go through proxy.php. The Drive API key lives
+// only on the server (in proxy.config.php) so it never ships to browsers.
+//
+// Artwork does not come from here. The files' own embedded art is whatever the
+// rip carried — low-resolution scans and wrong releases — so the player uses
+// the generated sleeve set instead.
 
 import { formatTrackName } from './utils/format-track-name.js';
 
@@ -95,19 +98,17 @@ export class DriveSource {
             duration:  '0:00',
             image:     null,
             audio:     `${PROXY_URL}?id=${encodeURIComponent(file.id)}`,
-            // Art is lazy — Player will request it once the audio is
-            // cached. 404 means "no embedded art", fall back to neon.
-            artProbe:  `${PROXY_URL}?action=art&id=${encodeURIComponent(file.id)}`,
+            // No artProbe. The MP3's own embedded art is never used — see the
+            // note in Player. A null image means the player picks a sleeve.
             colors:    this.generateColors(),
             driveId:   file.id,
             fileName:  file.name,
         };
     }
 
-    // Random palette per track-listing. Intentional (per user) — tracks
-    // without embedded art get a different neon look each load. Tracks
-    // with embedded art will get their palette overridden by the Player
-    // once the art has loaded.
+    // Last-resort palette. In practice the player derives colour from whichever
+    // sleeve a track is wearing, so this only applies if the sleeve set failed
+    // to load at all.
     generateColors() {
         const palettes = [
             { primary: '#ff6b6b', secondary: '#4ecdc4', accent: '#ffe66d', muted: '#95a5a6', dark: '#2c3e50', light: '#ecf0f1' },

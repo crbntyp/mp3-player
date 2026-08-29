@@ -383,15 +383,6 @@ class Player {
             this.updateDuration();
         });
 
-        // Once the audio has fully buffered the proxy will also have the
-        // file cached on disk, which is the precondition for art
-        // extraction. Probe for embedded album art at that point — a 200
-        // swaps it in, a 404 leaves the neon placeholder alone.
-        this.audio.addEventListener('canplaythrough', () => {
-            const track = this.tracks[this.currentTrackIndex];
-            if (track) this.tryEmbeddedArt(track);
-        });
-
         // Handle duration change - only update if we don't have a valid duration yet
         this.audio.addEventListener('durationchange', () => {
             const durationEl = document.getElementById('duration');
@@ -608,30 +599,14 @@ class Player {
         document.documentElement.style.setProperty('--backdrop-image', `url("${url}")`);
     }
 
-    // Drive tracks ship with a placeholder neon image — replace it with
-    // the file's embedded cover art if one is present. The probe is the
-    // proxy.php art endpoint; a 200 fires onload, a 404 fires onerror and
-    // we leave the neon placeholder in place. Palette stays random by
-    // design — user prefers the neon-derived colour per visit.
-    tryEmbeddedArt(track) {
-        if (!track.artProbe) return;
-
-        const trackIndex = this.currentTrackIndex;
-        const probe = new Image();
-        probe.onload = () => {
-            if (this.currentTrackIndex !== trackIndex) return;
-
-            this.updateAlbumArt({
-                cover: track.artProbe,
-                label: track.artProbe,
-                colors: track.colors,
-                isPlaceholder: false,
-            });
-            console.log('✓ Embedded art swapped in');
-        };
-        probe.onerror = () => { /* 404 — no embedded art, neon stays */ };
-        probe.src = track.artProbe;
-    }
+    // Artwork deliberately never comes from the audio file itself.
+    //
+    // Drive tracks used to probe proxy.php?action=art once buffered and swap
+    // the MP3's own tagged artwork over the sleeve. That art is whatever the
+    // rip happened to carry — low-resolution scans, wrong releases, label
+    // stamps — and it replaced a good image with a bad one several seconds
+    // into playback, which read as the player breaking. The generated sleeve
+    // set is the only source of imagery for tracks without a curated cover.
 
     updateTrackInfo(track) {
         const titleEl = document.getElementById('track-title');
