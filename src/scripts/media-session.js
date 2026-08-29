@@ -41,17 +41,27 @@ export class MediaSession {
     const track = this.player.tracks[this.player.currentTrackIndex];
     if (!track) return;
 
-    let artworkUrl = track.image;
-    if (this.player.currentPlaceholder) artworkUrl = this.player.currentPlaceholder.url;
+    // Whatever the player is actually showing, which for a Drive track is a
+    // sleeve rather than anything on the track itself.
+    //
+    // This read player.currentPlaceholder, a field that stopped existing when
+    // artwork resolution was rewritten — so it fell through to track.image,
+    // which is null for every Drive track, and the lock screen and CarPlay
+    // showed no artwork at all. Nothing threw; the art was simply absent.
+    let artworkUrl = this.player.currentArt?.cover || track.image;
     if (artworkUrl && !artworkUrl.startsWith('http')) {
       artworkUrl = new URL(artworkUrl, window.location.href).href;
     }
 
+    // The mix matters as much as the title on a record like these, and the
+    // lock screen is the one place there's room to say so.
+    const title = track.version ? `${track.title} (${track.version})` : track.title;
+
     navigator.mediaSession.metadata = new MediaMetadata({
-      title: track.title,
+      title,
       artist: track.artist,
       album: 'plyr',
-      artwork: artworkUrl ? [{ src: artworkUrl, sizes: '512x512', type: 'image/jpeg' }] : [],
+      artwork: artworkUrl ? [{ src: artworkUrl, sizes: '1024x1024', type: 'image/jpeg' }] : [],
     });
   }
 
