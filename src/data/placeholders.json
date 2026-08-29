@@ -179,6 +179,186 @@
         "dark": "#264c4b",
         "light": "#a5c3b4"
       }
+    },
+    {
+      "id": "sleeve-16",
+      "url": "img/placeholders/sleeve-16.jpg",
+      "colors": {
+        "primary": "#e5754c",
+        "secondary": "#854f34",
+        "accent": "#fbd884",
+        "muted": "#86554a",
+        "dark": "#5b443c",
+        "light": "#946a04"
+      }
+    },
+    {
+      "id": "sleeve-17",
+      "url": "img/placeholders/sleeve-17.jpg",
+      "colors": {
+        "primary": "#b76a32",
+        "secondary": "#042365",
+        "accent": "#f6c686",
+        "muted": "#8c6444",
+        "dark": "#402524",
+        "light": "#8e550a"
+      }
+    },
+    {
+      "id": "sleeve-18",
+      "url": "img/placeholders/sleeve-18.jpg",
+      "colors": {
+        "primary": "#65b8cc",
+        "secondary": "#043c64",
+        "accent": "#9bd1de",
+        "muted": "#587c8c",
+        "dark": "#2d4956",
+        "light": "#266472"
+      }
+    },
+    {
+      "id": "sleeve-19",
+      "url": "img/placeholders/sleeve-19.jpg",
+      "colors": {
+        "primary": "#ef4620",
+        "secondary": "#763117",
+        "accent": "#faa162",
+        "muted": "#8e220a",
+        "dark": "#643c2c",
+        "light": "#944004"
+      }
+    },
+    {
+      "id": "sleeve-20",
+      "url": "img/placeholders/sleeve-20.jpg",
+      "colors": {
+        "primary": "#2c5c71",
+        "secondary": "#1c3f54",
+        "accent": "#9fc8d9",
+        "muted": "#6c949a",
+        "dark": "#364f59",
+        "light": "#c1baac"
+      }
+    },
+    {
+      "id": "sleeve-21",
+      "url": "img/placeholders/sleeve-21.jpg",
+      "colors": {
+        "primary": "#a36f41",
+        "secondary": "#643c26",
+        "accent": "#f4dfb9",
+        "muted": "#a77f59",
+        "dark": "#4c3829",
+        "light": "#cbb399"
+      }
+    },
+    {
+      "id": "sleeve-22",
+      "url": "img/placeholders/sleeve-22.jpg",
+      "colors": {
+        "primary": "#9c6263",
+        "secondary": "#513333",
+        "accent": "#cbadae",
+        "muted": "#8f656e",
+        "dark": "#41394d",
+        "light": "#b68b8c"
+      }
+    },
+    {
+      "id": "sleeve-23",
+      "url": "img/placeholders/sleeve-23.jpg",
+      "colors": {
+        "primary": "#3858b1",
+        "secondary": "#142c67",
+        "accent": "#849ce9",
+        "muted": "#5866af",
+        "dark": "#61392c",
+        "light": "#8484b8"
+      }
+    },
+    {
+      "id": "sleeve-24",
+      "url": "img/placeholders/sleeve-24.jpg",
+      "colors": {
+        "primary": "#14a9d6",
+        "secondary": "#0d456e",
+        "accent": "#59dcf3",
+        "muted": "#774faf",
+        "dark": "#35326f",
+        "light": "#0a7a8e"
+      }
+    },
+    {
+      "id": "sleeve-25",
+      "url": "img/placeholders/sleeve-25.jpg",
+      "colors": {
+        "primary": "#2a7fd4",
+        "secondary": "#040c14",
+        "accent": "#90bce8",
+        "muted": "#b4a088",
+        "dark": "#3f4041",
+        "light": "#194c7f"
+      }
+    },
+    {
+      "id": "sleeve-26",
+      "url": "img/placeholders/sleeve-26.jpg",
+      "colors": {
+        "primary": "#5484c4",
+        "secondary": "#1c3254",
+        "accent": "#84c4ec",
+        "muted": "#5f779b",
+        "dark": "#34435e",
+        "light": "#7699c2"
+      }
+    },
+    {
+      "id": "sleeve-27",
+      "url": "img/placeholders/sleeve-27.jpg",
+      "colors": {
+        "primary": "#b88f07",
+        "secondary": "#775707",
+        "accent": "#faee9a",
+        "muted": "#8a7544",
+        "dark": "#54472c",
+        "light": "#918007"
+      }
+    },
+    {
+      "id": "sleeve-28",
+      "url": "img/placeholders/sleeve-28.jpg",
+      "colors": {
+        "primary": "#bf923f",
+        "secondary": "#3c2e14",
+        "accent": "#ddc69b",
+        "muted": "#7c965f",
+        "dark": "#433b2a",
+        "light": "#afb269"
+      }
+    },
+    {
+      "id": "sleeve-29",
+      "url": "img/placeholders/sleeve-29.jpg",
+      "colors": {
+        "primary": "#b77f4a",
+        "secondary": "#743e1c",
+        "accent": "#ecd29b",
+        "muted": "#917c59",
+        "dark": "#4f3d30",
+        "light": "#805f18"
+      }
+    },
+    {
+      "id": "sleeve-30",
+      "url": "img/placeholders/sleeve-30.jpg",
+      "colors": {
+        "primary": "#4283b3",
+        "secondary": "#1c4567",
+        "accent": "#8acef1",
+        "muted": "#4c7494",
+        "dark": "#2e4c59",
+        "light": "#105f88"
+      }
     }
   ]
 }

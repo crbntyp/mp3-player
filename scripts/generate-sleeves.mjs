@@ -41,6 +41,26 @@ const SCENES = [
   'a forest of bare trees under an emerald green sky, mist pooling at the roots',
   'a solitary lighthouse beam cutting through violet fog over jagged rocks',
   'the curve of a planet horizon seen from orbit, thin atmosphere glowing turquoise against deep space',
+
+  // Second batch. Same cinematic register, deliberately widened away from the
+  // cosmic/vortex centre of the first set so 30 sleeves in rotation don't all
+  // read as the same picture — more terrestrial subjects, and palettes pushed
+  // into amber, red, sulphur and monochrome rather than teal/magenta again.
+  'a colossal sand dune ridge at dawn, sky banded coral and gold, a tiny figure cresting the ridge',
+  'rain falling through a single shaft of streetlight in an empty concrete underpass, deep blue and sodium orange',
+  'an iceberg the size of a cathedral glowing from within, cold cyan against a black sea',
+  'a vast field of tall grass under a low red sun, wind moving in visible waves across it',
+  'the interior of an abandoned power station, shafts of dusty light through a broken glass roof',
+  'a wooden pier stretching into thick fog, lamps receding one by one into white nothing',
+  'an enormous flock of birds forming a slow spiral against a bruised violet sky',
+  'a mountain lake perfectly still at blue hour, mirrored peaks, one warm cabin light on the shore',
+  'neon signage fracturing in reflections across wet asphalt in a narrow alley, magenta and cyan',
+  'a total solar eclipse above a desert plateau, white corona blazing, the landscape in deep shadow',
+  'a lone satellite tumbling above the terminator line of a dark planet, thin blue atmosphere behind it',
+  'waves of black volcanic rock steaming under a sulphur yellow sky',
+  'an ancient standing stone circle under a dense field of stars, faint green airglow on the horizon',
+  'a slow river of fog moving between skyscrapers at night, amber windows burning through it',
+  'a wall of falling water lit from behind by cold blue light, spray suspended in the air',
 ];
 
 fs.mkdirSync(OUT, { recursive: true });
