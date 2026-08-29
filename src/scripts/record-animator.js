@@ -36,7 +36,14 @@ export class RecordAnimator {
       this.element.classList.remove('slide-in', 'hidden', 'playing');
       this.element.classList.add('slide-out');
 
+      // Safety net. Animations do not run on a hidden page, so animationend
+      // can simply never arrive — and anything awaiting this would wait
+      // forever. Nothing should be able to wedge on decoration.
+      let settled = false;
       const onEnd = () => {
+        if (settled) return;
+        settled = true;
+        clearTimeout(timer);
         this.element.removeEventListener('animationend', onEnd);
         this.element.classList.remove('slide-out');
         this.element.classList.add('visible');
@@ -48,6 +55,7 @@ export class RecordAnimator {
         resolve();
       };
       this.element.addEventListener('animationend', onEnd);
+      const timer = setTimeout(onEnd, 1500);
     });
   }
 
@@ -62,7 +70,14 @@ export class RecordAnimator {
       this.element.classList.remove('playing', 'visible', 'slide-out');
       this.element.classList.add('slide-in');
 
+      // Safety net. Animations do not run on a hidden page, so animationend
+      // can simply never arrive — and anything awaiting this would wait
+      // forever. Nothing should be able to wedge on decoration.
+      let settled = false;
       const onEnd = () => {
+        if (settled) return;
+        settled = true;
+        clearTimeout(timer);
         this.element.removeEventListener('animationend', onEnd);
         this.element.classList.remove('slide-in');
         this.element.classList.add('hidden');
@@ -71,6 +86,7 @@ export class RecordAnimator {
         resolve();
       };
       this.element.addEventListener('animationend', onEnd);
+      const timer = setTimeout(onEnd, 1500);
     });
   }
 }

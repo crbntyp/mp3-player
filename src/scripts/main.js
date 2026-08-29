@@ -797,31 +797,42 @@ class Player {
         return (this.currentTrackIndex - 1 + this.tracks.length) % this.tracks.length;
     }
 
-    async nextTrack() {
-        const wasPlaying = this.isPlaying;
+    nextTrack() {
         const nextIndex = this.peekNextIndex();
         if (nextIndex === null) return; // nothing loaded
-
-        if (wasPlaying && this.recordAnimator.visible) {
-            await this.recordAnimator.slideIn();
-            this.loadTrack(nextIndex, wasPlaying);
-            await this.recordAnimator.slideOut();
-        } else {
-            this.loadTrack(nextIndex, wasPlaying);
-        }
+        this.#changeTrack(nextIndex);
     }
 
-    async previousTrack() {
-        const wasPlaying = this.isPlaying;
+    previousTrack() {
         const prevIndex = this.peekPrevIndex();
         if (prevIndex === null) return;
+        this.#changeTrack(prevIndex);
+    }
 
-        if (wasPlaying && this.recordAnimator.visible) {
-            await this.recordAnimator.slideIn();
-            this.loadTrack(prevIndex, wasPlaying);
-            await this.recordAnimator.slideOut();
-        } else {
-            this.loadTrack(prevIndex, wasPlaying);
+    // Change the record. The turntable animation is decoration and never gets
+    // to gate it.
+    //
+    // This used to `await recordAnimator.slideIn()` before loading, but only
+    // when something was already playing. Two things break there once the
+    // screen is locked: CSS animations don't run on a hidden page, so
+    // `animationend` never fires and the promise never resolves — the track
+    // simply never changed — and even if it had resolved, iOS treats a Media
+    // Session handler as a user-activation context only while the call stack
+    // is unbroken, so play() after an await is rejected.
+    //
+    // That's exactly why the lock-screen buttons worked while paused and did
+    // nothing while playing: paused took the else branch and loaded directly.
+    //
+    // So: load synchronously, animate afterwards, and only when there is a
+    // visible page to animate on.
+    #changeTrack(index) {
+        const wasPlaying = this.isPlaying;
+        this.loadTrack(index, wasPlaying);
+
+        if (wasPlaying && this.recordAnimator.visible && !document.hidden) {
+            this.recordAnimator.slideIn()
+                .then(() => this.recordAnimator.slideOut())
+                .catch(() => { /* decoration — never worth surfacing */ });
         }
     }
 
