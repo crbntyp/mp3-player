@@ -41,3 +41,21 @@
   </Files>
 
 </IfModule>
+
+# Share cards.
+#
+# A request for the app carrying ?e=<era>&t=<n> is served by share.php, which
+# is the same index.html with Open Graph tags for that track injected. Only
+# requests with both parameters are rewritten, so the plain entry point stays
+# a static file and nothing about a normal visit changes.
+#
+# This exists because the app addresses tracks with a fragment, and fragments
+# never reach a server — an unfurling crawler asking for /plyr/#1998/12 sees
+# only /plyr/ and cannot tell which record was shared.
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteBase /plyr/
+  RewriteCond %{QUERY_STRING} (^|&)e=[^&]+
+  RewriteCond %{QUERY_STRING} (^|&)t=[0-9]+
+  RewriteRule ^(index\.html)?$ share.php [L,QSA]
+</IfModule>

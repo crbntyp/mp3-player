@@ -1,0 +1,10 @@
+{
+  "_comment": "Drive folder list, shared by the client (drive.js) and the server (share.php). The IDs identify which public folder to read; they are not secrets. The key that reads them stays server-side in proxy.config.php. Labels are what appear in hash links (#1998/12) and share URLs, so renaming one breaks links already shared.",
+  "eras": [
+    { "id": "1YiPSorLbLyYQ0yhDctUPvuldy5AuBO7N", "label": "1993-97", "years": "1993-97" },
+    { "id": "1jG4ecT8-rYbzAtjtODdsQJGZk-py8Xkp", "label": "1998",    "years": "1998" },
+    { "id": "1bxnKmycwXKgpq4cszhDCrin_GWrNiAgL", "label": "1999",    "years": "1999" },
+    { "id": "1IE0SIW5g2ASNW9alhjPY1vVSjQ1j_MZV", "label": "2000",    "years": "2000" },
+    { "id": "1ns2mhWgCZ7lJ_ZN23JfHlLhcljkJYiG5", "label": "2001-04", "years": "2001-04" }
+  ]
+}

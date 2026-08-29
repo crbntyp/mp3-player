@@ -4,10 +4,16 @@
   "description": "Classics you can't find online!",
   "start_url": "/plyr/",
   "display": "standalone",
-  "background_color": "#1a1a2e",
-  "theme_color": "#1a1a2e",
+  "background_color": "#0c0c11",
+  "theme_color": "#0c0c11",
   "orientation": "portrait",
   "icons": [
+    {
+      "src": "img/assets/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
     {
       "src": "img/assets/icon-192.png",
       "sizes": "192x192",

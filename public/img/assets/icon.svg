@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="plyr">
+  <!-- A record on a dark ground. The old mark was a hot pink square with a
+       lowercase p, which shared nothing with the app it fronts — dark,
+       atmospheric, built around a vinyl record and its sleeve.
+
+       Drawn to survive 16px: at tab size the grooves disappear and what
+       remains is a dark disc with a warm centre, which is legible and
+       distinct in a strip of tabs. The detail is there for the 512px
+       install icon rather than for the favicon. -->
+  <defs>
+    <radialGradient id="label" cx="50%" cy="38%" r="70%">
+      <stop offset="0%" stop-color="#fbbf24"/>
+      <stop offset="60%" stop-color="#f59e0b"/>
+      <stop offset="100%" stop-color="#b45309"/>
+    </radialGradient>
+    <linearGradient id="sheen" x1="18%" y1="8%" x2="78%" y2="92%">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity=".16"/>
+      <stop offset="42%" stop-color="#ffffff" stop-opacity="0"/>
+      <stop offset="100%" stop-color="#ffffff" stop-opacity=".05"/>
+    </linearGradient>
+    <radialGradient id="vinyl" cx="42%" cy="34%" r="78%">
+      <stop offset="0%" stop-color="#26262e"/>
+      <stop offset="100%" stop-color="#0e0e13"/>
+    </radialGradient>
+  </defs>
+
+  <!-- Full-bleed ground: the manifest declares these icons maskable, so the
+       background has to reach the edges or a circular mask crops to nothing. -->
+  <rect width="512" height="512" fill="#0c0c11"/>
+
+  <!-- Disc. Kept inside the maskable safe zone (the inner 80%) so a rounded
+       or circular platform mask never clips the grooves. -->
+  <circle cx="256" cy="256" r="196" fill="url(#vinyl)"/>
+
+  <!-- Grooves -->
+  <g fill="none" stroke="#ffffff" stroke-opacity=".10">
+    <circle cx="256" cy="256" r="176" stroke-width="2"/>
+    <circle cx="256" cy="256" r="158" stroke-width="2"/>
+    <circle cx="256" cy="256" r="140" stroke-width="2"/>
+    <circle cx="256" cy="256" r="122" stroke-width="2"/>
+  </g>
+
+  <circle cx="256" cy="256" r="196" fill="url(#sheen)"/>
+
+  <!-- Centre label, in the amber the sleeve set keeps landing on -->
+  <circle cx="256" cy="256" r="78" fill="url(#label)"/>
+  <circle cx="256" cy="256" r="78" fill="none" stroke="#000000" stroke-opacity=".28" stroke-width="2"/>
+
+  <!-- Spindle hole -->
+  <circle cx="256" cy="256" r="13" fill="#0c0c11"/>
+</svg>

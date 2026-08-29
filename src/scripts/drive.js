@@ -8,21 +8,18 @@
 // the generated sleeve set instead.
 
 import { formatTrackName } from './utils/format-track-name.js';
+import erasData from '../data/eras.json';
 
 const PROXY_URL = 'proxy.php';
 
 export class DriveSource {
     constructor() {
-        // Folder configuration. The IDs themselves aren't secret — they
-        // identify *which* public Drive folder to read — but the key that
-        // lets us read it stays server-side.
-        this.folders = [
-            { id: '1YiPSorLbLyYQ0yhDctUPvuldy5AuBO7N', label: '1993-97', years: '1993-97' },
-            { id: '1jG4ecT8-rYbzAtjtODdsQJGZk-py8Xkp', label: '1998',    years: '1998' },
-            { id: '1bxnKmycwXKgpq4cszhDCrin_GWrNiAgL', label: '1999',    years: '1999' },
-            { id: '1IE0SIW5g2ASNW9alhjPY1vVSjQ1j_MZV', label: '2000',    years: '2000' },
-            { id: '1ns2mhWgCZ7lJ_ZN23JfHlLhcljkJYiG5', label: '2001-04', years: '2001-04' },
-        ];
+        // Folder configuration now lives in data/eras.json, because
+        // share.php needs the same label → folder mapping to resolve a
+        // shared link server-side. Two hardcoded copies of this list would
+        // drift the moment an era was added, and the failure would be a
+        // share card for the wrong record rather than an error.
+        this.folders = erasData.eras;
 
         this.cachedTracks = new Map();
     }

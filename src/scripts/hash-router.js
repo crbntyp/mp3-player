@@ -1,9 +1,18 @@
-// URL hash routing: encode/decode the current track position so reloads and
+// URL routing: encode/decode the current track position so reloads and
 // shared links land on the same place.
 //
 // Hash shape: #<source>/<track-number>  (1-based for human readability)
 //   #local/3      → local tracks, track #3
 //   #1998/12      → Drive folder labelled "1998", track #12
+//
+// The same position is mirrored into the query string (?e=1998&t=12), and
+// that is the half that makes link previews possible. A fragment is never
+// sent to a server, so an unfurling crawler asking for a #-only link sees
+// the bare app and cannot know which record was shared. The query reaches
+// share.php, which resolves the track and emits the right Open Graph tags.
+//
+// Both are written, so whichever half of the URL someone copies works, and
+// links shared before the query existed still open correctly.
 
 export class HashRouter {
   constructor(player) {
@@ -13,15 +22,10 @@ export class HashRouter {
   // Read the hash on init. Returns true if it loaded a track, false to let
   // the caller fall through to the default first-track behaviour.
   async load() {
-    const hash = window.location.hash.slice(1);
-    if (!hash) return false;
+    const target = this.#readHash() || this.#readQuery();
+    if (!target) return false;
 
-    const parts = hash.split('/');
-    if (parts.length < 2) return false;
-
-    const source = parts[0];
-    const trackIndex = parseInt(parts[1]) - 1;
-    if (isNaN(trackIndex) || trackIndex < 0) return false;
+    const { source, trackIndex } = target;
 
     console.log(`🔗 Loading from hash: ${source}/${trackIndex + 1}`);
 
@@ -56,6 +60,37 @@ export class HashRouter {
     }
 
     const trackNum = this.player.currentTrackIndex + 1;
-    history.replaceState(null, '', `#${source}/${trackNum}`);
+
+    // Query first, then hash. The query is what a crawler can read, so
+    // copying straight from the address bar produces a link that previews
+    // — which is the only way this helps anyone who doesn't hunt for a
+    // share button.
+    const query = `?e=${encodeURIComponent(source)}&t=${trackNum}`;
+    history.replaceState(null, '', `${query}#${source}/${trackNum}`);
+  }
+
+  // #<source>/<n>
+  #readHash() {
+    const hash = window.location.hash.slice(1);
+    if (!hash) return null;
+    const parts = hash.split('/');
+    if (parts.length < 2) return null;
+    return this.#toTarget(parts[0], parts[1]);
+  }
+
+  // ?e=<source>&t=<n> — how share.php addresses a track, and therefore how
+  // a link that came back from a preview is shaped.
+  #readQuery() {
+    const params = new URLSearchParams(window.location.search);
+    const e = params.get('e');
+    const t = params.get('t');
+    if (!e || !t) return null;
+    return this.#toTarget(e, t);
+  }
+
+  #toTarget(source, num) {
+    const trackIndex = parseInt(num, 10) - 1;
+    if (!source || isNaN(trackIndex) || trackIndex < 0) return null;
+    return { source, trackIndex };
   }
 }
