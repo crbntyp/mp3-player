@@ -5,7 +5,13 @@
 // second set of quota bugs. Every crbntyp app is served from one origin
 // (crbntyp.com/plyr/, /gld/, /trckr/ …), so they share a single ~5MB
 // localStorage bucket — a neighbour that caches aggressively can fill it and
-// starve this app's small payload. That has actually happened here.
+// starve this app's small payload.
+//
+// Not hypothetical: on the shared dev origin (localhost:8080) gld's
+// cache_character-* keys filled all 5MB across 915 keys, and plyr's writes
+// fell through to sessionStorage. Production was measured at 18 keys / 147KB
+// at the time of writing, so it is fine there — but nothing stops the same
+// thing happening once gld has been used on that origin for a while.
 //
 // So a write walks a ladder: try it, drop our own key and retry, fall back to
 // sessionStorage, and finally warn once rather than failing invisibly forever.
