@@ -24,7 +24,11 @@ export class EraSelector {
         this.player = player;
         this.driveSource = null;
         this.viewingSource = null;   // folder id currently rendered
-        this.viewingTracks = [];
+        this.viewingTracks = [];     // the era's own tracks
+        this.rendered = [];          // what is actually in the list right now
+        this.searching = false;      // true while showing cross-era results
+        this.allTracks = null;       // every era, flattened; built on first search
+        this.searchTimer = null;
         this.listingError = null;
     }
 
@@ -116,7 +120,12 @@ export class EraSelector {
         });
 
         document.getElementById('records-search-input')?.addEventListener('input', (e) => {
-            this.#filterTracks(e.target.value);
+            // Debounced: a cross-era search may have to pull listings the
+            // first time, and re-rendering the whole list on every keystroke
+            // is wasted work either way.
+            const value = e.target.value;
+            clearTimeout(this.searchTimer);
+            this.searchTimer = setTimeout(() => this.#applySearch(value), 120);
         });
 
         this.#setupFavTools();
@@ -213,6 +222,12 @@ export class EraSelector {
         if (target && target !== this.viewingSource) {
             await this.showEra(target);
         } else {
+            // Reopening the same era. The search box keeps its text across a
+            // close, so re-rendering without touching it left the two
+            // disagreeing — the term still shown, every track visible — until
+            // a keystroke happened to re-run the filter.
+            this.#resetSearch();
+            this.rendered = this.viewingTracks;
             this.#renderTracksList();
         }
     }
@@ -261,9 +276,18 @@ export class EraSelector {
 
         this.#updateFavTools();
 
-        // Clear search before render so we don't show a filtered list.
-        const search = document.getElementById('records-search-input');
-        if (search) search.value = '';
+        this.#resetSearch();
+        this.rendered = tracks;
+
+        // The placeholder has to match the scope, or it's just wrong: search
+        // spans every era, except on Favourites where it searches the list
+        // you curated.
+        const input = document.getElementById('records-search-input');
+        if (input) {
+            input.placeholder = source === FAVOURITES
+                ? 'Search favourites'
+                : 'Search all eras';
+        }
 
         this.#markActiveChip();
         this.#renderTracksList();
@@ -342,6 +366,7 @@ export class EraSelector {
     async refreshFavouritesView() {
         if (this.viewingSource !== FAVOURITES) return;
         this.viewingTracks = await this.#loadFavourites();
+        if (!this.searching) this.rendered = this.viewingTracks;
         this.#updateFavTools();
         this.#renderTracksList();
     }
@@ -387,12 +412,27 @@ export class EraSelector {
         }
     }
 
-    #renderTracksList() {
+    // `count` describes what to say above the list: absent means "this era",
+    // present means a search produced these results.
+    #renderTracksList(count = null) {
         const list = document.getElementById('records-list');
         if (!list) return;
         list.innerHTML = '';
 
-        if (this.viewingTracks.length === 0) {
+        const tracks = this.rendered;
+
+        if (tracks.length === 0 && count) {
+            const empty = document.createElement('div');
+            empty.className = 'records-empty';
+            empty.textContent = count.allEras
+                ? 'Nothing matching in any era.'
+                : 'Nothing matching in your favourites.';
+            list.appendChild(empty);
+            this.#updateCount(count);
+            return;
+        }
+
+        if (tracks.length === 0) {
             const empty = document.createElement('div');
             empty.className = 'records-empty';
             empty.textContent = this.listingError
@@ -404,17 +444,21 @@ export class EraSelector {
             return;
         }
 
+        // While searching, "the current track" is whatever is playing, found
+        // by identity rather than by position — the result list has its own
+        // ordering and its indexes mean nothing to the player's queue.
         const isCurrentSource = this.viewingSource === this.player.currentSource;
+        const playing = this.player.tracks[this.player.currentTrackIndex];
+        const playingKey = playing ? trackKey(playing) : null;
 
-        this.viewingTracks.forEach((track, index) => {
-            const isCurrent = isCurrentSource && index === this.player.currentTrackIndex;
+        tracks.forEach((track, index) => {
+            const isCurrent = this.searching
+                ? (playingKey !== null && trackKey(track) === playingKey)
+                : (isCurrentSource && index === this.player.currentTrackIndex);
 
             const item = document.createElement('button');
             item.className = 'records-row';
             item.dataset.index = String(index);
-            // Stash searchable text so the filter doesn't keep
-            // re-querying the DOM for it.
-            item.dataset.search = `${track.title} ${track.artist || ''} ${track.version || ''}`.toLowerCase();
             if (track.missing) {
                 item.classList.add('records-row--missing');
                 item.title = 'This file is no longer in its era';
@@ -455,6 +499,12 @@ export class EraSelector {
                 ? `<span class="records-row__version">${escapeHtml(track.version)}</span>`
                 : '';
 
+            // A result from another era has to say where it lives, or you
+            // can't tell what you're about to open.
+            const era = (this.searching && track.era)
+                ? `<span class="records-row__era">${escapeHtml(track.era)}</span>`
+                : '';
+
             item.innerHTML = `
                 <span class="records-row__art">
                     ${sleeve}
@@ -465,6 +515,7 @@ export class EraSelector {
                     <span class="records-row__sub">
                         <span class="records-row__artist">${escapeHtml(track.artist || 'Unknown artist')}</span>
                         ${version}
+                        ${era}
                     </span>
                 </span>
                 ${tail}
@@ -472,7 +523,7 @@ export class EraSelector {
             list.appendChild(item);
         });
 
-        this.#updateCount();
+        this.#updateCount(count);
 
         // Scroll the current track into view so the user lands on
         // where they are, not at the top of an arbitrary listing.
@@ -482,31 +533,89 @@ export class EraSelector {
 
     // Track count doubles as search feedback: "47 tracks" normally, "12 of 47"
     // while filtering, "nothing matching" when a search excludes everything.
-    #updateCount(matches = null) {
+    #updateCount(count = null) {
         const el = document.getElementById('records-count-el');
         if (!el) return;
 
-        const total = this.viewingTracks.length;
-        if (matches === null || matches === total) {
+        if (!count) {
+            const total = this.viewingTracks.length;
             el.textContent = total === 1 ? '1 track' : `${total} tracks`;
-        } else if (matches === 0) {
+            return;
+        }
+
+        if (count.matches === 0) {
             el.textContent = 'nothing matching';
+        } else if (count.allEras) {
+            // Say "all eras" explicitly — the results are no longer the era
+            // named beside this count, and that would otherwise read as a lie.
+            el.textContent = `${count.matches} of ${count.of} / all eras`;
         } else {
-            el.textContent = `${matches} of ${total}`;
+            el.textContent = `${count.matches} of ${count.of}`;
         }
     }
 
-    #filterTracks(query) {
+    // Search spans every era, not just the one on screen.
+    //
+    // The era chips are how you browse by year; search is the other axis, and
+    // scoping it to the era you happen to be looking at made it useless for
+    // the thing people actually search for — a tune whose year they don't
+    // remember. 395 tracks across five listings is small enough to hold in
+    // memory, and they're cached client- and server-side, so this costs one
+    // round of fetches on the first search and nothing afterwards.
+    //
+    // Favourites is the exception: it's a list you curated, not a slice of
+    // the collection, so searching it means searching it.
+    async #applySearch(query) {
         const q = query.trim().toLowerCase();
-        let matches = 0;
 
-        document.querySelectorAll('#records-list .records-row').forEach((item) => {
-            const hit = !q || item.dataset.search.includes(q);
-            item.hidden = !hit;
-            if (hit) matches++;
-        });
+        if (!q) {
+            this.searching = false;
+            this.rendered = this.viewingTracks;
+            this.#renderTracksList();
+            return;
+        }
 
-        this.#updateCount(q ? matches : null);
+        if (this.viewingSource === FAVOURITES) {
+            this.searching = false;
+            this.rendered = this.viewingTracks.filter((t) => matchText(t).includes(q));
+            this.#renderTracksList({ matches: this.rendered.length, of: this.viewingTracks.length });
+            return;
+        }
+
+        const pool = await this.#everyTrack();
+        this.searching = true;
+        this.rendered = pool.filter((t) => matchText(t).includes(q));
+        this.#renderTracksList({ matches: this.rendered.length, of: pool.length, allEras: true });
+    }
+
+    // Every era's tracks, flattened, each tagged with the era it came from and
+    // its index there — which is what playing a result needs to get you to the
+    // right record. Built once, then reused.
+    async #everyTrack() {
+        if (this.allTracks) return this.allTracks;
+
+        const out = [];
+        for (const folder of this.driveSource?.getFolders() || []) {
+            try {
+                const tracks = await this.driveSource.fetchTracks(folder.id);
+                tracks.forEach((t, i) => out.push({ ...t, era: folder.label, eraIndex: i }));
+            } catch (err) {
+                console.warn(`Search: couldn't read era ${folder.label}:`, err.message);
+            }
+        }
+        this.allTracks = out;
+        return out;
+    }
+
+    // Clear the box and the search state together. Called when the era
+    // changes, when the sheet reopens, and after a track is played — a search
+    // is how you find one record, not a mode you stay in.
+    #resetSearch() {
+        clearTimeout(this.searchTimer);
+        this.searchTimer = null;
+        this.searching = false;
+        const input = document.getElementById('records-search-input');
+        if (input) input.value = '';
     }
 
     // ===== source switching =====
@@ -554,10 +663,25 @@ export class EraSelector {
     }
 
     async #playFromView(index) {
-        const track = this.viewingTracks[index];
+        const track = this.rendered[index];
         if (track?.missing) {
             this.player.showToast("That file isn't in its era any more.");
             return;
+        }
+
+        // A search result belongs to its own era, not the one on screen, so
+        // it goes home before it plays.
+        if (this.searching && track?.era) {
+            const folder = this.driveSource?.getFolders().find((f) => f.label === track.era);
+            if (folder) {
+                if (this.player.currentSource === folder.id) {
+                    this.player.loadTrack(track.eraIndex, /* autoplay */ true);
+                } else {
+                    await this.switchToDrive(folder.id, { startIndex: track.eraIndex, autoplay: true });
+                }
+                this.#afterPlay();
+                return;
+            }
         }
 
         const sameSource = this.viewingSource === this.player.currentSource;
@@ -574,6 +698,20 @@ export class EraSelector {
             this.player.loadTrack(index, /* autoplay */ true);
         }
 
+        this.#afterPlay();
+    }
+
+    // Once a record is on, the search that found it has done its job. Leaving
+    // the term in the box meant reopening the panel showed a stale query over
+    // an unfiltered list, which read as the search having broken.
+    #afterPlay() {
+        this.#resetSearch();
+        // Drop the view entirely so the next open goes through showEra() and
+        // rebuilds from whatever is now playing, rather than reopening onto a
+        // list that may no longer be the era you're in.
+        this.viewingSource = null;
+        this.viewingTracks = [];
+        this.rendered = [];
         this.closeSheet();
     }
 
@@ -608,6 +746,15 @@ export class EraSelector {
         const folder = this.driveSource?.getFolders().find((f) => f.id === source);
         return folder?.label || 'Records';
     }
+}
+
+// What a search query is matched against. Includes the era label so typing
+// "1999" narrows to that year, which is the obvious thing to try.
+function matchText(track) {
+    return [track.title, track.artist, track.version, track.era]
+        .filter(Boolean)
+        .join(' ')
+        .toLowerCase();
 }
 
 function escapeHtml(s) {

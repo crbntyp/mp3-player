@@ -1546,6 +1546,20 @@ body.records-open {
     }
   }
 
+  // Which era a cross-era search result came from. Mono and dim: it's a
+  // filing location, not part of the record's name.
+  &__era {
+    font-family: var(--font-mono);
+    font-size: 9.5px;
+    letter-spacing: 0.04em;
+    color: rgba(255, 255, 255, 0.32);
+    padding: 1px 5px;
+    border-radius: 4px;
+    background: rgba(255, 255, 255, 0.06);
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
   &__time {
     font-family: var(--font-mono);
     font-size: 10.5px;

@@ -488,9 +488,16 @@ class Player {
 
         // Load audio if available
         if (track.audio) {
-            // Connect visualizer to audio on first track load
-            if (this.visualizer && !this.visualizer.audioContext) {
-                this.visualizer.connectAudio(this.audio);
+            // Connect the visualiser on first track load. It declines on
+            // iOS — see AudioVisualizer.connectAudio — and when it does, the
+            // canvas and its animation loop are shut down rather than left
+            // running at 60fps drawing nothing on a phone.
+            if (this.visualizer && !this.visualizerChecked) {
+                this.visualizerChecked = true;
+                if (!this.visualizer.connectAudio(this.audio)) {
+                    this.visualizer.hide();
+                    document.getElementById('visualizer-canvas')?.setAttribute('hidden', '');
+                }
             }
 
             // Check if we have a preloaded version
@@ -704,12 +711,11 @@ class Player {
 
     play() {
         if (this.audio.src) {
-            // Resume AudioContext if suspended (required by browsers)
-            if (this.visualizer && this.visualizer.audioContext && this.visualizer.audioContext.state === 'suspended') {
-                this.visualizer.audioContext.resume().then(() => {
-                    console.log('✓ AudioContext resumed');
-                });
-            }
+            // Resume a context suspended by the autoplay policy. This is the
+            // one legitimate place to resume — off a real user gesture — as
+            // opposed to on a timer whenever the system suspends us, which is
+            // what used to chop playback up in the car.
+            this.visualizer?.resumeIfSuspended();
 
             this.audio.play();
             this.isPlaying = true;

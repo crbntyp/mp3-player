@@ -1,4 +1,12 @@
 // Audio Visualizer with Pulse Line (Heart Rate Monitor Style)
+
+// iPadOS reports itself as a Mac, so the touch-point check is what separates
+// an iPad from a desktop Safari that can safely use Web Audio.
+function isIOS() {
+    return /iPad|iPhone|iPod/.test(navigator.userAgent)
+        || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+}
+
 export class AudioVisualizer {
     constructor() {
         this.canvas = document.getElementById('visualizer-canvas');
@@ -58,10 +66,33 @@ export class AudioVisualizer {
         this.canvas.style.height = `${height}px`;
     }
 
+    // Route the audio through Web Audio so the waveform has something to
+    // read. Returns true if it connected.
+    //
+    // Refused on iOS, and this is the important part: createMediaElementSource
+    // permanently reroutes the element's output through the AudioContext, so
+    // from that moment every sound the app makes depends on that context
+    // staying `running`. iOS suspends it on any audio route change — plugging
+    // into CarPlay is one — and again whenever Safari is backgrounded, which
+    // is the normal state of a phone in a car.
+    //
+    // The old code answered each suspension by resuming 100ms later, so the
+    // system suspended, we resumed, the system suspended again: audio cutting
+    // in and out roughly once a second. That fight is unwinnable, and losing
+    // it costs playback itself.
+    //
+    // Without the Web Audio hop the <audio> element plays straight out to the
+    // system route, which is what makes CarPlay, Bluetooth and the lock-screen
+    // controls behave. The visualiser is decoration; playback is the product.
     connectAudio(audioElement) {
         if (!audioElement) {
             console.warn('No audio element provided');
-            return;
+            return false;
+        }
+
+        if (isIOS()) {
+            console.log('iOS: leaving audio on the native route — visualiser off.');
+            return false;
         }
 
         try {
@@ -78,25 +109,22 @@ export class AudioVisualizer {
 
                 this.dataArray = new Uint8Array(this.analyser.frequencyBinCount);
 
-                // iOS: Auto-resume AudioContext when system suspends it
-                this.audioContext.onstatechange = () => {
-                    console.log('AudioContext state:', this.audioContext.state);
-                    if (this.audioContext.state === 'interrupted' || this.audioContext.state === 'suspended') {
-                        // Try to resume after a short delay
-                        setTimeout(() => {
-                            if (this.audioContext.state !== 'running') {
-                                this.audioContext.resume().then(() => {
-                                    console.log('✓ AudioContext auto-resumed');
-                                }).catch(e => console.log('Resume failed:', e));
-                            }
-                        }, 100);
-                    }
-                };
-
                 console.log('✓ Audio context connected to pulse visualizer');
             }
+            return true;
         } catch (error) {
             console.error('Error connecting audio:', error);
+            return false;
+        }
+    }
+
+    // A context can still be suspended by an autoplay policy on desktop. That
+    // is resumed once, from a real user gesture, which is the only time a
+    // resume is legitimate — never on a timer in response to the system
+    // deciding to suspend us.
+    resumeIfSuspended() {
+        if (this.audioContext?.state === 'suspended') {
+            this.audioContext.resume().catch(() => { /* nothing more to try */ });
         }
     }
 
