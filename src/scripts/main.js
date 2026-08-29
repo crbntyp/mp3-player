@@ -54,11 +54,14 @@ class Player {
     async init() {
         console.log('🎵 Player application initializing...');
 
+        this.booting = true;
         this.eraSelector.init();
 
+        this.#setBootStatus('Reading track list', 15);
         await this.loadTracks();
+
+        this.#setBootStatus('Reading sleeves', 30);
         await this.loadPlaceholders();
-        await this.preloadCoverImages();
 
         this.initVisualizer();
         this.mediaSession.setup();
@@ -66,6 +69,7 @@ class Player {
         this.setupEventListeners();
         this.eraSelector.setup();
 
+        this.#setBootStatus('Opening records', 45);
         const hashLoaded = await this.hashRouter.load();
 
         // Two restore paths, and the hash used to swallow the other one.
@@ -94,6 +98,15 @@ class Player {
         } else if (hashLoaded) {
             this.#restorePositionIfSameTrack();
         }
+
+        // Only now is there a track to show, so only now is there artwork
+        // worth waiting for — and it's one image, not a library.
+        this.#setBootStatus('Loading artwork', 80);
+        await this.#preloadImage(this.currentArt?.cover);
+
+        this.#setBootStatus('Ready', 100);
+        this.#revealApp();
+        this.booting = false;
 
         // Apply persisted UI state (volume slider, shuffle toggle).
         this.#detectVolumeSupport();
@@ -201,6 +214,15 @@ class Player {
     }
 
     showLoadingState(message) {
+        // During boot the designed overlay is already on screen, so this
+        // reports into it rather than stacking a second one on top — that
+        // double-overlay flash was the most visible symptom of the old
+        // startup order.
+        if (this.booting) {
+            this.#setBootStatus(message.replace(/…$/, ''), 60);
+            return;
+        }
+
         // Create a simple loading overlay
         let overlay = document.getElementById('drive-loading');
         if (!overlay) {
@@ -234,6 +256,7 @@ class Player {
     }
 
     hideLoadingState() {
+        if (this.booting) return; // the boot overlay lifts in #revealApp()
         const overlay = document.getElementById('drive-loading');
         if (overlay) {
             overlay.style.display = 'none';
@@ -288,63 +311,54 @@ class Player {
         }
     }
 
-    async preloadCoverImages() {
-        const loadingOverlay = document.getElementById('loading-overlay');
-        const loadingProgressBar = document.getElementById('loading-progress-bar');
-        const loadingStatus = document.getElementById('loading-status');
+    // Boot overlay.
+    //
+    // This used to be preloadCoverImages(): it walked every bundled local
+    // track and downloaded its full-size cover *sequentially*, holding the
+    // overlay up the whole time, and then hid the overlay — at which point
+    // the Drive listing fetch began behind a second, JS-injected overlay.
+    //
+    // So it blocked startup on ~200KB of artwork for seven offline-fallback
+    // tracks that are then immediately replaced by a Drive era, and got out
+    // of the way just before the one slow step a loading screen exists for.
+    // Two overlays, back to back, covering the wrong half of the boot.
+    //
+    // Now the overlay spans the actual sequence — track list, sleeve set,
+    // Drive listing, then the single image the first track will wear — and
+    // lifts once there is something real on screen. Local covers load on
+    // demand if a local track is ever played; updateAlbumArt() falls back to
+    // the raw URL on a cache miss, so nothing needs preloading to work.
+    #setBootStatus(message, percent) {
+        const bar = document.getElementById('loading-progress-bar');
+        const status = document.getElementById('loading-status');
+        if (bar) bar.style.width = `${percent}%`;
+        if (status) status.textContent = message;
+    }
 
-        if (!loadingOverlay || !loadingProgressBar || !loadingStatus) {
-            console.warn('Loading overlay elements not found');
-            return;
-        }
+    // Decode one image and keep the decoded element, so swapping it into the
+    // player paints without a flash. Resolves either way — a missing or
+    // broken cover must not strand the boot behind the overlay.
+    #preloadImage(src) {
+        if (!src) return Promise.resolve(null);
+        if (this.imageCache.has(src)) return Promise.resolve(this.imageCache.get(src));
 
-        // Only tracks that actually have cover art are worth waiting on.
-        // Counting the whole track list here used to make the bar sprint
-        // through skipped entries and report progress for work never done.
-        const covers = [...new Set(this.tracks.map((t) => t.image).filter(Boolean))];
-        const totalImages = covers.length;
+        return new Promise((resolve) => {
+            const img = new Image();
+            img.onload = () => { this.imageCache.set(src, img); resolve(img); };
+            img.onerror = () => { console.warn(`✗ Failed to load: ${src}`); resolve(null); };
+            img.src = src;
+        });
+    }
 
-        if (totalImages === 0) {
-            loadingOverlay.classList.add('hidden');
-            setTimeout(() => loadingOverlay.remove(), 500);
-            return;
-        }
-
-        let loadedImages = 0;
-        console.log(`🖼️  Preloading ${totalImages} cover image(s)...`);
-        loadingStatus.textContent = `Loading artwork ${loadedImages}/${totalImages}`;
-
-        // Sequential so the progress bar reflects real work rather than
-        // finishing all at once.
-        for (const src of covers) {
-            await new Promise((resolve) => {
-                const img = new Image();
-
-                const done = (ok) => {
-                    if (ok) this.imageCache.set(src, img);
-                    else console.warn(`✗ Failed to load: ${src}`);
-                    loadedImages++;
-                    loadingProgressBar.style.width = `${(loadedImages / totalImages) * 100}%`;
-                    loadingStatus.textContent = `Loading artwork ${loadedImages}/${totalImages}`;
-                    resolve();
-                };
-
-                img.onload  = () => done(true);
-                img.onerror = () => done(false);
-                img.src = src;
-            });
-        }
-
-        console.log('✅ All cover images preloaded');
-
-        // Hide loading overlay with fade out
+    #revealApp() {
+        const overlay = document.getElementById('loading-overlay');
+        if (!overlay) return;
+        // A beat at 100% so the bar doesn't vanish mid-fill, then fade and
+        // remove — it's a one-shot element, not something to keep around.
         setTimeout(() => {
-            loadingOverlay.classList.add('hidden');
-            // Remove from DOM after transition
-            setTimeout(() => {
-                loadingOverlay.remove();
-            }, 500);
-        }, 300); // Small delay to show 100% complete
+            overlay.classList.add('hidden');
+            setTimeout(() => overlay.remove(), 500);
+        }, 200);
     }
 
     setupAudioEvents() {

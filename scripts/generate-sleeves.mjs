@@ -61,6 +61,49 @@ const SCENES = [
   'an ancient standing stone circle under a dense field of stars, faint green airglow on the horizon',
   'a slow river of fog moving between skyscrapers at night, amber windows burning through it',
   'a wall of falling water lit from behind by cold blue light, spray suspended in the air',
+
+  // Third batch. The first two sets are almost entirely landscape at scale —
+  // dunes, seas, skies, orbit. Rotation across 45 sleeves needs shapes that
+  // aren't another horizon, so this one leans interior, architectural and
+  // close-up, with greens, chrome and sodium doing the work instead of
+  // another teal-to-magenta gradient.
+  'an empty underground station platform at night, white tiles, one train passing in a long blur of light',
+  'a chapel interior in deep shadow, stained glass throwing broken panels of red and blue across bare stone',
+  'a vast library of dark bookshelves receding into black, lit by a single green desk lamp',
+  'an aerial view of a river delta branching like silver veins across black volcanic sand',
+  'a greenhouse at night seen from outside, condensation running down the glass, the jungle within lit acid green',
+  'telephone wires crossing a flat white winter sky, a scatter of black birds, almost monochrome',
+  'an underwater view of a swimming pool at night, the surface above rippling with turquoise light',
+  'a lone radio mast on a dark moor, red aircraft warning lights bleeding through low mist',
+  'sun breaking through a dense pine canopy in long god rays, deep green and gold, mist between the trunks',
+  'a polished chrome sphere resting on cracked dry earth, a burning orange sky curved across its reflection',
+  'an oil slick on dark water in extreme close-up, iridescent bands of violet, green and bronze',
+  'a snow covered motorway interchange from directly above at night, sodium lights tracing the curves',
+  'a curtain of rain sweeping across a wheat field with low sun behind it, gold and slate grey',
+  'the interior of a limestone cave, one shaft of daylight striking a still green pool',
+  'a derelict fairground ferris wheel silhouetted in thick sodium orange fog',
+
+  // Fourth batch: cosmic, planetary and UFO. This is the visual language the
+  // records themselves came wrapped in — late-90s trance sleeves and rave
+  // flyers were full of ringed planets, saucers and abduction beams — so it
+  // sits closer to the source material than any of the landscape sets do.
+  // Kept cinematic rather than cartoon: the craft are photographed objects in
+  // real weather, not clip art.
+  'a vast ringed gas giant filling the sky above a barren moon, the rings cutting a hard diagonal across the frame',
+  'a classic silver disc craft hanging motionless over a wheat field at dusk, underside lights glowing amber',
+  'a binary star system, one blue-white and one deep red, rising over the terminator line of an ice planet',
+  'a single column of white light descending from an unseen craft onto an empty desert highway at night',
+  'the surface of a red planet with a colossal dust storm wall advancing across the plain',
+  'an alien monolith half buried in grey lunar regolith, Earth small and blue in the black sky above',
+  'a swarm of small lights holding perfect formation as they cross a dense star field',
+  'an astronaut standing alone in the crater of an unfamiliar moon, twin suns setting behind the rim',
+  'the underside of a saucer seen from directly below, concentric rings of light, rain falling through the beam',
+  'an enormous ringed planet rising over a black ocean on an alien world, two moons behind it',
+  'a wormhole warping and smearing the star field around its rim, gravitational lensing, deep violet',
+  'a crashed craft embedded in blue glacier ice, a faint interior glow still lit within the hull',
+  'a cluster of black pyramids on a dark planet under three pale moons',
+  'a stellar nursery in deep space, vast pillars of gas lit from within by newborn stars',
+  'a lone figure on a hilltop watching a craft rise silently through low cloud, backlit, silhouette only',
 ];
 
 fs.mkdirSync(OUT, { recursive: true });
