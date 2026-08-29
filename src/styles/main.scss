@@ -49,7 +49,7 @@
   --ease-settle: cubic-bezier(0.34, 1.2, 0.64, 1);
   --ease-smooth: cubic-bezier(0.4, 0, 0.2, 1);
 
-  // Type. Mono is the player's voice; the crate list uses the system UI face
+  // Type. Mono is the player's voice; the era list uses the system UI face
   // so a 100-row listing reads as text rather than as a grid of blocks. No
   // download — it's whatever the OS already has.
   --font-mono: "Space Mono", monospace;
@@ -472,6 +472,13 @@ body {
   align-items: center;
   gap: 12px;
   z-index: 3;
+
+  // Four zones now that volume has moved in from the corner cluster. At the
+  // narrow width the outer gap is what gives, not the controls.
+  @media (max-width: 768px) {
+    padding: 0 12px 12px;
+    gap: 8px;
+  }
 }
 
 .progress-strip {
@@ -516,23 +523,6 @@ body {
     border-radius: var(--radius-sm);
   }
 
-  &--utility {
-    opacity: 0.65;
-
-    .control-icon { width: 18px; height: 18px; }
-
-    // Stroke icons carry less visual mass than the filled glyphs beside them,
-    // so they need a touch more size to sit at the same optical weight.
-    .control-icon--stroke { width: 19px; height: 19px; }
-  }
-
-  // Active state for toggles (shuffle on, repeat on). Brighter than
-  // the default utility opacity + accent-coloured for clarity.
-  &--active {
-    opacity: 1;
-    color: var(--color-accent);
-  }
-
   i { display: block; }
 
   // Inline SVG icons — sized via the SVG itself, filled with currentColor
@@ -549,16 +539,6 @@ body {
   .control-icon--stroke {
     fill: none;
     stroke: currentColor;
-  }
-}
-
-// Repeat: 3 modes (off, all, one). Show the right glyph for each by
-// hiding the other two via the data-mode attribute on the button.
-#repeat-btn {
-  .repeat-icon-one { display: none; }
-  &[data-mode="one"] {
-    .repeat-icon-all { display: none; }
-    .repeat-icon-one { display: block; }
   }
 }
 
@@ -581,6 +561,22 @@ body {
   position: relative;
   display: inline-flex;
   align-items: center;
+
+  // Sits at the end of the player bar, a step quieter than the transport
+  // controls beside it — it's an output setting, not a playback one.
+  .control-btn { opacity: 0.6; }
+  .control-btn:hover,
+  .control-btn:focus-visible { opacity: 1; }
+  .control-icon { width: 18px; height: 18px; }
+}
+
+// Hidden where software volume does nothing. iOS Safari makes
+// HTMLMediaElement.volume read-only — output is hardware-only there — so the
+// slider would render and move without changing anything. Player sets this
+// class by probing the property rather than by sniffing for touch, so Android
+// (where it genuinely works) keeps the control.
+body.no-volume-control .volume-cluster {
+  display: none;
 }
 
 // Vertical-looking volume slider, rendered as a horizontal range input
@@ -824,103 +820,217 @@ body {
   animation: spin 1s linear infinite;
 }
 
-// Era Selector — fixed to the bottom-left of the viewport (not the
-// player container) so the player chrome stays uncluttered. Menu pops
-// upward from the button.
-.era-selector {
-  position: fixed;
-  bottom: 24px;
-  left: 24px;
-  z-index: 50;
-}
+// ── Records launcher ────────────────────────────────────────────────────
+//
+// Centred at the base of the player column. The old .era-selector and
+// .utility-cluster were both position:fixed to opposite corners of the
+// viewport, which meant the controls were anchored to the window while the
+// player they control was anchored to the page — on a wide display they sat
+// hundreds of pixels apart and could never read as one set. Everything now
+// lives in the single centred column, so mobile is the same layout at a
+// narrower width rather than a second set of rules.
 
-// Utility cluster — bottom-right counterpart to .era-selector.
-// Houses shuffle, repeat, and the volume button (which pops out its
-// slider to the left).
-.utility-cluster {
-  position: fixed;
-  bottom: 24px;
-  right: 24px;
-  z-index: 50;
+.records-launch {
   display: flex;
+  justify-content: center;
+  // The wordmark above is clipped to its top 56% and pulled up by a -20px
+  // margin, so its box ends well above where the letters visually stop.
+  // Spacing measured from the box would sit the pill on top of the mark.
+  margin-top: 30px;
+}
+
+.records-launch__btn {
+  display: inline-flex;
   align-items: center;
-  gap: 10px;
-}
-
-// The label is updated by JS to reflect the current source but is
-// visually hidden — assistive tech still announces it via aria-label
-// on the parent button. Kept off-screen with the standard a11y idiom.
-.era-label-hidden {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0, 0, 0, 0);
-  white-space: nowrap;
-  border: 0;
-}
-
-.era-menu {
-  position: absolute;
-  bottom: 100%;
-  left: 0;                  // left-anchored to the trigger
-  margin-bottom: 8px;
-  background: var(--surface);
-  // saturate() lets the artwork wash behind the panel tint the glass, so the
-  // menu belongs to the track that's playing instead of sitting on top of it.
-  backdrop-filter: blur(var(--surface-blur)) saturate(1.8);
-  -webkit-backdrop-filter: blur(var(--surface-blur)) saturate(1.8);
+  gap: 9px;
+  padding: 9px 16px 9px 13px;
+  background: rgba(255, 255, 255, 0.06);
   border: none;
-  border-radius: 16px;
-  padding: var(--space-2);
-  width: 330px;
-  max-width: calc(100vw - var(--space-6));
-  // A wide, low-opacity shadow reads as depth; a tight dark one reads as a
-  // box sitting on the page. The hairline is a top highlight only.
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.055),
-    0 28px 70px -28px rgba(0, 0, 0, 0.92);
-  opacity: 0;
-  visibility: hidden;
-  transform: translateY(10px);
-  transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s;
-  z-index: 100;
+  border-radius: 999px;
+  color: rgba(255, 255, 255, 0.75);
+  font-family: var(--font-ui);
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  transition: background 0.18s var(--ease-out), color 0.18s var(--ease-out),
+              transform 0.18s var(--ease-out);
 
-  &.open {
-    opacity: 1;
-    visibility: visible;
-    transform: translateY(0);
+  &:hover {
+    background: rgba(255, 255, 255, 0.11);
+    color: #fff;
+  }
+
+  &:active { transform: scale(0.97); }
+
+  &:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 3px;
+    color: #fff;
   }
 }
 
-// Active era option (current playback source) gets the accent treatment.
-.era-option.active {
-  color: var(--color-accent);
+.records-launch__icon {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  fill: none;
+  stroke: currentColor;
 }
 
-// ── State B: the crate ────────────────────────────────────────────────
-//
-// A track list for a record collection, so it's built like one. The left
-// column carries the track's number — which is its actual address, since deep
-// links are #<era>/<n> — and on the row that's playing that number gives way
-// to a spinning label. Status is told in the subject's own language rather
-// than by tinting an edge.
+.records-launch__label {
+  line-height: 1;
+}
 
-.crate-header {
+// ── Records sheet ───────────────────────────────────────────────────────
+//
+// One component, two anchorings. On desktop it's a centred panel that rises
+// into place; below 768px the same markup becomes a bottom sheet pinned to
+// the bottom edge, full width, with a grab handle. The only things that
+// change are the position, the width and the transform — the internals are
+// identical, so there's no second implementation to keep in step.
+
+.records-scrim {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  // Pushes the player back far enough that the sheet reads as the only live
+  // surface. The blur belongs here — on the thing being covered — rather
+  // than on the panel doing the covering.
+  background: rgba(0, 0, 0, 0.72);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  opacity: 0;
+  transition: opacity 0.26s var(--ease-out);
+
+  &.open { opacity: 1; }
+}
+
+.records-sheet {
+  position: fixed;
+  z-index: 61;
+  display: flex;
+  flex-direction: column;
+
+  // Desktop: centred in the viewport, both axes. Anchoring it to the bottom
+  // edge made it a tall panel climbing out of the base of the screen, with
+  // its weight all in one corner; centred, it reads as the thing you're
+  // looking at rather than something perched on the player.
+  top: 50%;
+  left: 50%;
+  // Wider than the 465px player behind it, deliberately. At 420px the album
+  // art showed down both sides of the panel, so the dimmed player stayed in
+  // view around the thing that was supposed to have replaced it — the same
+  // half-covered ambiguity that full screen fixes on mobile.
+  width: 540px;
+  max-width: calc(100vw - var(--space-6));
+  transform: translate(-50%, calc(-50% + 12px));
+
+  // Opaque, not glass.
+  //
+  // This was var(--surface) — 68% black over a 30px backdrop blur — so the
+  // album art and the vinyl behind it came through the panel. A blurred
+  // image sitting directly under small text doesn't read as depth, it reads
+  // as the panel itself being out of focus, which is what made the whole
+  // sheet look soft.
+  //
+  // It still belongs to the playing track: the palette tint is painted *on*
+  // the opaque base rather than borrowed through it, so the colour survives
+  // and the blur goes. backdrop-filter goes with it — over an opaque
+  // background it composites nothing and only costs GPU time.
+  background:
+    linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--color-primary) 13%, #0c0c11) 0%,
+      #0c0c11 55%
+    );
+  border: none;
+  border-radius: 18px;
+  padding: var(--space-2);
+  // A wide, low-opacity shadow reads as depth; a tight dark one reads as a
+  // border, which is what we just removed.
+  box-shadow: 0 24px 64px -12px rgba(0, 0, 0, 0.7);
+
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.24s var(--ease-out), transform 0.26s var(--ease-out);
+
+  &.open {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translate(-50%, -50%);
+  }
+
+  // Mobile: the same panel, taken full screen.
+  //
+  // A partial bottom sheet spends its top third showing a dimmed player you
+  // aren't looking at, on the screen with the least room to spare — and 60+
+  // records deserve the whole viewport. Full screen also removes the
+  // half-covered state where it's ambiguous whether the player or the list
+  // is the live surface.
+  //
+  // It still arrives from the bottom edge, so the gesture it implies is the
+  // one you'd expect; it just doesn't stop half way.
+  @media (max-width: 768px) {
+    inset: 0;
+    width: auto;
+    max-width: none;
+    border-radius: 0;
+    // The safe-area inset is 0 in a browser and non-zero under a notch, so
+    // the base value is what keeps the header off the top edge on everything
+    // that isn't an iPhone.
+    padding:
+      calc(var(--space-3) + env(safe-area-inset-top))
+      var(--space-2)
+      calc(var(--space-2) + env(safe-area-inset-bottom));
+    transform: translateY(100%);
+    box-shadow: none;
+
+    &.open { transform: translateY(0); }
+  }
+}
+
+// Grab handle — the affordance that says "this drags", and the thing that
+// makes the sheet read as a sheet. Desktop has no bottom edge to drag from,
+// so it's mobile-only.
+// The grab handle is gone with the partial sheet. On a full-screen view it
+// would promise a drag-to-dismiss gesture that doesn't exist — the close
+// button in the header is the way out, and it's always in reach at the top.
+// The element stays in the markup as a spacer-free no-op rather than being
+// special-cased in JS.
+.records-sheet__grab {
+  display: none;
+}
+
+// Locks the page behind an open sheet so scrolling the list doesn't scroll
+// the player underneath once the list hits its end.
+body.records-open {
+  overflow: hidden;
+}
+
+// ── Records internals ───────────────────────────────────────────────────
+//
+// A track list for a record collection, so it's built like one: every row
+// wears the sleeve the track is actually wearing on the deck, with its number
+// underneath — the number is the track's address, since deep links are
+// #<era>/<n>. Status is told in the subject's own language rather than by
+// tinting an edge.
+
+.records-header {
   display: flex;
   align-items: center;
   gap: var(--space-1);
   padding: 2px 2px var(--space-2);
 }
 
-.crate-nav {
+.records-nav {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 24px;
-  height: 24px;
+  width: 26px;
+  height: 26px;
   flex-shrink: 0;
   padding: 0;
   background: transparent;
@@ -939,9 +1049,11 @@ body {
     outline-offset: 2px;
     color: #fff;
   }
+
+  &.is-spinning .control-icon { animation: spin 0.8s linear infinite; }
 }
 
-.crate-id {
+.records-id {
   flex: 1;
   min-width: 0;
   display: flex;
@@ -950,13 +1062,10 @@ body {
   padding-left: var(--space-1);
 }
 
-// Britanica is already in the bundle for the crbntyp mark, and an era is a
-// label on the spine of a crate — worth setting in the display face rather
-// than more of the same mono.
 // Set in the UI face at a normal weight. Britanica extra-bold was the
-// heaviest thing in the panel and pulled the eye to the crate name rather
-// than the track you opened the crate to find.
-.crate-name {
+// heaviest thing in the panel and pulled the eye to the era name rather
+// than the track you opened the era to find.
+.records-name {
   font-family: var(--font-ui);
   font-size: 13px;
   font-weight: 600;
@@ -968,7 +1077,7 @@ body {
   white-space: nowrap;
 }
 
-.crate-count {
+.records-count {
   font-family: var(--font-mono);
   font-size: 9.5px;
   letter-spacing: 0.08em;
@@ -978,11 +1087,67 @@ body {
   flex-shrink: 0;
 }
 
-.crate-search {
+// ── Era chips ─────────────────────────────────────────────────────────
+//
+// Replaces the old drill-down. Scrolls sideways rather than wrapping, so a
+// sixth folder extends the rail instead of reflowing the sheet. The
+// scrollbar is hidden because the overflow is meant to be dragged, not
+// operated.
+.records-eras {
+  display: flex;
+  gap: 6px;
+  overflow-x: auto;
+  padding: 0 2px var(--space-2);
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+
+  &::-webkit-scrollbar { display: none; }
+}
+
+.records-chip {
+  flex-shrink: 0;
+  padding: 6px 12px;
+  background: rgba(255, 255, 255, 0.06);
+  border: none;
+  border-radius: 999px;
+  color: rgba(255, 255, 255, 0.6);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.15s ease, color 0.15s ease;
+
+  &:hover { background: rgba(255, 255, 255, 0.12); color: #fff; }
+
+  &:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+  }
+
+  // The era you're in. Filled in the current track's own palette, which is
+  // the same colour the rest of the UI is wearing.
+  &.is-active {
+    background: var(--color-primary);
+    color: #fff;
+  }
+}
+
+// ── Search + shuffle ──────────────────────────────────────────────────
+
+.records-tools {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: var(--space-2);
+}
+
+.records-search {
   position: relative;
   display: flex;
   align-items: center;
-  margin-bottom: var(--space-2);
+  flex: 1;
+  min-width: 0;
 
   &__icon {
     position: absolute;
@@ -1018,13 +1183,61 @@ body {
   }
 }
 
-// Scrollable list — caps the popup height so 60+ Drive tracks don't
-// run off the top of the viewport.
-.era-tracks-list {
+// Shuffle. It's a property of the era, not of the transport, so it sits
+// with the era — and it's labelled rather than a bare glyph, because a
+// two-state icon with no text is exactly the control nobody is sure they've
+// turned on.
+.records-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+  padding: 7px 11px;
+  background: rgba(255, 255, 255, 0.045);
+  border: none;
+  border-radius: 8px;
+  color: rgba(255, 255, 255, 0.55);
+  font-family: var(--font-ui);
+  font-size: 11.5px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
+
+  &__icon {
+    width: 14px;
+    height: 14px;
+    fill: currentColor;
+  }
+
+  &:hover { background: rgba(255, 255, 255, 0.09); color: #fff; }
+
+  &:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+  }
+
+  &.is-active {
+    background: color-mix(in srgb, var(--color-primary) 45%, transparent);
+    color: #fff;
+  }
+
+  // The label is the state indicator on desktop; on a narrow sheet the row
+  // has to give somewhere, and the icon plus the fill carries it.
+  @media (max-width: 420px) {
+    &__label { display: none; }
+    padding: 7px 9px;
+  }
+}
+
+// Scrollable list — capped so 60+ Drive tracks don't run off the viewport.
+.records-list {
   display: flex;
   flex-direction: column;
   gap: 1px;
-  max-height: min(58vh, 440px);
+  // Tall enough that the panel covers the player's full height, not just its
+  // middle. Capped in vh so a short window shrinks the list instead of
+  // pushing the header and search off screen.
+  max-height: min(64vh, 560px);
   overflow-y: auto;
   overscroll-behavior: contain;
   scrollbar-width: thin;
@@ -1036,18 +1249,28 @@ body {
     border-radius: 3px;
   }
   &::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, 0.3); }
+
+  // Full screen: the list takes everything left under the header, chips and
+  // search rather than being capped. min-height:0 is what actually lets a
+  // flex child scroll — without it the item refuses to shrink below its
+  // content and the whole panel grows instead of the list scrolling.
+  @media (max-width: 768px) {
+    max-height: none;
+    flex: 1;
+    min-height: 0;
+  }
 }
 
-.crate-row {
+.records-row {
   display: grid;
-  grid-template-columns: 20px minmax(0, 1fr) auto;
+  grid-template-columns: 40px minmax(0, 1fr) auto;
   align-items: center;
-  gap: 10px;
+  gap: 11px;
   width: 100%;
   padding: 6px 8px;
   background: transparent;
   border: none;
-  border-radius: 8px;
+  border-radius: 10px;
   color: #fff;
   cursor: pointer;
   text-align: left;
@@ -1056,7 +1279,7 @@ body {
 
   &:hover {
     background: rgba(255, 255, 255, 0.07);
-    .crate-row__num { color: rgba(255, 255, 255, 0.65); }
+    .records-row__num { color: rgba(255, 255, 255, 0.65); }
   }
 
   &:focus-visible {
@@ -1068,42 +1291,44 @@ body {
   &--current {
     background: color-mix(in srgb, var(--color-primary) 14%, transparent);
 
-    .crate-row__title  { color: var(--color-accent); }
-    .crate-row__artist { color: rgba(255, 255, 255, 0.7); }
+    .records-row__title  { color: var(--color-accent); }
+    .records-row__artist { color: rgba(255, 255, 255, 0.7); }
+    .records-row__sleeve { box-shadow: 0 0 0 1.5px var(--color-accent); }
 
     &:hover { background: color-mix(in srgb, var(--color-primary) 20%, transparent); }
   }
 
-  &__slot {
+  // Sleeve + number, stacked. The artwork is the identifier you recognise;
+  // the number is the one you can type into a URL. Both fit because the
+  // number sits under the sleeve rather than beside it.
+  &__art {
     display: flex;
+    flex-direction: column;
     align-items: center;
-    justify-content: center;
-    width: 20px;
+    gap: 3px;
+    width: 40px;
+  }
+
+  &__sleeve {
+    width: 40px;
+    height: 40px;
+    border-radius: 4px;
+    object-fit: cover;
+    display: block;
+    background: rgba(255, 255, 255, 0.05);
+  }
+
+  &__sleeve--blank {
+    background: linear-gradient(135deg, rgba(255,255,255,0.07), rgba(255,255,255,0.02));
   }
 
   &__num {
     font-family: var(--font-mono);
-    font-size: 10px;
+    font-size: 9px;
     font-variant-numeric: tabular-nums;
     color: rgba(255, 255, 255, 0.28);
+    line-height: 1;
     transition: color 0.12s ease;
-  }
-
-  // The record on the deck. Concentric label + groove, in this track's own
-  // palette — the same colours the whole UI is wearing.
-  &__disc {
-    width: 14px;
-    height: 14px;
-    border-radius: 50%;
-    background: radial-gradient(
-      circle at 50% 50%,
-      var(--color-accent) 0 20%,
-      #0a0a0c 21% 27%,
-      var(--color-primary) 28% 100%
-    );
-    box-shadow:
-      0 0 0 1px rgba(255, 255, 255, 0.18),
-      0 2px 5px rgba(0, 0, 0, 0.5);
   }
 
   &__meta {
@@ -1191,20 +1416,18 @@ body {
   }
 
   &--playing {
-    .crate-row__disc { animation: spin 3.2s linear infinite; }
-
-    .crate-row__eq i { animation: crate-eq 0.9s ease-in-out infinite; }
-    .crate-row__eq i:nth-child(2) { animation-delay: 0.15s; }
-    .crate-row__eq i:nth-child(3) { animation-delay: 0.3s; }
+    .records-row__eq i { animation: records-eq 0.9s ease-in-out infinite; }
+    .records-row__eq i:nth-child(2) { animation-delay: 0.15s; }
+    .records-row__eq i:nth-child(3) { animation-delay: 0.3s; }
   }
 }
 
-@keyframes crate-eq {
+@keyframes records-eq {
   0%, 100% { height: 3px; }
   50%      { height: 12px; }
 }
 
-.era-tracks-empty {
+.records-empty {
   padding: var(--space-6) var(--space-3);
   text-align: center;
   color: rgba(255, 255, 255, 0.45);
@@ -1213,75 +1436,6 @@ body {
   line-height: 1.5;
 }
 
-.era-menu-title {
-  padding: 8px 10px 4px;
-  font-size: 9.5px;
-  font-weight: 400;
-  color: rgba(255, 255, 255, 0.28);
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-}
-
-.era-divider {
-  height: 1px;
-  background: rgba(255, 255, 255, 0.1);
-  margin: 4px 0;
-}
-
-.era-option {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  width: 100%;
-  padding: 8px 10px;
-  background: transparent;
-  border: none;
-  border-radius: 8px;
-  color: rgba(255, 255, 255, 0.9);
-  font-family: var(--font-ui);
-  font-size: 13px;
-  font-weight: 400;
-  cursor: pointer;
-  transition: background 0.15s ease;
-  text-align: left;
-
-  &:hover {
-    background: rgba(255, 255, 255, 0.1);
-  }
-
-  &:focus-visible {
-    outline: 2px solid var(--color-accent);
-    outline-offset: -2px;
-    background: rgba(255, 255, 255, 0.1);
-  }
-
-  &.active {
-    background: var(--color-primary);
-
-    .era-option-icon { color: white; }
-  }
-}
-
-// Inline SVG icon inside an era option. Stroke-based, currentColor —
-// matches the rest of the icon set rather than an icon-font glyph.
-.era-option-icon {
-  width: 18px;
-  height: 18px;
-  flex-shrink: 0;
-  color: var(--color-accent);
-}
-
-.era-tracks-search:focus-visible {
-  outline: 2px solid var(--color-accent);
-  outline-offset: -1px;
-}
-
-.era-back-btn:focus-visible,
-.era-refresh-btn:focus-visible {
-  outline: 2px solid var(--color-accent);
-  outline-offset: 2px;
-  border-radius: var(--radius-sm);
-}
 
 .credit-logo:focus-visible {
   outline: 2px solid var(--color-accent);

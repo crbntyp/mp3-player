@@ -3,6 +3,7 @@
     {
       "id": "sleeve-01",
       "url": "img/placeholders/sleeve-01.jpg",
+      "thumb": "img/placeholders/sleeve-01-thumb.webp",
       "colors": {
         "primary": "#24a4b1",
         "secondary": "#2c4e60",
@@ -15,6 +16,7 @@
     {
       "id": "sleeve-02",
       "url": "img/placeholders/sleeve-02.jpg",
+      "thumb": "img/placeholders/sleeve-02-thumb.webp",
       "colors": {
         "primary": "#883fbf",
         "secondary": "#4b2369",
@@ -27,6 +29,7 @@
     {
       "id": "sleeve-03",
       "url": "img/placeholders/sleeve-03.jpg",
+      "thumb": "img/placeholders/sleeve-03-thumb.webp",
       "colors": {
         "primary": "#f8a53a",
         "secondary": "#7f380b",
@@ -39,6 +42,7 @@
     {
       "id": "sleeve-04",
       "url": "img/placeholders/sleeve-04.jpg",
+      "thumb": "img/placeholders/sleeve-04-thumb.webp",
       "colors": {
         "primary": "#bd3972",
         "secondary": "#77144d",
@@ -51,6 +55,7 @@
     {
       "id": "sleeve-05",
       "url": "img/placeholders/sleeve-05.jpg",
+      "thumb": "img/placeholders/sleeve-05-thumb.webp",
       "colors": {
         "primary": "#1c5caf",
         "secondary": "#093374",
@@ -63,6 +68,7 @@
     {
       "id": "sleeve-06",
       "url": "img/placeholders/sleeve-06.jpg",
+      "thumb": "img/placeholders/sleeve-06-thumb.webp",
       "colors": {
         "primary": "#44b0bb",
         "secondary": "#0f6778",
@@ -75,6 +81,7 @@
     {
       "id": "sleeve-07",
       "url": "img/placeholders/sleeve-07.jpg",
+      "thumb": "img/placeholders/sleeve-07-thumb.webp",
       "colors": {
         "primary": "#0dbfe7",
         "secondary": "#0a4a73",
@@ -87,6 +94,7 @@
     {
       "id": "sleeve-08",
       "url": "img/placeholders/sleeve-08.jpg",
+      "thumb": "img/placeholders/sleeve-08-thumb.webp",
       "colors": {
         "primary": "#63428c",
         "secondary": "#3f295a",
@@ -99,6 +107,7 @@
     {
       "id": "sleeve-09",
       "url": "img/placeholders/sleeve-09.jpg",
+      "thumb": "img/placeholders/sleeve-09-thumb.webp",
       "colors": {
         "primary": "#f1821e",
         "secondary": "#7e3c0c",
@@ -111,6 +120,7 @@
     {
       "id": "sleeve-10",
       "url": "img/placeholders/sleeve-10.jpg",
+      "thumb": "img/placeholders/sleeve-10-thumb.webp",
       "colors": {
         "primary": "#e58065",
         "secondary": "#274b54",
@@ -123,6 +133,7 @@
     {
       "id": "sleeve-11",
       "url": "img/placeholders/sleeve-11.jpg",
+      "thumb": "img/placeholders/sleeve-11-thumb.webp",
       "colors": {
         "primary": "#b55d73",
         "secondary": "#040c1a",
@@ -135,6 +146,7 @@
     {
       "id": "sleeve-12",
       "url": "img/placeholders/sleeve-12.jpg",
+      "thumb": "img/placeholders/sleeve-12-thumb.webp",
       "colors": {
         "primary": "#7e6996",
         "secondary": "#41364e",
@@ -147,6 +159,7 @@
     {
       "id": "sleeve-13",
       "url": "img/placeholders/sleeve-13.jpg",
+      "thumb": "img/placeholders/sleeve-13-thumb.webp",
       "colors": {
         "primary": "#5db455",
         "secondary": "#136229",
@@ -159,6 +172,7 @@
     {
       "id": "sleeve-14",
       "url": "img/placeholders/sleeve-14.jpg",
+      "thumb": "img/placeholders/sleeve-14-thumb.webp",
       "colors": {
         "primary": "#6f4faf",
         "secondary": "#1c142c",
@@ -171,6 +185,7 @@
     {
       "id": "sleeve-15",
       "url": "img/placeholders/sleeve-15.jpg",
+      "thumb": "img/placeholders/sleeve-15-thumb.webp",
       "colors": {
         "primary": "#0f95a5",
         "secondary": "#046c8c",
@@ -183,6 +198,7 @@
     {
       "id": "sleeve-16",
       "url": "img/placeholders/sleeve-16.jpg",
+      "thumb": "img/placeholders/sleeve-16-thumb.webp",
       "colors": {
         "primary": "#e5754c",
         "secondary": "#854f34",
@@ -195,6 +211,7 @@
     {
       "id": "sleeve-17",
       "url": "img/placeholders/sleeve-17.jpg",
+      "thumb": "img/placeholders/sleeve-17-thumb.webp",
       "colors": {
         "primary": "#b76a32",
         "secondary": "#042365",
@@ -207,6 +224,7 @@
     {
       "id": "sleeve-18",
       "url": "img/placeholders/sleeve-18.jpg",
+      "thumb": "img/placeholders/sleeve-18-thumb.webp",
       "colors": {
         "primary": "#65b8cc",
         "secondary": "#043c64",
@@ -219,6 +237,7 @@
     {
       "id": "sleeve-19",
       "url": "img/placeholders/sleeve-19.jpg",
+      "thumb": "img/placeholders/sleeve-19-thumb.webp",
       "colors": {
         "primary": "#ef4620",
         "secondary": "#763117",
@@ -231,6 +250,7 @@
     {
       "id": "sleeve-20",
       "url": "img/placeholders/sleeve-20.jpg",
+      "thumb": "img/placeholders/sleeve-20-thumb.webp",
       "colors": {
         "primary": "#2c5c71",
         "secondary": "#1c3f54",
@@ -243,6 +263,7 @@
     {
       "id": "sleeve-21",
       "url": "img/placeholders/sleeve-21.jpg",
+      "thumb": "img/placeholders/sleeve-21-thumb.webp",
       "colors": {
         "primary": "#a36f41",
         "secondary": "#643c26",
@@ -255,6 +276,7 @@
     {
       "id": "sleeve-22",
       "url": "img/placeholders/sleeve-22.jpg",
+      "thumb": "img/placeholders/sleeve-22-thumb.webp",
       "colors": {
         "primary": "#9c6263",
         "secondary": "#513333",
@@ -267,6 +289,7 @@
     {
       "id": "sleeve-23",
       "url": "img/placeholders/sleeve-23.jpg",
+      "thumb": "img/placeholders/sleeve-23-thumb.webp",
       "colors": {
         "primary": "#3858b1",
         "secondary": "#142c67",
@@ -279,6 +302,7 @@
     {
       "id": "sleeve-24",
       "url": "img/placeholders/sleeve-24.jpg",
+      "thumb": "img/placeholders/sleeve-24-thumb.webp",
       "colors": {
         "primary": "#14a9d6",
         "secondary": "#0d456e",
@@ -291,6 +315,7 @@
     {
       "id": "sleeve-25",
       "url": "img/placeholders/sleeve-25.jpg",
+      "thumb": "img/placeholders/sleeve-25-thumb.webp",
       "colors": {
         "primary": "#2a7fd4",
         "secondary": "#040c14",
@@ -303,6 +328,7 @@
     {
       "id": "sleeve-26",
       "url": "img/placeholders/sleeve-26.jpg",
+      "thumb": "img/placeholders/sleeve-26-thumb.webp",
       "colors": {
         "primary": "#5484c4",
         "secondary": "#1c3254",
@@ -315,6 +341,7 @@
     {
       "id": "sleeve-27",
       "url": "img/placeholders/sleeve-27.jpg",
+      "thumb": "img/placeholders/sleeve-27-thumb.webp",
       "colors": {
         "primary": "#b88f07",
         "secondary": "#775707",
@@ -327,6 +354,7 @@
     {
       "id": "sleeve-28",
       "url": "img/placeholders/sleeve-28.jpg",
+      "thumb": "img/placeholders/sleeve-28-thumb.webp",
       "colors": {
         "primary": "#bf923f",
         "secondary": "#3c2e14",
@@ -339,6 +367,7 @@
     {
       "id": "sleeve-29",
       "url": "img/placeholders/sleeve-29.jpg",
+      "thumb": "img/placeholders/sleeve-29-thumb.webp",
       "colors": {
         "primary": "#b77f4a",
         "secondary": "#743e1c",
@@ -351,6 +380,7 @@
     {
       "id": "sleeve-30",
       "url": "img/placeholders/sleeve-30.jpg",
+      "thumb": "img/placeholders/sleeve-30-thumb.webp",
       "colors": {
         "primary": "#4283b3",
         "secondary": "#1c4567",

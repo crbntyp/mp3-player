@@ -22,6 +22,12 @@ const DATA_FILE = path.join(__dirname, '../src/data/placeholders.json');
 
 const SIZE = 1024;
 
+// Crate rows show the sleeve a track is wearing, so every sleeve is needed at
+// list size as well as at full size. Serving the 1024px JPEG into a 40px box
+// would have pulled ~3.9MB to draw thumbnails; the WebP derivative is a couple
+// of KB each, so the whole set costs less than one full sleeve.
+const THUMB = 96;
+
 async function extractPalette(buffer) {
   try {
     const { Vibrant } = require('node-vibrant/node');
@@ -86,10 +92,23 @@ async function build() {
     fs.writeFileSync(outPath, buffer);
     totalBytes += buffer.length;
 
-    const colors = await extractPalette(buffer);
-    images.push({ id: name, url: `img/placeholders/${outName}`, colors });
+    const thumbName = `${name}-thumb.webp`;
+    const thumb = await sharp(path.join(SRC_DIR, file))
+      .resize(THUMB, THUMB, { fit: 'cover' })
+      .webp({ quality: 72 })
+      .toBuffer();
+    fs.writeFileSync(path.join(OUT_DIR, thumbName), thumb);
+    totalBytes += thumb.length;
 
-    console.log(`  ✓ ${outName}  ${(buffer.length / 1024).toFixed(0)}KB  ${colors.primary} / ${colors.accent}`);
+    const colors = await extractPalette(buffer);
+    images.push({
+      id: name,
+      url: `img/placeholders/${outName}`,
+      thumb: `img/placeholders/${thumbName}`,
+      colors,
+    });
+
+    console.log(`  ✓ ${outName}  ${(buffer.length / 1024).toFixed(0)}KB  +thumb ${(thumb.length / 1024).toFixed(1)}KB  ${colors.primary} / ${colors.accent}`);
   }
 
   fs.writeFileSync(DATA_FILE, JSON.stringify({ images }, null, 2));

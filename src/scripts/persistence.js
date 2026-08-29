@@ -8,6 +8,11 @@
 // Bumped to v2 alongside the repeat-default fix — older keys had stale
 // repeat/shuffle state from feature-testing that re-enabled itself on
 // every visit. v2 starts everyone fresh.
+//
+// `repeat` was later dropped as a feature (playback is always continuous).
+// Saved keys from that era may still carry the field; load() spreads over
+// DEFAULTS, so an unknown key is simply carried and never read. No migration
+// needed, and no reason to burn a v3 on it.
 const STORAGE_KEY = 'plyr:state:v2';
 const DEBOUNCE_MS = 500;
 
@@ -18,7 +23,6 @@ const DEFAULTS = Object.freeze({
     volume:         1,         // 0..1
     muted:          false,
     shuffle:        false,
-    repeat:         'off',     // 'off' | 'one' | 'all'
 });
 
 export class Persistence {

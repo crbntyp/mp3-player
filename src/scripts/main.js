@@ -6,6 +6,7 @@ import { RecordAnimator } from './record-animator.js';
 import { EraSelector } from './era-selector.js';
 import { Persistence } from './persistence.js';
 import { formatTime, parseDuration } from './utils/time.js';
+import { trackKey, hashString } from './utils/track-key.js';
 
 // Player Application
 class Player {
@@ -26,13 +27,12 @@ class Player {
         this.currentSource = 'local'; // 'local' or folder ID
         this.driveSource = null; // Drive integration (set by EraSelector.init)
 
-        // Persistence — read on construction so volume/shuffle/repeat
+        // Persistence — read on construction so volume/shuffle
         // are correct from the very first track load. Last source +
         // track index + audio position are applied later in init().
         this.persistence = new Persistence();
         this.audio.volume = this.persistence.state.muted ? 0 : this.persistence.state.volume;
         this.shuffle = this.persistence.state.shuffle;
-        this.repeat  = this.persistence.state.repeat;           // 'off' | 'one' | 'all'
         this.shuffleOrder = null;                                // lazily computed when shuffle is on
 
         // Sub-controllers — each owns its slice of state and DOM. The Player
@@ -80,22 +80,23 @@ class Player {
         // shared link to someone else's track starts at 0:00; your own reload
         // picks up where you left off.
         if (!hashLoaded && this.tracks.length > 0) {
-            // Only resume a persisted Drive crate. 'local' is the default value
-            // of that field and now means "no crate chosen yet", since local
+            // Only resume a persisted Drive era. 'local' is the default value
+            // of that field and now means "no era chosen yet", since local
             // tracks are a fallback rather than somewhere you navigate to.
             const persistedDrive = this.persistence.state.source
                 && this.persistence.state.source !== 'local';
 
             const restored = persistedDrive ? await this.#restoreFromPersistence() : false;
             if (!restored) {
-                await this.#openDefaultCrate();
+                await this.#openDefaultEra();
             }
             this.preloadAdjacentTracks();
         } else if (hashLoaded) {
             this.#restorePositionIfSameTrack();
         }
 
-        // Apply persisted UI state (volume slider, shuffle/repeat icons).
+        // Apply persisted UI state (volume slider, shuffle toggle).
+        this.#detectVolumeSupport();
         this.updateVolumeUI();
         this.updateModeButtons();
 
@@ -127,7 +128,7 @@ class Player {
     // as a genuine fallback: if the proxy is down, the API key is missing or
     // there's no network, switchToDrive leaves currentSource as 'local' and we
     // play what's on disk rather than showing an empty player.
-    async #openDefaultCrate() {
+    async #openDefaultEra() {
         const folders = this.driveSource?.getFolders?.() ?? [];
 
         if (folders.length) {
@@ -361,22 +362,9 @@ class Player {
             }
         });
 
-        // End-of-track behaviour respects repeat mode. 'one' replays the
-        // current track; 'off' stops at the final track of the queue;
-        // anything else advances (shuffle reshuffles when it wraps).
-        this.audio.addEventListener('ended', () => {
-            if (this.repeat === 'one') {
-                this.audio.currentTime = 0;
-                this.audio.play();
-                return;
-            }
-            const atEnd = this.peekNextIndex() === null;
-            if (atEnd && this.repeat === 'off') {
-                this.pause();
-                return;
-            }
-            this.nextTrack();
-        });
+        // A finished track always advances. peekNextIndex() wraps, so the
+        // last track of a era rolls into the first rather than stopping.
+        this.audio.addEventListener('ended', () => this.nextTrack());
 
         // Handle loading - set duration once
         this.audio.addEventListener('loadedmetadata', () => {
@@ -449,7 +437,7 @@ class Player {
 
         // Artwork + palette for this track. Real cover art always wins; the
         // placeholder set is only a stand-in for files with none.
-        const art = this.#resolveArtwork(track);
+        const art = this.resolveArtwork(track);
         this.currentArt = art;
         this.updateAlbumArt(art);
         this.updateTrackInfo(track);
@@ -546,25 +534,46 @@ class Player {
     //
     // A track's own embedded cover art always wins — generate-palettes.js
     // extracts it at build time and derives the palette from it, so the whole
-    // UI recolours to the artwork. The neon placeholder set is the fallback
-    // for files that shipped without art; picking randomly among them is
-    // deliberate, so those tracks look different each visit.
-    #resolveArtwork(track) {
+    // UI recolours to the artwork. The generated sleeve set is the fallback
+    // for files that shipped without art.
+    //
+    // The sleeve is chosen by hashing the track's identity, not at random.
+    // Random assignment meant a track wore a different sleeve every time you
+    // played it, so nothing on Drive had a visual identity — and it made
+    // artwork impossible to show in two places at once, because a thumbnail
+    // in the era list would contradict the sleeve on the turntable the
+    // moment either one re-resolved. A hash is stable forever and costs no
+    // storage.
+    //
+    // Public because the era list resolves thumbnails through the same
+    // path; two callers sharing one function is what keeps them agreeing.
+    resolveArtwork(track) {
         if (track.image) {
             return {
                 cover: track.image,
                 label: track.label || track.image,
+                // The 240px label crop doubles as the records-row thumbnail —
+                // it's already the right order of magnitude, so real covers
+                // need no extra derivative.
+                thumb: track.label || track.image,
                 colors: track.colors,
                 isPlaceholder: false,
             };
         }
 
         if (this.placeholderImages.length > 0) {
-            const p = this.placeholderImages[Math.floor(Math.random() * this.placeholderImages.length)];
-            return { cover: p.url, label: p.url, colors: p.colors, isPlaceholder: true };
+            const i = hashString(trackKey(track)) % this.placeholderImages.length;
+            const p = this.placeholderImages[i];
+            return {
+                cover: p.url,
+                label: p.url,
+                thumb: p.thumb || p.url,
+                colors: p.colors,
+                isPlaceholder: true,
+            };
         }
 
-        return { cover: null, label: null, colors: track.colors, isPlaceholder: false };
+        return { cover: null, label: null, thumb: null, colors: track.colors, isPlaceholder: false };
     }
 
     updateAlbumArt(art) {
@@ -709,25 +718,25 @@ class Player {
         }
     }
 
-    // Position in the queue we'd land on next, honouring shuffle but not
-    // repeat. Returns null at the end of the queue (caller decides what
-    // to do based on repeat mode).
+    // Position in the queue we'd land on next, honouring shuffle.
+    //
+    // Playback is always continuous: the queue wraps at the end rather than
+    // stopping. There used to be a repeat control whose default ('off') made
+    // the player fall silent after the last track of a era — a behaviour
+    // nobody chose, hidden behind a toggle most people never found. Wrapping
+    // unconditionally is what that toggle was almost always set to anyway.
+    //
+    // Returns null only when there is genuinely nothing loaded.
     peekNextIndex() {
         if (this.tracks.length === 0) return null;
         if (this.shuffle) {
             this.#ensureShuffleOrder();
             const pos = this.shuffleOrder.indexOf(this.currentTrackIndex);
             const nextPos = pos + 1;
-            if (nextPos >= this.shuffleOrder.length) {
-                return this.repeat === 'all' ? this.shuffleOrder[0] : null;
-            }
+            if (nextPos >= this.shuffleOrder.length) return this.shuffleOrder[0];
             return this.shuffleOrder[nextPos];
         }
-        const next = this.currentTrackIndex + 1;
-        if (next >= this.tracks.length) {
-            return this.repeat === 'all' ? 0 : null;
-        }
-        return next;
+        return (this.currentTrackIndex + 1) % this.tracks.length;
     }
 
     peekPrevIndex() {
@@ -745,7 +754,7 @@ class Player {
     async nextTrack() {
         const wasPlaying = this.isPlaying;
         const nextIndex = this.peekNextIndex();
-        if (nextIndex === null) return; // end of queue, repeat off
+        if (nextIndex === null) return; // nothing loaded
 
         if (wasPlaying && this.recordAnimator.visible) {
             await this.recordAnimator.slideIn();
@@ -794,26 +803,31 @@ class Player {
         this.updateModeButtons();
     }
 
-    // Repeat cycles off → all → one → off. 'all' is the more useful
-    // default state on first toggle (loop the queue), 'one' is the
-    // niche state for putting a track on loop.
-    toggleRepeat() {
-        const order = ['off', 'all', 'one'];
-        this.repeat = order[(order.indexOf(this.repeat) + 1) % order.length];
-        this.persistence.save({ repeat: this.repeat });
-        this.updateModeButtons();
-    }
-
-    // Reflect current shuffle/repeat state in their toolbar icons.
+    // Reflect shuffle state on its toggle in the era sheet.
     updateModeButtons() {
         const shuffleBtn = document.getElementById('shuffle-btn');
-        if (shuffleBtn) shuffleBtn.classList.toggle('control-btn--active', this.shuffle);
+        if (!shuffleBtn) return;
+        shuffleBtn.classList.toggle('is-active', this.shuffle);
+        shuffleBtn.setAttribute('aria-pressed', String(this.shuffle));
+    }
 
-        const repeatBtn = document.getElementById('repeat-btn');
-        if (repeatBtn) {
-            repeatBtn.classList.toggle('control-btn--active', this.repeat !== 'off');
-            repeatBtn.dataset.mode = this.repeat;
-        }
+    // Is software volume actually settable on this device?
+    //
+    // iOS Safari makes HTMLMediaElement.volume read-only — output is hardware
+    // only — so the control renders, moves, and does nothing. Rather than
+    // hiding it on every touch device (which would take a working slider away
+    // from Android), probe it: write a different value and see whether it
+    // stuck. Marks <body> so the CSS can drop the control.
+    #detectVolumeSupport() {
+        const prev = this.audio.volume;
+        const probe = prev === 0.5 ? 0.4 : 0.5;
+        this.audio.volume = probe;
+        const settable = Math.abs(this.audio.volume - probe) < 0.001;
+        this.audio.volume = prev;
+
+        document.body.classList.toggle('no-volume-control', !settable);
+        if (!settable) console.log('Volume is hardware-controlled here — hiding the slider.');
+        return settable;
     }
 
     setVolume(value, opts = {}) {
@@ -937,9 +951,9 @@ class Player {
             nextBtn.addEventListener('click', () => this.nextTrack());
         }
 
-        // Shuffle + repeat toggles.
+        // Shuffle lives in the era sheet — it's a property of the era,
+        // not of the transport.
         document.getElementById('shuffle-btn')?.addEventListener('click', () => this.toggleShuffle());
-        document.getElementById('repeat-btn')?.addEventListener('click', () => this.toggleRepeat());
 
         // Volume — speaker button toggles mute; slider sets volume live.
         document.getElementById('volume-btn')?.addEventListener('click', () => this.toggleMute());
@@ -1000,13 +1014,17 @@ class Player {
             const typing = target && (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA');
 
             // Escape works even while typing — it's the way out of the era
-            // menu's search box, and the generic typing guard below used to
-            // swallow it there, trapping you in the popup.
+            // sheet's search box, and the generic typing guard below used to
+            // swallow it there, trapping you in the sheet.
+            //
+            // Routed through closeSheet() rather than stripping the class
+            // here: the sheet also owns a scrim and a body class, and peeling
+            // off only the class left both behind, blocking every click on
+            // the player underneath.
             if (e.key === 'Escape') {
-                const menu = document.getElementById('era-menu');
-                if (menu?.classList.contains('open')) {
-                    menu.classList.remove('open');
-                    document.getElementById('era-btn')?.focus();
+                if (this.eraSelector?.isOpen()) {
+                    this.eraSelector.closeSheet();
+                    document.getElementById('records-btn')?.focus();
                 } else if (typing) {
                     target.blur();
                 }
@@ -1037,10 +1055,6 @@ class Player {
                 case 's':
                 case 'S':
                     this.toggleShuffle();
-                    break;
-                case 'r':
-                case 'R':
-                    this.toggleRepeat();
                     break;
             }
         });

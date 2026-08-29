@@ -73,10 +73,15 @@
                 <p id="track-artist" class="track-artist"></p>
             </div>
 
-            <!-- Player bar at the bottom of the album art — minimal:
-                 [play] [progress] [prev/next]. Shuffle, repeat and
-                 volume live in the bottom-right utility cluster outside
-                 the player container. -->
+            <!-- Player bar at the bottom of the album art:
+                 [play] [progress] [prev/next] [volume].
+
+                 Volume used to live in a fixed cluster in the corner of the
+                 viewport, which anchored it to the window rather than to the
+                 player it controls. It's a transport control, so it belongs on
+                 the transport. It's hidden on touch devices — iOS Safari makes
+                 HTMLMediaElement.volume read-only, so the slider there moves
+                 without changing anything. -->
             <div class="player-bar">
                 <button id="play-btn" class="control-btn control-btn--play" aria-label="Play / pause">
                     <svg class="control-icon" viewBox="0 0 24 24" aria-hidden="true">
@@ -104,98 +109,21 @@
                         </svg>
                     </button>
                 </div>
-            </div>
-        </div>
-
-        <!-- Utility cluster — fixed bottom-right of the viewport, mirrors
-             the era selector at the opposite corner. Holds non-essential
-             playback toggles so the player bar stays minimal. -->
-        <div class="utility-cluster">
-            <button id="shuffle-btn" class="control-btn control-btn--utility" aria-label="Toggle shuffle">
-                <svg class="control-icon" viewBox="0 0 24 24" aria-hidden="true">
-                    <path d="M16 4l4 4-4 4v-3h-2.5l-2.1 3.1 1.4 2L14.5 17H17v-3l4 4-4 4v-3h-3.5l-2.4-3.4-2.4 3.4H3v-2h4.5l2.4-3.4-2.4-3.4H3V8h4.5l2.4 3.4L12 8h5V4z" />
-                </svg>
-            </button>
-            <button id="repeat-btn" class="control-btn control-btn--utility" data-mode="off" aria-label="Toggle repeat">
-                <svg class="control-icon repeat-icon-all" viewBox="0 0 24 24" aria-hidden="true">
-                    <path d="M7 7h10v3l4-4-4-4v3H5v6h2V7zm10 10H7v-3l-4 4 4 4v-3h12v-6h-2v4z" />
-                </svg>
-                <svg class="control-icon repeat-icon-one" viewBox="0 0 24 24" aria-hidden="true">
-                    <path d="M7 7h10v3l4-4-4-4v3H5v6h2V7zm10 10H7v-3l-4 4 4 4v-3h12v-6h-2v4zm-4-6h-1v4h-1v-3l-1.5 1.1V11l2-1.4h1.5V15z" />
-                </svg>
-            </button>
-            <div class="volume-cluster">
-                <button id="volume-btn" class="control-btn control-btn--utility" data-level="high" aria-label="Toggle mute">
-                    <svg class="control-icon volume-icon-high" viewBox="0 0 24 24" aria-hidden="true">
-                        <path d="M3 9v6h4l5 4V5L7 9H3zm13.5 3a4.5 4.5 0 00-2.5-4v8a4.5 4.5 0 002.5-4zM14 3.2v2.1a7 7 0 010 13.4v2.1a9 9 0 000-17.6z" />
-                    </svg>
-                    <svg class="control-icon volume-icon-low" viewBox="0 0 24 24" aria-hidden="true">
-                        <path d="M3 9v6h4l5 4V5L7 9H3zm13.5 3a4.5 4.5 0 00-2.5-4v8a4.5 4.5 0 002.5-4z" />
-                    </svg>
-                    <svg class="control-icon volume-icon-mute" viewBox="0 0 24 24" aria-hidden="true">
-                        <path d="M3 9v6h4l5 4V5L7 9H3zm13.6 7L19 18.4 17.4 20 15 17.6 12.6 20 11 18.4 13.4 16 11 13.6 12.6 12 15 14.4 17.4 12 19 13.6 16.6 16z" />
-                    </svg>
-                </button>
-                <div class="volume-popout">
-                    <input id="volume-slider" class="volume-slider" type="range" min="0" max="1" step="0.01" aria-label="Volume" />
-                </div>
-            </div>
-        </div>
-
-        <!-- Era selector — fixed bottom-left of the viewport. Mitsubishi
-             three-diamond mark stands in for the era / source switcher. -->
-        <div class="era-selector">
-            <!-- A record beside a tracklist: this opens the crate. The old
-                 three-diamond mark was borrowed from a car badge and said
-                 nothing about music. -->
-            <button id="era-btn" class="control-btn control-btn--utility" aria-label="Open crate">
-                <svg class="control-icon control-icon--stroke" viewBox="0 0 24 24" fill="none"
-                     stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true">
-                    <circle cx="8" cy="12" r="6.5" />
-                    <circle cx="8" cy="12" r="1.5" />
-                    <path d="M17.5 6.5h4.5M17.5 12h4.5M17.5 17.5h4.5" />
-                </svg>
-                <span id="era-label" class="era-label-hidden">Crate</span>
-            </button>
-            <div id="era-menu" class="era-menu">
-                <!-- State A: pick a source / era. -->
-                <!-- Drive eras only. The bundled local tracks are still there
-                     as an offline fallback (see Player.#openDefaultCrate), but
-                     they aren't a place you'd choose to go. -->
-                <div class="era-menu-view era-menu-view--eras" data-view="eras">
-                    <div class="era-menu-title">Google Drive</div>
-                    <!-- Drive folders populated by EraSelector.populateMenu() -->
-                </div>
-
-                <!-- State B: track list for the era chosen above. Hidden by
-                     default; shown when a folder is picked. -->
-                <div class="era-menu-view era-menu-view--tracks" data-view="tracks" hidden>
-                    <div class="crate-header">
-                        <button id="era-back-btn" class="crate-nav" aria-label="Back to era picker">
-                            <svg class="control-icon" viewBox="0 0 24 24" aria-hidden="true">
-                                <path d="M15 6l-6 6 6 6 1.4-1.4L11.8 12l4.6-4.6z"/>
-                            </svg>
-                        </button>
-                        <span class="crate-id">
-                            <span id="era-tracks-title" class="crate-name">Tracks</span>
-                            <span id="era-tracks-count" class="crate-count"></span>
-                        </span>
-                        <button id="era-refresh-btn" class="crate-nav" aria-label="Refresh listing">
-                            <svg class="control-icon" viewBox="0 0 24 24" aria-hidden="true">
-                                <path d="M17.65 6.35A8 8 0 1019.73 14h-2.08a6 6 0 11-1.42-6.22L13 11h7V4l-2.35 2.35z"/>
-                            </svg>
-                        </button>
-                    </div>
-                    <div class="crate-search">
-                        <svg class="crate-search__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                             stroke-width="1.5" stroke-linecap="round" aria-hidden="true">
-                            <circle cx="11" cy="11" r="6" />
-                            <path d="M20 20l-4.5-4.5" />
+                <div class="volume-cluster">
+                    <button id="volume-btn" class="control-btn" data-level="high" aria-label="Toggle mute">
+                        <svg class="control-icon volume-icon-high" viewBox="0 0 24 24" aria-hidden="true">
+                            <path d="M3 9v6h4l5 4V5L7 9H3zm13.5 3a4.5 4.5 0 00-2.5-4v8a4.5 4.5 0 002.5-4zM14 3.2v2.1a7 7 0 010 13.4v2.1a9 9 0 000-17.6z" />
                         </svg>
-                        <input id="era-tracks-search" class="crate-search__input" type="search"
-                               placeholder="Search this crate" aria-label="Search tracks" />
+                        <svg class="control-icon volume-icon-low" viewBox="0 0 24 24" aria-hidden="true">
+                            <path d="M3 9v6h4l5 4V5L7 9H3zm13.5 3a4.5 4.5 0 00-2.5-4v8a4.5 4.5 0 002.5-4z" />
+                        </svg>
+                        <svg class="control-icon volume-icon-mute" viewBox="0 0 24 24" aria-hidden="true">
+                            <path d="M3 9v6h4l5 4V5L7 9H3zm13.6 7L19 18.4 17.4 20 15 17.6 12.6 20 11 18.4 13.4 16 11 13.6 12.6 12 15 14.4 17.4 12 19 13.6 16.6 16z" />
+                        </svg>
+                    </button>
+                    <div class="volume-popout">
+                        <input id="volume-slider" class="volume-slider" type="range" min="0" max="1" step="0.01" aria-label="Volume" />
                     </div>
-                    <div id="era-tracks-list" class="era-tracks-list"></div>
                 </div>
             </div>
         </div>
@@ -204,6 +132,87 @@
             <a href="https://crbntyp.com" class="credit-logo" target="_blank" rel="noopener">crbntyp</a>
         </div>
 
+        <!-- Records launcher — centred at the base of the player column.
+             It used to be fixed to the bottom-left of the viewport, which on a
+             wide display put it several hundred pixels from the player it
+             opens; the two could never read as related because one was
+             anchored to the window and the other to the page. In the column it
+             inherits the player's centring, so desktop and mobile are the same
+             layout at different widths rather than two sets of rules. -->
+        <div class="records-launch">
+            <button id="records-btn" class="records-launch__btn" aria-haspopup="dialog"
+                    aria-expanded="false" aria-controls="records-sheet-el">
+                <svg class="records-launch__icon" viewBox="0 0 24 24" fill="none"
+                     stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true">
+                    <circle cx="8" cy="12" r="6.5" />
+                    <circle cx="8" cy="12" r="1.5" />
+                    <path d="M17.5 6.5h4.5M17.5 12h4.5M17.5 17.5h4.5" />
+                </svg>
+                <span class="records-launch__label">Records</span>
+            </button>
+        </div>
+
+    </div>
+
+    <!-- Records sheet.
+         One component, two anchorings: a bottom sheet on mobile (full width,
+         grab handle, dimmed scrim) and a centred panel on desktop. It's a
+         sibling of .player-container rather than a child of the button,
+         because it's no longer hinged to a corner — it belongs to the
+         viewport, and nesting it would have trapped it inside the player's
+         stacking context and 465px width.
+
+         There is no era-picker step any more. It used to be a drill-down —
+         pick a era, then see its tracks — which cost a tap on every visit
+         and hid which era you were in once you were in it. The eras are now
+         a scrolling chip row pinned above the list, so you land on tracks and
+         can always see where you are. -->
+    <div id="records-scrim" class="records-scrim" hidden></div>
+    <div id="records-sheet-el" class="records-sheet" role="dialog" aria-modal="true"
+         aria-label="Records" hidden>
+        <div class="records-sheet__grab" aria-hidden="true"></div>
+
+        <div class="records-header">
+            <span class="records-id">
+                <span id="records-title" class="records-name">Records</span>
+                <span id="records-count-el" class="records-count"></span>
+            </span>
+            <button id="records-refresh-btn" class="records-nav" aria-label="Refresh listing">
+                <svg class="control-icon" viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M17.65 6.35A8 8 0 1019.73 14h-2.08a6 6 0 11-1.42-6.22L13 11h7V4l-2.35 2.35z"/>
+                </svg>
+            </button>
+            <button id="records-close-btn" class="records-nav" aria-label="Close records">
+                <svg class="control-icon" viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M18.3 5.7L12 12l6.3 6.3-1.4 1.4L10.6 13.4 4.3 19.7 2.9 18.3 9.2 12 2.9 5.7l1.4-1.4 6.3 6.3 6.3-6.3z"/>
+                </svg>
+            </button>
+        </div>
+
+        <!-- Era chips. Populated by EraSelector.populateMenu(). -->
+        <div id="records-eras" class="records-eras" role="tablist" aria-label="Choose an era"></div>
+
+        <div class="records-tools">
+            <div class="records-search">
+                <svg class="records-search__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                     stroke-width="1.5" stroke-linecap="round" aria-hidden="true">
+                    <circle cx="11" cy="11" r="6" />
+                    <path d="M20 20l-4.5-4.5" />
+                </svg>
+                <input id="records-search-input" class="records-search__input" type="search"
+                       placeholder="Search these records" aria-label="Search tracks" />
+            </div>
+            <!-- Shuffle is a property of the era, not of the transport, so
+                 it sits with the era rather than floating near the player. -->
+            <button id="shuffle-btn" class="records-toggle" aria-pressed="false" aria-label="Shuffle these records">
+                <svg class="records-toggle__icon" viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M16 4l4 4-4 4v-3h-2.5l-2.1 3.1 1.4 2L14.5 17H17v-3l4 4-4 4v-3h-3.5l-2.4-3.4-2.4 3.4H3v-2h4.5l2.4-3.4-2.4-3.4H3V8h4.5l2.4 3.4L12 8h5V4z" />
+                </svg>
+                <span class="records-toggle__label">Shuffle</span>
+            </button>
+        </div>
+
+        <div id="records-list" class="records-list"></div>
     </div>
 
     <!-- Toast Notification -->
