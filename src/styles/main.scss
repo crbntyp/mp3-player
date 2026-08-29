@@ -111,7 +111,15 @@ body {
   align-items: center;
   justify-content: center;
   position: relative;
-  overflow: hidden;
+
+  // overflow-x only. This was `overflow: hidden`, which meant that on a short
+  // window the bottom of the column — the wordmark and the Records button —
+  // was simply cut off with no way to reach it. The button is the only way
+  // into the collection, so losing it is losing the app. The height queries
+  // below should keep the column fitting, but a laptop with a lot of browser
+  // chrome shouldn't be one pixel away from an unusable page.
+  overflow-x: hidden;
+  overflow-y: auto;
 
   // Base wash pulled from the artwork's own palette, so the page is never
   // flatly black behind the cover. Painted here rather than assigned inline
@@ -184,6 +192,19 @@ body {
   padding: var(--space-3);
 
   @media (max-width: 768px) {
+    width: 340px;
+  }
+
+  // Short windows. The column is roughly 790px tall at full width, so a
+  // 1280x720 laptop — or any window with a chunky browser chrome — pushed
+  // the wordmark and the Records button past the bottom edge. The artwork is
+  // square and takes its height from the container's width, so narrowing the
+  // column is what shortens it; there's no separate height to set.
+  @media (max-height: 820px) and (min-width: 769px) {
+    width: 400px;
+  }
+
+  @media (max-height: 720px) and (min-width: 769px) {
     width: 340px;
   }
 }
@@ -990,6 +1011,14 @@ body.no-volume-control .volume-cluster {
   // margin, so its box ends well above where the letters visually stop.
   // Spacing measured from the box would sit the pill on top of the mark.
   margin-top: 30px;
+
+  @media (max-height: 820px) {
+    margin-top: 22px;
+  }
+
+  @media (max-height: 720px) {
+    margin-top: 16px;
+  }
 }
 
 .records-launch__btn {
@@ -1642,6 +1671,14 @@ body.records-open {
   flex-direction: column;
   align-items: center;
   margin-top: 40px;
+
+  @media (max-height: 820px) {
+    margin-top: 24px;
+  }
+
+  @media (max-height: 720px) {
+    margin-top: 14px;
+  }
 }
 
 .credit-logo {

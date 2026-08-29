@@ -1,5 +1,5 @@
 // Service Worker for plyr PWA
-const CACHE_NAME = 'plyr-v16';
+const CACHE_NAME = 'plyr-v17';
 
 // App-shell paths are derived from the registration scope rather than
 // hardcoded to /plyr/. vite.config.js deliberately builds with `base: './'`
