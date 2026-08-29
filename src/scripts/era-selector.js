@@ -11,8 +11,13 @@
 // Nothing here knows which one it's drawing.
 
 import { DriveSource } from './drive.js';
+import { trackKey } from './utils/track-key.js';
 
 const PROXY_URL = 'proxy.php';
+
+// The favourites view is addressed like an era, so one code path renders
+// both. It isn't a folder, so anything folder-specific checks for it.
+const FAVOURITES = 'favourites';
 
 export class EraSelector {
     constructor(player) {
@@ -41,6 +46,21 @@ export class EraSelector {
         if (!rail || !this.driveSource) return;
 
         rail.innerHTML = '';
+
+        // Favourites leads the rail. It's the one list that's yours rather
+        // than a fixed slice of the collection, and putting it first means
+        // it's the first thing under your thumb on a phone.
+        const fav = document.createElement('button');
+        fav.className = 'records-chip records-chip--fav';
+        fav.dataset.folderId = FAVOURITES;
+        fav.setAttribute('role', 'tab');
+        fav.setAttribute('aria-selected', 'false');
+        fav.innerHTML = `
+            <svg class="records-chip__icon" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M12 20.7l-1.5-1.35C5.4 14.75 2 11.7 2 7.95 2 5.4 4 3.4 6.5 3.4c1.4 0 2.8.66 3.7 1.7l1.8 2.06 1.8-2.06c.9-1.04 2.3-1.7 3.7-1.7 2.5 0 4.5 2 4.5 4.55 0 3.75-3.4 6.8-8.5 11.4L12 20.7z"/>
+            </svg><span>Favourites</span>`;
+        rail.appendChild(fav);
+
         this.driveSource.getFolders().forEach((folder) => {
             const chip = document.createElement('button');
             chip.className = 'records-chip';
@@ -98,6 +118,65 @@ export class EraSelector {
         document.getElementById('records-search-input')?.addEventListener('input', (e) => {
             this.#filterTracks(e.target.value);
         });
+
+        this.#setupFavTools();
+    }
+
+    // ===== import / export =====
+    //
+    // Favourites live in this browser's storage, so there is no account to
+    // sync through — a file is the transfer medium. Export writes one, import
+    // merges one in rather than replacing, so moving a list between two
+    // browsers you actually use isn't a one-way trip.
+    #setupFavTools() {
+        document.getElementById('fav-export-btn')?.addEventListener('click', () => {
+            const favs = this.player.favourites;
+            if (favs.count === 0) return;
+
+            const blob = new Blob([JSON.stringify(favs.exportPayload(), null, 2)],
+                { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = favs.exportFilename();
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+            // Revoked on a later turn of the loop: revoking synchronously
+            // can cancel the download in some browsers before it starts.
+            setTimeout(() => URL.revokeObjectURL(url), 10000);
+
+            this.player.showToast(`Exported ${favs.count} favourite${favs.count === 1 ? '' : 's'}`);
+        });
+
+        const file = document.getElementById('fav-import-file');
+
+        document.getElementById('fav-import-btn')?.addEventListener('click', () => file?.click());
+
+        file?.addEventListener('change', async () => {
+            const chosen = file.files?.[0];
+            // Reset first, so picking the same file twice still fires change.
+            file.value = '';
+            if (!chosen) return;
+
+            try {
+                const text = await chosen.text();
+                const { added, skipped } = this.player.favourites.import(text);
+                await this.refreshFavouritesView();
+                this.player.updateFavouriteButton();
+
+                if (added === 0) {
+                    this.player.showToast(
+                        skipped ? 'Already had every favourite in that file.' : 'Nothing to import.');
+                } else {
+                    this.player.showToast(
+                        `Imported ${added} favourite${added === 1 ? '' : 's'}` +
+                        (skipped ? ` (${skipped} already saved)` : ''), 4000);
+                }
+            } catch (err) {
+                this.player.showToast(err.message || "Couldn't read that file.", 5000);
+            }
+        });
     }
 
     // ===== sheet open/close =====
@@ -126,7 +205,8 @@ export class EraSelector {
         // Land on the era you're actually listening to. Falling back to the
         // first folder matters on a cold boot, where currentSource may still
         // be 'local' from the offline fallback.
-        const target = this.#isKnownFolder(this.player.currentSource)
+        const target = (this.player.currentSource === FAVOURITES
+                || this.#isKnownFolder(this.player.currentSource))
             ? this.player.currentSource
             : this.driveSource?.getFolders()[0]?.id;
 
@@ -161,9 +241,14 @@ export class EraSelector {
     // ===== era rendering =====
 
     async showEra(source) {
-        const tracks = source === 'local'
-            ? this.player.localTracks
-            : await this.#loadDriveListing(source);
+        let tracks;
+        if (source === FAVOURITES) {
+            tracks = await this.#loadFavourites();
+        } else if (source === 'local') {
+            tracks = this.player.localTracks;
+        } else {
+            tracks = await this.#loadDriveListing(source);
+        }
 
         this.viewingSource = source;
         this.viewingTracks = tracks;
@@ -172,7 +257,9 @@ export class EraSelector {
         if (titleEl) titleEl.textContent = this.#labelFor(source);
 
         const refreshBtn = document.getElementById('records-refresh-btn');
-        if (refreshBtn) refreshBtn.hidden = (source === 'local');
+        if (refreshBtn) refreshBtn.hidden = (source === 'local' || source === FAVOURITES);
+
+        this.#updateFavTools();
 
         // Clear search before render so we don't show a filtered list.
         const search = document.getElementById('records-search-input');
@@ -192,6 +279,99 @@ export class EraSelector {
 
     #isKnownFolder(id) {
         return !!this.driveSource?.getFolders().some((f) => f.id === id);
+    }
+
+    // Turn stored favourites into playable tracks.
+    //
+    // A saved entry holds the filename, not a track number, because a Drive
+    // re-listing renumbers everything. So each era that has favourites in it
+    // gets its listing fetched once (DriveSource caches, so this is usually
+    // free) and entries are matched by key.
+    //
+    // An entry whose file no longer exists is kept in the list rather than
+    // dropped — a folder that failed to load would otherwise quietly delete
+    // favourites — but rendered as unavailable and not playable.
+    async #loadFavourites() {
+        this.listingError = null;
+        const saved = this.player.favourites.list();
+        if (saved.length === 0) return [];
+
+        const eras = [...new Set(saved.map((e) => e.e).filter(Boolean))];
+        const byKey = new Map();
+
+        for (const label of eras) {
+            const folder = this.driveSource?.getFolders().find((f) => f.label === label);
+            if (!folder) continue;
+            try {
+                const tracks = await this.driveSource.fetchTracks(folder.id);
+                tracks.forEach((t, i) => {
+                    // Carry the era and its index home with the track so
+                    // playing from this list can switch source and land on
+                    // the right record.
+                    byKey.set(trackKey(t), { ...t, era: label, eraIndex: i });
+                });
+            } catch (err) {
+                console.warn(`Favourites: couldn't read era ${label}:`, err.message);
+            }
+        }
+
+        return saved.map((entry) => {
+            const found = byKey.get(entry.k);
+            if (found) return found;
+            // Unresolved: render from the cached display text so the row
+            // still says what it is.
+            return {
+                id: 0,
+                title: entry.title || entry.k,
+                artist: entry.artist || '',
+                version: entry.version || null,
+                album: 'Favourites',
+                duration: '0:00',
+                image: null,
+                audio: null,
+                colors: null,
+                fileName: entry.k,
+                era: entry.e || null,
+                missing: true,
+            };
+        });
+    }
+
+    // Re-render in place after the list changed underneath us (the heart on
+    // the artwork can remove the very row you're looking at).
+    async refreshFavouritesView() {
+        if (this.viewingSource !== FAVOURITES) return;
+        this.viewingTracks = await this.#loadFavourites();
+        this.#updateFavTools();
+        this.#renderTracksList();
+    }
+
+    // Export only when there is something to export; import always, because
+    // the browser that most needs to import is the one with nothing in it.
+    #updateFavTools() {
+        const tools = document.getElementById('fav-tools');
+        if (!tools) return;
+        const favs = this.player.favourites;
+        const onFavs = this.viewingSource === FAVOURITES;
+        tools.hidden = !onFavs;
+
+        const exportBtn = document.getElementById('fav-export-btn');
+        if (exportBtn) exportBtn.hidden = favs.count === 0;
+
+        // Say it out loud when the list can't be kept. Every crbntyp app is
+        // served from crbntyp.com, so they share one ~5MB localStorage
+        // bucket — a neighbour that caches heavily can fill it and leave
+        // nothing for this. Warning in the console only would mean the user
+        // discovers it when their favourites are already gone.
+        const warn = document.getElementById('fav-warning');
+        if (!warn) return;
+        const atRisk = onFavs && favs.count > 0 && favs.isAtRisk();
+        warn.hidden = !atRisk;
+        if (atRisk) {
+            warn.textContent = favs.storageMode === 'session'
+                ? "Storage on this site is full, so these are only held until you close the tab. Export to keep them."
+                : "These couldn't be saved — storage on this site is full. Export to keep them.";
+        }
     }
 
     async #loadDriveListing(folderId) {
@@ -215,7 +395,10 @@ export class EraSelector {
         if (this.viewingTracks.length === 0) {
             const empty = document.createElement('div');
             empty.className = 'records-empty';
-            empty.textContent = this.listingError || 'No records in here.';
+            empty.textContent = this.listingError
+                || (this.viewingSource === FAVOURITES
+                    ? 'No favourites yet. Tap the heart on a record to save it.'
+                    : 'No records in here.');
             list.appendChild(empty);
             this.#updateCount();
             return;
@@ -232,6 +415,10 @@ export class EraSelector {
             // Stash searchable text so the filter doesn't keep
             // re-querying the DOM for it.
             item.dataset.search = `${track.title} ${track.artist || ''} ${track.version || ''}`.toLowerCase();
+            if (track.missing) {
+                item.classList.add('records-row--missing');
+                item.title = 'This file is no longer in its era';
+            }
             if (isCurrent) {
                 item.classList.add('records-row--current');
                 // Drives the equaliser. Paused shows the same sleeve, still —
@@ -367,10 +554,18 @@ export class EraSelector {
     }
 
     async #playFromView(index) {
+        const track = this.viewingTracks[index];
+        if (track?.missing) {
+            this.player.showToast("That file isn't in its era any more.");
+            return;
+        }
+
         const sameSource = this.viewingSource === this.player.currentSource;
 
         if (!sameSource) {
-            if (this.viewingSource === 'local') {
+            if (this.viewingSource === FAVOURITES) {
+                await this.switchToFavourites({ startIndex: index, autoplay: true });
+            } else if (this.viewingSource === 'local') {
                 await this.switchToLocal({ startIndex: index, autoplay: true });
             } else {
                 await this.switchToDrive(this.viewingSource, { startIndex: index, autoplay: true });
@@ -382,7 +577,33 @@ export class EraSelector {
         this.closeSheet();
     }
 
+    // Playing a favourite makes the favourites the queue, so next and prev
+    // walk your list. Dropping you into the track's own era instead would
+    // mean a saved list you can open but never actually listen through.
+    async switchToFavourites({ startIndex = 0, autoplay = false } = {}) {
+        const tracks = (this.viewingSource === FAVOURITES && this.viewingTracks.length)
+            ? this.viewingTracks
+            : await this.#loadFavourites();
+
+        const playable = tracks.filter((t) => !t.missing);
+        if (playable.length === 0) {
+            this.player.showToast('Nothing in favourites to play yet.');
+            return;
+        }
+
+        // The clicked index refers to the rendered list, which may include
+        // unavailable rows; map it onto the playable queue.
+        const clicked = tracks[startIndex];
+        const target = Math.max(0, playable.findIndex((t) => trackKey(t) === trackKey(clicked || {})));
+
+        this.player.pause();
+        this.player.currentSource = FAVOURITES;
+        this.player.tracks = playable;
+        this.player.loadTrack(target, autoplay);
+    }
+
     #labelFor(source) {
+        if (source === FAVOURITES) return 'Favourites';
         if (source === 'local') return 'Local Tracks';
         const folder = this.driveSource?.getFolders().find((f) => f.id === source);
         return folder?.label || 'Records';

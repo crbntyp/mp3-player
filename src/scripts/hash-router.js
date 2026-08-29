@@ -29,7 +29,12 @@ export class HashRouter {
 
     console.log(`🔗 Loading from hash: ${source}/${trackIndex + 1}`);
 
-    if (source === 'local') {
+    if (source === 'favourites') {
+      // Favourites is a queue like an era, so it round-trips through the URL
+      // the same way — a link to your 3rd favourite is a real place.
+      await this.player.eraSelector.switchToFavourites({ startIndex: trackIndex });
+      return this.player.tracks.length > 0;
+    } else if (source === 'local') {
       if (trackIndex < this.player.tracks.length) {
         this.player.loadTrack(trackIndex);
         return true;
@@ -52,7 +57,9 @@ export class HashRouter {
   update() {
     let source = 'local';
 
-    if (this.player.currentSource !== 'local' && this.player.driveSource) {
+    if (this.player.currentSource === 'favourites') {
+      source = 'favourites';
+    } else if (this.player.currentSource !== 'local' && this.player.driveSource) {
       const folder = this.player.driveSource
         .getFolders()
         .find((f) => f.id === this.player.currentSource);

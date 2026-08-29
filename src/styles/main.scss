@@ -820,6 +820,159 @@ body.no-volume-control .volume-cluster {
   animation: spin 1s linear infinite;
 }
 
+// ── Favourite toggle ──────────────────────────────────────────────────
+//
+// Top-left of the sleeve. The transport runs along the bottom edge and the
+// title sits centred at the top, so the corners are the only uncontested
+// space on the artwork — and the left one reads as a mark on the record
+// rather than another control in the row.
+//
+// Off state is a hollow outline at low opacity so it doesn't compete with
+// the artwork; on state fills in the track's own accent, which is the
+// colour the whole UI is already wearing.
+
+.fav-btn {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  z-index: 4;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  color: rgba(255, 255, 255, 0.75);
+  cursor: pointer;
+  transition: background 0.18s var(--ease-out), color 0.18s var(--ease-out),
+              transform 0.18s var(--ease-out);
+
+  .fav-icon {
+    width: 18px;
+    height: 18px;
+    display: block;
+    // Outline until saved — a filled heart should mean something.
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.7;
+    transition: fill 0.18s var(--ease-out), stroke 0.18s var(--ease-out);
+  }
+
+  &:hover {
+    background: rgba(0, 0, 0, 0.45);
+    color: #fff;
+  }
+
+  &:active { transform: scale(0.9); }
+
+  &:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 3px;
+    color: #fff;
+  }
+
+  &.is-on {
+    color: var(--color-accent);
+
+    .fav-icon {
+      fill: currentColor;
+      stroke: currentColor;
+    }
+  }
+
+  @media (max-width: 768px) {
+    top: 10px;
+    left: 10px;
+    width: 32px;
+    height: 32px;
+  }
+}
+
+// ── Favourites in the records sheet ───────────────────────────────────
+
+// The Favourites chip carries a heart so it reads as yours at a glance,
+// rather than as another date range in the rail.
+.records-chip--fav {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.records-chip__icon {
+  width: 11px;
+  height: 11px;
+  fill: currentColor;
+  flex-shrink: 0;
+}
+
+// A favourite whose file is no longer in its era. Kept in the list rather
+// than deleted — an era that failed to load would otherwise quietly erase
+// favourites — but shown as unavailable and not playable.
+.records-row--missing {
+  opacity: 0.4;
+  cursor: default;
+
+  &:hover { background: transparent; }
+
+  .records-row__sleeve { filter: grayscale(1); }
+}
+
+// Shown when the list can't actually be kept — storage full, or degraded to
+// sessionStorage. Amber rather than red: the favourites still work for now,
+// they just won't survive the tab.
+.fav-warning {
+  margin: 0 2px var(--space-2);
+  padding: 8px 10px;
+  border-radius: 8px;
+  background: color-mix(in srgb, #f59e0b 16%, transparent);
+  color: #fcd9a0;
+  font-family: var(--font-ui);
+  font-size: 11.5px;
+  line-height: 1.45;
+}
+
+// Import / export. Sits under the search row and above the list, visible
+// only on the Favourites view.
+.fav-tools {
+  display: flex;
+  gap: 6px;
+  padding: 0 2px var(--space-2);
+}
+
+.fav-tool {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 11px;
+  background: rgba(255, 255, 255, 0.045);
+  border: none;
+  border-radius: 8px;
+  color: rgba(255, 255, 255, 0.6);
+  font-family: var(--font-ui);
+  font-size: 11.5px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
+
+  &__icon {
+    width: 13px;
+    height: 13px;
+    flex-shrink: 0;
+  }
+
+  &:hover { background: rgba(255, 255, 255, 0.1); color: #fff; }
+
+  &:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+  }
+}
+
 // ── Records launcher ────────────────────────────────────────────────────
 //
 // Centred at the base of the player column. The old .era-selector and

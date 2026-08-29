@@ -7,6 +7,7 @@ import { EraSelector } from './era-selector.js';
 import { Persistence } from './persistence.js';
 import { formatTime, parseDuration } from './utils/time.js';
 import { trackKey, hashString } from './utils/track-key.js';
+import { Favourites } from './favourites.js';
 
 // Player Application
 class Player {
@@ -40,6 +41,7 @@ class Player {
         this.recordAnimator = new RecordAnimator(this);
         this.hashRouter = new HashRouter(this);
         this.mediaSession = new MediaSession(this);
+        this.favourites = new Favourites();
         this.eraSelector = new EraSelector(this);
 
         this.init();
@@ -122,10 +124,11 @@ class Player {
     async #restoreFromPersistence() {
         const { source, trackIndex, audioPosition } = this.persistence.state;
 
-        // Switch to the persisted Drive folder if applicable. switchToDrive
-        // lives on the era selector — call it directly rather than
-        // populating the menu UI.
-        if (source && source !== 'local' && this.eraSelector?.switchToDrive) {
+        // Switch to the persisted source if applicable. These live on the
+        // era selector — call them directly rather than populating the menu UI.
+        if (source === 'favourites' && this.eraSelector?.switchToFavourites) {
+            await this.eraSelector.switchToFavourites();
+        } else if (source && source !== 'local' && this.eraSelector?.switchToDrive) {
             await this.eraSelector.switchToDrive(source);
         }
 
@@ -475,6 +478,7 @@ class Player {
         this.updateTrackInfo(track);
         this.updateTheme(art.colors);
         this.mediaSession.updateMetadata();
+        this.updateFavouriteButton();
 
         // Set duration from track data (more reliable than audio metadata for opus)
         const durationEl = document.getElementById('duration');
@@ -835,6 +839,50 @@ class Player {
         this.updateModeButtons();
     }
 
+    // The era label the current track belongs to — what a favourite is filed
+    // under, and what hash links and share URLs already use. Null for
+    // anything that isn't a Drive era, since those can't be resolved back.
+    currentEraLabel() {
+        if (!this.driveSource) return null;
+        const folder = this.driveSource.getFolders().find((f) => f.id === this.currentSource);
+        return folder ? folder.label : null;
+    }
+
+    toggleFavourite() {
+        const track = this.tracks[this.currentTrackIndex];
+        if (!track) return;
+
+        // A favourite has to be findable again. When playing from the
+        // favourites queue the track carries the era it was resolved from;
+        // otherwise it's whichever era is loaded. A bundled local track has
+        // neither and isn't reachable from the Records panel, so saving one
+        // would create an entry that could never be opened again.
+        const era = this.currentEraLabel() || track.era || null;
+        if (!era && !this.favourites.has(track)) {
+            this.showToast('Only tracks from an era can be saved.');
+            return;
+        }
+
+        const on = this.favourites.toggle(track, era);
+        this.updateFavouriteButton();
+        this.showToast(on ? 'Saved to favourites' : 'Removed from favourites');
+
+        // The open list is now stale if it's the one we just changed.
+        if (this.eraSelector?.viewingSource === 'favourites') {
+            this.eraSelector.refreshFavouritesView();
+        }
+    }
+
+    updateFavouriteButton() {
+        const btn = document.getElementById('fav-btn');
+        if (!btn) return;
+        const track = this.tracks[this.currentTrackIndex];
+        const on = !!track && this.favourites.has(track);
+        btn.classList.toggle('is-on', on);
+        btn.setAttribute('aria-pressed', String(on));
+        btn.setAttribute('aria-label', on ? 'Remove from favourites' : 'Save to favourites');
+    }
+
     // Reflect shuffle state on its toggle in the era sheet.
     updateModeButtons() {
         const shuffleBtn = document.getElementById('shuffle-btn');
@@ -983,6 +1031,8 @@ class Player {
             nextBtn.addEventListener('click', () => this.nextTrack());
         }
 
+        document.getElementById('fav-btn')?.addEventListener('click', () => this.toggleFavourite());
+
         // Shuffle lives in the era sheet — it's a property of the era,
         // not of the transport.
         document.getElementById('shuffle-btn')?.addEventListener('click', () => this.toggleShuffle());
@@ -1087,6 +1137,10 @@ class Player {
                 case 's':
                 case 'S':
                     this.toggleShuffle();
+                    break;
+                case 'f':
+                case 'F':
+                    this.toggleFavourite();
                     break;
             }
         });

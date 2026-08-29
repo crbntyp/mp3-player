@@ -69,6 +69,15 @@
                  src=""
                  class="album-art"
                  alt="Album Art" />
+            <!-- Favourite toggle. Top-left of the artwork, opposite corner
+                 to nothing — the transport lives along the bottom, so the top
+                 corners are the only uncontested space on the sleeve. -->
+            <button id="fav-btn" class="fav-btn" aria-pressed="false" aria-label="Save to favourites">
+                <svg class="fav-icon" viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M12 20.7l-1.5-1.35C5.4 14.75 2 11.7 2 7.95 2 5.4 4 3.4 6.5 3.4c1.4 0 2.8.66 3.7 1.7l1.8 2.06 1.8-2.06c.9-1.04 2.3-1.7 3.7-1.7 2.5 0 4.5 2 4.5 4.55 0 3.75-3.4 6.8-8.5 11.4L12 20.7z"/>
+                </svg>
+            </button>
+
             <div class="track-info-overlay">
                 <h2 id="track-title" class="track-title">No Tracks Loaded</h2>
                 <!-- Visualizer Canvas (between title and artist) -->
@@ -213,6 +222,31 @@
                 </svg>
                 <span class="records-toggle__label">Shuffle</span>
             </button>
+        </div>
+
+        <!-- Import / export. Only rendered for the Favourites view, and the
+             export half only when there is something to export. Import stays
+             reachable from the empty state on purpose: a fresh browser has no
+             list, and hiding import there would make the feature impossible
+             to use on the browser that most needs it. -->
+        <p id="fav-warning" class="fav-warning" hidden></p>
+
+        <div id="fav-tools" class="fav-tools" hidden>
+            <button id="fav-export-btn" class="fav-tool" type="button">
+                <svg class="fav-tool__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                     stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="M12 3v12M8 11l4 4 4-4M4 20h16"/>
+                </svg>
+                <span>Export</span>
+            </button>
+            <button id="fav-import-btn" class="fav-tool" type="button">
+                <svg class="fav-tool__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                     stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="M12 15V3M8 7l4-4 4 4M4 20h16"/>
+                </svg>
+                <span>Import</span>
+            </button>
+            <input id="fav-import-file" type="file" accept="application/json,.json" hidden>
         </div>
 
         <div id="records-list" class="records-list"></div>
