@@ -376,9 +376,27 @@ class Player {
             }
         });
 
-        // A finished track always advances. peekNextIndex() wraps, so the
-        // last track of a era rolls into the first rather than stopping.
-        this.audio.addEventListener('ended', () => this.nextTrack());
+        // A finished track advances. peekNextIndex() wraps, so the last track
+        // of an era rolls into the first rather than stopping.
+        //
+        // Guarded, because 'ended' is not proof a track played. A media
+        // element fires it immediately for a source it never managed to
+        // decode — an unreadable or zero-length stream reports duration 0 and
+        // ends the moment it loads. Advancing on that walks the whole era in
+        // a couple of seconds, and since playback now wraps unconditionally
+        // (repeat having been removed) it would do so indefinitely rather
+        // than stopping at the last track. Removing repeat did not create
+        // this fault, but it did take the ceiling off it.
+        //
+        // A record that actually finished has a duration it reached.
+        this.audio.addEventListener('ended', () => {
+            if (!(this.audio.duration > 0)) {
+                console.warn('Ignoring "ended" from a track that never played');
+                this.pause();
+                return;
+            }
+            this.nextTrack();
+        });
 
         // Handle loading - set duration once
         this.audio.addEventListener('loadedmetadata', () => {
@@ -736,7 +754,7 @@ class Player {
     //
     // Playback is always continuous: the queue wraps at the end rather than
     // stopping. There used to be a repeat control whose default ('off') made
-    // the player fall silent after the last track of a era — a behaviour
+    // the player fall silent after the last track of an era — a behaviour
     // nobody chose, hidden behind a toggle most people never found. Wrapping
     // unconditionally is what that toggle was almost always set to anyway.
     //
