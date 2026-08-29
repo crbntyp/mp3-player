@@ -1686,7 +1686,12 @@ body.records-open {
   font-size: 48px;
   font-weight: 800;
   color: white;
-  clip-path: inset(0 0 44% 0);
+  // 36%, not the 44% in the shared crbntyp pattern. The clip is a percentage
+  // of the line box, and at line-height 1 that box is 48px of which the
+  // glyphs occupy rather less — the font's ascent and descent take the rest.
+  // So the percentage is sensitive: 44% ate into the letterforms, 36% cuts
+  // where the mark is meant to be cut.
+  clip-path: inset(0 0 36% 0);
   line-height: 1;
   margin-bottom: -20px;
   text-decoration: none;
