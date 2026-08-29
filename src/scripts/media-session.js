@@ -33,7 +33,33 @@ export class MediaSession {
       }
     });
 
+    // iOS was showing skip-back/skip-forward 10s on the lock screen instead
+    // of previous/next track, even though neither seek action was ever
+    // registered. Safari picks the ±10s pair by default for a lone <audio>
+    // element and only gives up the slots once those actions are explicitly
+    // declined — setting a handler to null is how you say "this media has no
+    // such action", which is different from never having mentioned it.
+    //
+    // seekto stays: it drives the scrubber, which is worth keeping and does
+    // not compete for the two button slots.
+    setHandler('seekbackward', null);
+    setHandler('seekforward', null);
+
+    this.configured = true;
     console.log('✓ Media Session API configured');
+  }
+
+  // Re-assert the handlers when playback starts.
+  //
+  // Safari can drop or re-evaluate the action set around the first real play
+  // and around audio route changes, and the lock screen then reverts to
+  // whatever it would have shown by default. Re-running setup() is cheap and
+  // idempotent, so it's easier to just say it again than to work out exactly
+  // when it was forgotten.
+  reassert() {
+    if (!this.supported) return;
+    this.setup();
+    this.updateMetadata();
   }
 
   updateMetadata() {

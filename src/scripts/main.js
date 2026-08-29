@@ -717,6 +717,10 @@ class Player {
             // what used to chop playback up in the car.
             this.visualizer?.resumeIfSuspended();
 
+            // Say the lock-screen action set again now that playback is
+            // genuinely starting — see MediaSession.reassert().
+            this.mediaSession?.reassert();
+
             this.audio.play();
             this.isPlaying = true;
             this.updatePlayButton();
