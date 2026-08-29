@@ -3,18 +3,6 @@
 // stylesheet plus 1.27MB of icon fonts across three families — for a music
 // note, a disc, a calendar and a spinner.
 
-// Britanica — only the 800 weight is declared, because .credit-logo is the
-// only rule that uses the family and it asks for 800. Declaring all six
-// weights pulled 884KB of font files into the bundle to render one word.
-@font-face {
-  font-family: "Britanica";
-  src: url("../fonts/britanica-extra-bold.woff2") format("woff2"),
-       url("../fonts/britanica-extra-bold.woff") format("woff");
-  font-weight: 800;
-  font-style: normal;
-  font-display: swap;
-}
-
 // CSS Variables for dynamic theming
 :root {
   // Palette — overwritten per track by Player.updateTheme() from the
@@ -1682,23 +1670,26 @@ body.records-open {
 }
 
 .credit-logo {
-  font-family: "Britanica", Arial, sans-serif;
-  font-size: 48px;
-  font-weight: 800;
-  color: white;
-  // 36%, not the 44% in the shared crbntyp pattern. The clip is a percentage
-  // of the line box, and at line-height 1 that box is 48px of which the
-  // glyphs occupy rather less — the font's ascent and descent take the rest.
-  // So the percentage is sensitive: 44% ate into the letterforms, 36% cuts
-  // where the mark is meant to be cut.
-  clip-path: inset(0 0 36% 0);
-  line-height: 1;
-  margin-bottom: -20px;
+  // The mark is inline SVG now, so there is no type to set and no clip to
+  // tune — the cut is in the geometry. Only the size and the colour are CSS.
+  display: block;
+  width: 150px;
+  color: #fff;
   text-decoration: none;
-  transition: color 0.3s ease;
+  transition: color 0.3s ease, opacity 0.3s ease;
+
+  svg {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
 
   &:hover {
     color: rgba(255, 255, 255, 0.9);
+  }
+
+  @media (max-height: 720px) {
+    width: 124px;
   }
 }
 
