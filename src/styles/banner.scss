@@ -1,0 +1,252 @@
+@use 'main';
+
+/*
+ * Banner rig — a dev-only page (src/banner.html) that stands several players
+ * in one row so a single screenshot can serve as the project banner on
+ * crbntyp.com. Vite's only HTML entry is src/index.html, so none of this is
+ * built or deployed; it exists to be photographed.
+ *
+ * Nothing here restyles a player. The cards are cloned from index.html at
+ * runtime and keep the app's own classes, so what the camera sees is the
+ * real component — this file only supplies the stage around them, the row
+ * geometry, and the crop guides that show which parts of the shot each
+ * consumer of the image will actually keep.
+ */
+
+body.banner-body {
+  // The rig's own chrome sits outside the shot, so the page behind the stage
+  // is deliberately inert — a flat, slightly-lifted grey that makes the
+  // stage's edges obvious when dragging a screenshot marquee around it.
+  background: #101116;
+  padding-top: 0;
+
+  // The app's wash belongs to the stage here, not to the window.
+  &::before,
+  &::after { display: none; }
+}
+
+body.banner-body:not(.is-clean) {
+  padding-top: 52px;   // clears the fixed control bar
+}
+
+// ── Stage ───────────────────────────────────────────────────────────────
+//
+// The framed area, sized by JS to the chosen aspect. This is the thing to
+// screenshot: everything inside it is the banner, everything outside is rig.
+.banner-stage {
+  position: relative;
+  // Breathing room for anything pinned to the frame's edges. Proportional to
+  // the frame, set by JS, so it holds at any output size.
+  --banner-pad: 40px;
+  flex: none;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  // Absolute rather than fixed: the wash has to belong to the frame, not to
+  // the window, or the vignette would centre on the browser instead of on
+  // the picture.
+  @include main.ambient-wash(absolute);
+}
+
+// ── Row ─────────────────────────────────────────────────────────────────
+
+.banner-inner {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  // Set by JS once the row's natural size is known, so the composition is
+  // laid out at the player's real dimensions and only then fitted to the
+  // frame. Scaling the whole row keeps every proportion — type, controls,
+  // the record's overhang — exactly as the app draws them.
+  transform: scale(var(--banner-scale, 1));
+  transform-origin: center center;
+}
+
+.banner-row {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--banner-gap, 170px);
+  // The record slides out past the right edge of its own card, so the last
+  // one needs somewhere to go. The same reserve goes on the left, unused, on
+  // purpose: it makes the row's box concentric with the sleeves. Padding only
+  // on the right would put the box's centre 40px to the right of them, and
+  // everything centred against that box — the row in the frame, the wordmark
+  // and the Records button under it — would sit visibly off the covers while
+  // measuring as perfectly centred.
+  padding: 0 var(--banner-overhang, 135px);
+}
+
+// Inside the rig a card is always the desktop card. The app sizes
+// .player-container from the viewport — including two max-height queries —
+// which would otherwise make the shot depend on how tall the window happened
+// to be. Two classes outrank a single one, so no !important is needed.
+.banner-row .player-container {
+  width: 465px;
+  max-width: none;
+  flex: none;
+  padding: var(--space-3);
+}
+
+.banner-row .rotate-record,
+.banner-row .record-image {
+  width: 400px;
+  height: 400px;
+}
+
+.banner-row .record-label {
+  top: calc(50% - 60px);
+  left: calc(50% - 40px);
+  width: 120px;
+  height: 120px;
+}
+
+.banner-row .record-label-art { width: 115px; height: 115px; }
+.banner-row .record-label-text { width: 120px; height: 120px; }
+
+// A still frame of a spinning record catches the label at whatever angle the
+// animation happened to be at. Pausing it before the first frame leaves the
+// curved title upright, which is the only way it is readable in a photograph.
+.banner-stage.is-still .rotate-record.playing .record-image,
+.banner-stage.is-still .rotate-record.playing .record-label {
+  animation-play-state: paused;
+}
+
+// ── Footer ──────────────────────────────────────────────────────────────
+//
+// One wordmark and one Records button for the whole row, not one per card.
+
+.banner-footer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.banner-footer .credit { margin-top: 46px; }
+.banner-footer .records-launch { margin-top: 28px; }
+
+// Stacked under the row, the footer is part of the composition's height, so
+// it pushes the sleeves above the frame's centre and leaves a dead band
+// underneath. Sending the two of them to the bottom corners instead lets the
+// row sit dead centre and turns that band into margin. The footer is
+// reparented out of .banner-inner in this mode, so it keeps the app's own
+// sizing rather than being scaled with the row.
+.banner-stage.footer-corners > .banner-footer {
+  position: absolute;
+  inset: auto 0 0 0;
+  z-index: 2;
+  flex-direction: row;
+  align-items: flex-end;
+  justify-content: space-between;
+  padding: 0 var(--banner-pad) var(--banner-pad);
+
+  .credit,
+  .records-launch { margin-top: 0; }
+}
+
+// ── Crop guides ─────────────────────────────────────────────────────────
+//
+// The same file is used twice on crbntyp.com: full-bleed behind the project
+// title, and centre-cropped to 808/632 in the work grid. Both crops are
+// drawn here so the composition can be judged against them rather than
+// discovered afterwards.
+
+.banner-guides {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  pointer-events: none;
+}
+
+.banner-guide {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  border: 1px dashed rgba(255, 255, 255, 0.5);
+}
+
+.banner-guide--hero { border-color: rgba(110, 214, 255, 0.65); }
+.banner-guide--card { border-color: rgba(255, 196, 92, 0.7); }
+
+.banner-guide__label {
+  position: absolute;
+  top: 5px;
+  left: 6px;
+  padding: 2px 7px;
+  border-radius: 4px;
+  background: rgba(0, 0, 0, 0.6);
+  color: rgba(255, 255, 255, 0.85);
+  font: 500 11px/1.3 var(--font-ui);
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+
+// The project page lays flat ink over the whole banner and a heavy gradient
+// along its floor, so a shot that reads well on this page can still come out
+// muddy there. This reproduces both, over the hero crop only, as a preview —
+// it lives in the guide layer, so it is never in the screenshot.
+.banner-scrim {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(
+      to top,
+      #0e0f12 0%,
+      rgba(14, 15, 18, 0.86) 22%,
+      rgba(14, 15, 18, 0.4) 55%,
+      rgba(14, 15, 18, 0.1) 100%
+    ),
+    rgba(14, 15, 18, 0.6);
+}
+
+// ── Rig chrome ──────────────────────────────────────────────────────────
+
+.banner-controls {
+  position: fixed;
+  inset: 0 0 auto 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  flex-wrap: wrap;
+  padding: 9px 14px;
+  background: rgba(9, 10, 13, 0.94);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.09);
+  backdrop-filter: blur(10px);
+  font: 12px var(--font-ui);
+  color: rgba(255, 255, 255, 0.72);
+}
+
+.banner-field {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+
+  > span { color: rgba(255, 255, 255, 0.42); }
+
+  select,
+  button {
+    background: rgba(255, 255, 255, 0.07);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 6px;
+    color: #fff;
+    font: 12px var(--font-ui);
+    padding: 4px 7px;
+    cursor: pointer;
+  }
+}
+
+.banner-readout {
+  margin-left: auto;
+  font-variant-numeric: tabular-nums;
+  color: rgba(255, 255, 255, 0.5);
+
+  b { color: rgba(255, 255, 255, 0.9); font-weight: 600; }
+}
+
+.is-clean .banner-controls,
+.is-clean .banner-guides { display: none; }

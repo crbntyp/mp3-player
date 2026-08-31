@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>plyr__ banner rig</title>
+
+    <!--
+      Not part of the app. Vite's only HTML entry is index.html, so this page
+      is served by `npm run dev` and never built or deployed. It exists to be
+      screenshotted: it stands four or five players in a row so the project
+      banner on crbntyp.com can show the collection rather than one track.
+
+      Everything inside a card is cloned from index.html at runtime, so the
+      picture can't drift from the player it is a picture of.
+    -->
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&display=swap">
+</head>
+<body class="banner-body">
+
+    <div class="banner-controls" id="controls">
+        <span class="banner-field"><span>frame</span>
+            <select id="c-frame">
+                <option value="2.96">hero 2.96:1</option>
+                <option value="2.5">wide 2.5:1</option>
+                <option value="2">2:1</option>
+                <option value="1.2785">gallery card 1.28:1</option>
+                <option value="fit">fill window</option>
+            </select>
+        </span>
+        <span class="banner-field"><span>tracks</span>
+            <select id="c-count">
+                <option value="5">5</option>
+                <option value="4">4</option>
+            </select>
+        </span>
+        <span class="banner-field"><span>spacing</span>
+            <select id="c-gap">
+                <option value="170">spaced</option>
+                <option value="90">rack</option>
+                <option value="24">tight</option>
+            </select>
+        </span>
+        <span class="banner-field"><span>record</span>
+            <select id="c-record">
+                <option value="200">out</option>
+                <option value="300">far</option>
+                <option value="380">label showing</option>
+                <option value="32">tucked in</option>
+            </select>
+        </span>
+        <span class="banner-field"><span>spin</span>
+            <select id="c-spin">
+                <option value="still">still</option>
+                <option value="spin">spinning</option>
+            </select>
+        </span>
+        <span class="banner-field"><span>fill</span>
+            <select id="c-fill">
+                <option value="bleed">bleed off edges</option>
+                <option value="contain">contain</option>
+            </select>
+        </span>
+        <span class="banner-field"><span>logo</span>
+            <select id="c-footer">
+                <option value="stack">under the row</option>
+                <option value="corners">bottom corners</option>
+            </select>
+        </span>
+        <span class="banner-field"><span>visualiser</span>
+            <select id="c-viz">
+                <option value="off">off</option>
+                <option value="on">on</option>
+            </select>
+        </span>
+        <span class="banner-field">
+            <button id="c-reroll" type="button">reroll sleeves</button>
+            <button id="c-shuffle" type="button">reorder</button>
+        </span>
+        <span class="banner-field"><span>preview</span>
+            <select id="c-guides">
+                <option value="guides">crop guides</option>
+                <option value="hero">hero, as published</option>
+                <option value="none">none</option>
+            </select>
+        </span>
+        <span class="banner-readout" id="readout"></span>
+    </div>
+
+    <div class="banner-stage" id="stage">
+        <div class="banner-inner" id="inner">
+            <div class="banner-row" id="row"></div>
+            <div class="banner-footer" id="footer"></div>
+        </div>
+        <div class="banner-guides" id="guides"></div>
+    </div>
+
+    <script type="module" src="./scripts/banner.js"></script>
+</body>
+</html>

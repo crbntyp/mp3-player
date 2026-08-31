@@ -91,6 +91,55 @@
   display: none !important;
 }
 
+// The ambient wash: palette gradient, the blurred artwork over it, then a
+// vignette. A mixin rather than a `body` rule because the banner page lays
+// the same three layers over a fixed-size stage instead of the viewport —
+// same appearance, one definition. $layer-position is the only difference:
+// fixed against the viewport, absolute against a stage.
+@mixin ambient-wash($layer-position: fixed) {
+  // Base wash pulled from the artwork's own palette, so the page is never
+  // flatly black behind the cover. Painted here rather than assigned inline
+  // from JS — the stylesheet owns appearance, JS only sets the variables.
+  background:
+    radial-gradient(120% 100% at 50% -10%, var(--color-secondary) 0%, transparent 60%),
+    linear-gradient(165deg, var(--color-dark) 0%, #05060a 55%, #000 100%);
+  transition: background 0.8s var(--ease-smooth);
+
+  // Layer 1 — the artwork itself, blurred into an ambient field. Scaled up
+  // so the blur radius has bleed to eat instead of showing soft edges.
+  &::before {
+    content: '';
+    position: $layer-position;
+    inset: 0;
+    background-image: var(--backdrop-image);
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    transform: scale(1.15);
+    filter: blur(40px) saturate(1.35);
+    opacity: 0.62;
+    z-index: 0;
+    transition: opacity 0.8s var(--ease-smooth);
+    will-change: opacity;
+  }
+
+  // Layer 2 — vignette. Pulls the edges down so the centred player reads as
+  // the lit subject and the wash stays background.
+  &::after {
+    content: '';
+    position: $layer-position;
+    inset: 0;
+    background: radial-gradient(
+      110% 85% at 50% 45%,
+      transparent 25%,
+      rgba(0, 0, 0, 0.45) 70%,
+      rgba(0, 0, 0, 0.8) 100%
+    );
+    z-index: 0;
+    pointer-events: none;
+  }
+}
+
 body {
   font-family: "Space Mono", monospace;
   min-height: 100vh;
@@ -109,47 +158,7 @@ body {
   overflow-x: hidden;
   overflow-y: auto;
 
-  // Base wash pulled from the artwork's own palette, so the page is never
-  // flatly black behind the cover. Painted here rather than assigned inline
-  // from JS — the stylesheet owns appearance, JS only sets the variables.
-  background:
-    radial-gradient(120% 100% at 50% -10%, var(--color-secondary) 0%, transparent 60%),
-    linear-gradient(165deg, var(--color-dark) 0%, #05060a 55%, #000 100%);
-  transition: background 0.8s var(--ease-smooth);
-
-  // Layer 1 — the artwork itself, blurred into an ambient field. Scaled up
-  // so the blur radius has bleed to eat instead of showing soft edges.
-  &::before {
-    content: '';
-    position: fixed;
-    inset: 0;
-    background-image: var(--backdrop-image);
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-    transform: scale(1.15);
-    filter: blur(40px) saturate(1.35);
-    opacity: 0.62;
-    z-index: 0;
-    transition: opacity 0.8s var(--ease-smooth);
-    will-change: opacity;
-  }
-
-  // Layer 2 — vignette. Pulls the edges down so the centred player reads as
-  // the lit subject and the wash stays background.
-  &::after {
-    content: '';
-    position: fixed;
-    inset: 0;
-    background: radial-gradient(
-      110% 85% at 50% 45%,
-      transparent 25%,
-      rgba(0, 0, 0, 0.45) 70%,
-      rgba(0, 0, 0, 0.8) 100%
-    );
-    z-index: 0;
-    pointer-events: none;
-  }
+  @include ambient-wash;
 }
 
 // Visualizer Canvas (within album art container)
@@ -553,7 +562,13 @@ body {
 
 // Volume cluster: speaker icon swaps glyph by .data-level state.
 // Hovering or focusing the cluster reveals the slider popout.
-#volume-btn {
+//
+// Keyed off the class, not #volume-btn. The id is the script's hook — it is
+// what getElementById reaches for — and a hook that also carries appearance
+// means the button can only ever be drawn once per page. That is exactly
+// what broke the banner rig, where five cloned transports all showed the
+// high, low and mute glyphs at the same time.
+.volume-btn {
   .volume-icon-low,
   .volume-icon-mute { display: none; }
   &[data-level="low"]  {
